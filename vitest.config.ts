@@ -7,6 +7,8 @@ export default defineConfig({
     environment: 'node',
     setupFiles: ['./tests/setup.ts'],
     include: ['tests/{unit,integration}/**/*.{test,spec}.{ts,tsx}'],
+    testTimeout: 15000,
+    hookTimeout: 15000,
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

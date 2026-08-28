@@ -48,10 +48,9 @@ export default function SignupPage() {
       });
 
       if (loginRes?.ok) {
-        router.push('/overview');
-        router.refresh();
+        window.location.href = '/overview';
       } else {
-        router.push('/login');
+        window.location.href = '/login';
       }
     } catch (err: any) {
       setError(err.message || 'An unexpected error occurred.');

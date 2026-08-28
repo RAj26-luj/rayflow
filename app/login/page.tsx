@@ -31,10 +31,9 @@ export default function LoginPage() {
       });
 
       if (res?.error) {
-        setError(res.error || 'Invalid email or password.');
+        setError(res.error === 'CredentialsSignin' ? 'Invalid email or password.' : (res.error || 'Invalid email or password.'));
       } else if (res?.ok) {
-        router.push('/overview');
-        router.refresh();
+        window.location.href = '/overview';
       }
     } catch (err: any) {
       setError(err.message || 'Failed to sign in');
