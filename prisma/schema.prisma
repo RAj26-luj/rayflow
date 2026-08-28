@@ -1,0 +1,304 @@
+// RAYFLOW Prisma Schema
+// Production-grade data layer supporting multi-tenant isolation, 
+// financial consistency, and policy auditing.
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+// -------------------------------------------------------------
+// 1. TENANCY & AUTHENTICATION
+// -------------------------------------------------------------
+
+model Merchant {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  email       String   @unique
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  users         User[]
+  policy        AgentPolicy?
+  products      Product[]
+  customers     Customer[]
+  opportunities RevenueOpportunity[]
+  campaigns     Campaign[]
+  orders        Order[]
+  payments      Payment[]
+  auditLogs     AuditLog[]
+  webhookEvents WebhookEvent[]
+
+  @@index([email])
+  @@index([slug])
+}
+
+model User {
+  id           String   @id @default(cuid())
+  merchantId   String
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         String   @default("MERCHANT_ADMIN") // MERCHANT_ADMIN | MERCHANT_MEMBER
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+
+  @@index([merchantId])
+  @@index([email])
+}
+
+// -------------------------------------------------------------
+// 2. POLICY ENGINE & GOVERNANCE
+// -------------------------------------------------------------
+
+model AgentPolicy {
+  id                         String   @id @default(cuid())
+  merchantId                 String   @unique
+  maxDiscountPercent         Float    @default(20.0) // Hard 20% cap
+  maxCampaignBudget          Float    @default(50000.0) // Hard ₹50,000 cap
+  maxSingleTransaction       Float    @default(25000.0) // Single velocity cap
+  approvalThresholdDiscount  Float    @default(15.0) // >15% requires human approval
+  approvalThresholdCampaign  Float    @default(15000.0) // >₹15,000 requires human approval
+  createdAt                  DateTime @default(now())
+  updatedAt                  DateTime @updatedAt
+
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+
+  @@index([merchantId])
+}
+
+// -------------------------------------------------------------
+// 3. COMMERCE: CATALOGUE & CUSTOMERS
+// -------------------------------------------------------------
+
+model Product {
+  id                       String   @id @default(cuid())
+  merchantId               String
+  name                     String
+  sku                      String
+  description              String
+  price                    Float    // Stored in INR (Paise derived on txns)
+  compareAtPrice           Float?
+  category                 String
+  inventory                Int      @default(0)
+  conversionRate           Float    @default(0.0)
+  marginPercent            Float    @default(60.0)
+  image                    String
+  complementaryProductIds  String   @default("[]") // JSON stringified array of complementary IDs
+  createdAt                DateTime @default(now())
+  updatedAt                DateTime @updatedAt
+
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+
+  @@index([merchantId])
+  @@index([sku])
+  @@index([category])
+}
+
+model Customer {
+  id               String   @id @default(cuid())
+  merchantId       String
+  name             String
+  email            String
+  phone            String
+  cohort           String
+  lifetimeValue    Float    @default(0.0)
+  orderCount       Int      @default(0)
+  intentScore      Int      @default(50) // 0 - 100
+  cartStatus       String   @default("EMPTY") // EMPTY | ACTIVE | CHECKOUT_VIEWED | ABANDONED
+  notes            String?
+  lastPurchaseDate DateTime @default(now())
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+
+  @@unique([merchantId, email])
+  @@index([merchantId])
+  @@index([email])
+  @@index([intentScore])
+}
+
+// -------------------------------------------------------------
+// 4. REVENUE OPPORTUNITIES & CAMPAIGNS
+// -------------------------------------------------------------
+
+model RevenueOpportunity {
+  id                      String   @id @default(cuid())
+  merchantId              String
+  title                   String
+  subtitle                String
+  description             String
+  type                    String   // UPSELL | ABANDONED_CHECKOUT | CROSS_SELL | LOW_CONVERSION_RECOVERY
+  recommendedAction       String
+  reasoning               String
+  expectedRevenue         Float
+  confidence              Int      @default(80)
+  riskLevel               String   @default("LOW") // LOW | MEDIUM | HIGH
+  affectedCustomerCohort  String
+  affectedCustomersCount  Int      @default(0)
+  status                  String   @default("PENDING") // PENDING | SIMULATED | APPROVED | EXECUTED | REJECTED
+  actionPayload           String   @default("{}") // JSON stringified payload
+  policyNotes             String?
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+
+  @@index([merchantId])
+  @@index([status])
+  @@index([type])
+}
+
+model Campaign {
+  id                String   @id @default(cuid())
+  merchantId        String
+  name              String
+  targetCohort      String
+  discountPercent   Float
+  maxBudget         Float
+  estimatedAudience Int
+  expectedRevenue   Float
+  convertedOrders   Int      @default(0)
+  status            String   @default("ACTIVE") // ACTIVE | DRAFT | PAUSED | COMPLETED
+  aiReasoning       String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+
+  @@index([merchantId])
+  @@index([status])
+}
+
+// -------------------------------------------------------------
+// 5. ORDERS, PAYMENTS & SETTLEMENT
+// -------------------------------------------------------------
+
+model Order {
+  id                String   @id @default(cuid())
+  merchantId        String
+  orderNumber       String   @unique
+  razorpayOrderId   String   @unique
+  razorpayPaymentId String?  @unique
+  customerId        String
+  customerName      String
+  customerEmail     String
+  customerPhone     String
+  subtotalAmount    Float
+  discountAmount    Float    @default(0.0)
+  totalAmount       Float
+  status            String   @default("CREATED") // CREATED | ATTEMPTED | PAID | REFUNDED
+  paymentMethod     String?
+  isBundle          Boolean  @default(false)
+  bundleSavings     Float    @default(0.0)
+  failureReason     String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  merchant Merchant    @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  items    OrderItem[]
+  payments Payment[]
+
+  @@index([merchantId])
+  @@index([orderNumber])
+  @@index([razorpayOrderId])
+  @@index([status])
+}
+
+model OrderItem {
+  id          String @id @default(cuid())
+  orderId     String
+  productId   String
+  productName String
+  quantity    Int    @default(1)
+  unitPrice   Float
+  totalAmount Float
+
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+model Payment {
+  id                String   @id @default(cuid())
+  merchantId        String
+  orderId           String
+  razorpayPaymentId String   @unique
+  razorpayOrderId   String
+  amount            Float    // In INR
+  currency          String   @default("INR")
+  status            String   @default("CAPTURED") // CAPTURED | FAILED | REFUNDED
+  method            String   // upi | card | netbanking
+  email             String?
+  contact           String?
+  signature         String
+  signatureVerified Boolean  @default(false)
+  failureCode       String?
+  failureReason     String?
+  idempotencyKey    String?  @unique
+  createdAt         DateTime @default(now())
+
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  order    Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  @@index([merchantId])
+  @@index([orderId])
+  @@index([razorpayPaymentId])
+  @@index([razorpayOrderId])
+}
+
+// -------------------------------------------------------------
+// 6. AUDIT TRAILS & WEBHOOK RECONCILIATION
+// -------------------------------------------------------------
+
+model AuditLog {
+  id          String   @id @default(cuid())
+  merchantId  String
+  actorId     String   @default("system")
+  actorName   String   @default("System")
+  agentName   String   @default("Revenue Agent")
+  actionType  String   // ORDER_CREATED, PAYMENT_CAPTURED, POLICY_CHECK, etc.
+  entityType  String?  // ORDER, PRODUCT, OPPORTUNITY, CAMPAIGN, POLICY
+  entityId    String?
+  amount      Float?
+  policyCheck String   @default("NOT_APPLICABLE") // PASSED | FAILED | NOT_APPLICABLE
+  approval    String   @default("AUTO_APPROVED") // AUTO_APPROVED | MERCHANT_APPROVED | REJECTED
+  result      String   @default("SUCCESS") // SUCCESS | BLOCKED | FAILED
+  reason      String
+  recoveryNote String?
+  metadata    String?  // Sanitized JSON stringified metadata (no secrets)
+  requestId   String?
+  timestamp   DateTime @default(now())
+
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+
+  @@index([merchantId])
+  @@index([actionType])
+  @@index([timestamp])
+}
+
+model WebhookEvent {
+  id                String   @id @default(cuid())
+  merchantId        String
+  eventId           String   @unique // Razorpay event ID for deduplication
+  eventType         String   // payment.captured, payment.failed, order.paid
+  payload           String   // JSON stringified webhook payload
+  signatureVerified Boolean  @default(false)
+  processed         Boolean  @default(false)
+  createdAt         DateTime @default(now())
+
+  merchant Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+
+  @@index([merchantId])
+  @@index([eventId])
+  @@index([eventType])
+}

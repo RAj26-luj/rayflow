@@ -1,0 +1,51 @@
+name: RAYFLOW Production CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+
+jobs:
+  test-and-build:
+    name: Typecheck, Test & Build
+    runs-on: ubuntu-latest
+
+    env:
+      DATABASE_URL: "file:./dev.db"
+      NEXTAUTH_SECRET: "ci_jwt_super_secret_for_tests_only"
+      NEXTAUTH_URL: "http://localhost:3000"
+      RAZORPAY_KEY_ID: "rzp_test_ci_id"
+      RAZORPAY_KEY_SECRET: "rzp_secret_ci_secret"
+      DEMO_MODE: "true"
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client & Database
+        run: |
+          npx prisma generate
+          npx prisma db push
+          npx tsx prisma/seed.ts
+
+      - name: TypeScript Typecheck
+        run: npm run typecheck
+
+      - name: Next.js ESLint
+        run: npm run lint
+
+      - name: Vitest Unit & Integration Tests
+        run: npm test
+
+      - name: Production Build
+        run: npm run build
