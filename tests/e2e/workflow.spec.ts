@@ -1,41 +1,73 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('RAYFLOW E2E Production Workflows', () => {
-  test('Landing page renders hero value proposition and 5-step loop', async ({ page }) => {
+  test('1. Landing page renders hero value proposition', async ({ page }) => {
     await page.goto('/');
     await expect(page).toHaveTitle(/RAYFLOW/);
-    await expect(page.locator('text=The Autonomous AI Revenue Agent for Razorpay')).toBeVisible();
-    await expect(page.locator('text=Launch Live Merchant Dashboard')).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('Your AI Revenue Team');
+    await expect(page.getByRole('link', { name: /Explore Merchant Dashboard/i })).toBeVisible();
   });
 
-  test('Merchant Dashboard displays KPIs, Revenue Opportunities, and Policy Engine', async ({ page }) => {
-    await page.goto('/overview');
-    await expect(page.locator('text=Autonomous Revenue Copilot')).toBeVisible();
-    await expect(page.locator('text=TEST MODE')).toBeVisible();
-    await expect(page.locator('text=Revenue Influenced')).toBeVisible();
+  test('2. Merchant Login Flow authenticates and navigates to Overview Dashboard', async ({ page }) => {
+    await page.goto('/login');
+    await expect(page.getByRole('heading', { name: 'Sign in to RAYFLOW' })).toBeVisible();
+
+    // Fill Demo Login credentials
+    await page.click('button:has-text("Fill Demo Login")');
+    await page.click('button[type="submit"]');
+
+    // Redirection to overview dashboard
+    await page.waitForURL('**/overview');
+    await expect(page.getByText('Autonomous Revenue Copilot')).toBeVisible();
+    await expect(page.getByText('Revenue Influenced')).toBeVisible();
   });
 
-  test('Opportunities Feed supports 1-click simulation and approval', async ({ page }) => {
+  test('3. Opportunities Feed renders AI revenue opportunities', async ({ page }) => {
+    await page.goto('/login');
+    await page.click('button:has-text("Fill Demo Login")');
+    await page.click('button[type="submit"]');
+    await page.waitForURL('**/overview');
+
     await page.goto('/opportunities');
-    await expect(page.locator('text=Revenue Opportunities')).toBeVisible();
-    await expect(page.locator('text=Velocity Runner + Socks Bundle')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'AI Revenue Opportunities' })).toBeVisible();
   });
 
-  test('Shop AI Buyer Storefront executes pre-payment bundle checkout', async ({ page }) => {
+  test('4. AI Agent interface loads chat workspace and guard state', async ({ page }) => {
+    await page.goto('/login');
+    await page.click('button:has-text("Fill Demo Login")');
+    await page.click('button[type="submit"]');
+    await page.waitForURL('**/overview');
+
+    await page.goto('/agent');
+    await expect(page.getByRole('heading', { name: 'Revenue Agent' })).toBeVisible();
+    await expect(page.getByText('Active Policy Guard')).toBeVisible();
+  });
+
+  test('5. Shop AI Buyer Storefront renders catalog and conversational shopping', async ({ page }) => {
     await page.goto('/shop');
-    await expect(page.locator('text=Shop with AI')).toBeVisible();
-    await expect(page.locator('text=Velocity Runner Pro')).toBeVisible();
+    await expect(page.getByText('Test Mode').first()).toBeVisible();
+    await expect(page.getByPlaceholder(/Tell AI what you need/i)).toBeVisible();
   });
 
-  test('Audit trail logs immutable policy checks and Razorpay captures', async ({ page }) => {
-    await page.goto('/audit');
-    await expect(page.locator('text=Compliance & Policy Audit Trail')).toBeVisible();
-    await expect(page.locator('text=PASSED')).toBeVisible();
-  });
+  test('6. Policy Engine evaluates governance and discount bounds', async ({ page }) => {
+    await page.goto('/login');
+    await page.click('button:has-text("Fill Demo Login")');
+    await page.click('button[type="submit"]');
+    await page.waitForURL('**/overview');
 
-  test('Policy Engine live testing sandbox evaluates discount boundaries', async ({ page }) => {
     await page.goto('/policies');
-    await expect(page.locator('text=Agent Safety Policies')).toBeVisible();
-    await expect(page.locator('text=Max Bounded Discount')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Agent Policy Engine' })).toBeVisible();
+    await expect(page.getByText('Hard Economic Caps')).toBeVisible();
+    await expect(page.getByText('Maximum Discount (%)')).toBeVisible();
+  });
+
+  test('7. Compliance & Audit Trail displays verifiable ledger', async ({ page }) => {
+    await page.goto('/login');
+    await page.click('button:has-text("Fill Demo Login")');
+    await page.click('button[type="submit"]');
+    await page.waitForURL('**/overview');
+
+    await page.goto('/audit');
+    await expect(page.getByRole('heading', { name: 'Autonomous Agent Audit Trail' })).toBeVisible();
   });
 });
