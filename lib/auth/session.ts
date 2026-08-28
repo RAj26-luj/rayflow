@@ -64,8 +64,10 @@ export async function getAuthenticatedMerchant(): Promise<AuthenticatedMerchantC
       merchantName: user.merchant.name,
       role: user.role,
     };
-  } catch (err) {
-    console.error('Failed to resolve authenticated session:', err);
+  } catch (err: any) {
+    if (process.env.NODE_ENV !== 'test') {
+      console.error('Failed to resolve authenticated session:', err?.message || err);
+    }
     return null;
   }
 }

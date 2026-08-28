@@ -22,16 +22,16 @@ export interface RazorpayOrderResponse {
 
 class RazorpayService {
   private client: Razorpay | null = null;
-  private keyId: string;
-  private keySecret: string;
+  private keyId: string | null;
+  private keySecret: string | null;
   private isDemoMode: boolean;
 
   constructor() {
-    this.keyId = process.env.RAZORPAY_KEY_ID || 'rzp_test_rayflow_demo_id';
-    this.keySecret = process.env.RAZORPAY_KEY_SECRET || 'rzp_secret_rayflow_demo_secret';
-    this.isDemoMode = process.env.DEMO_MODE !== 'false';
+    this.keyId = process.env.RAZORPAY_KEY_ID || null;
+    this.keySecret = process.env.RAZORPAY_KEY_SECRET || null;
+    this.isDemoMode = process.env.DEMO_MODE === 'true';
 
-    if (this.keyId && this.keySecret && !this.keyId.includes('demo_id')) {
+    if (this.keyId && this.keySecret) {
       try {
         this.client = new Razorpay({
           key_id: this.keyId,
@@ -58,6 +58,11 @@ class RazorpayService {
         console.error('Razorpay API order creation failed:', err);
         throw new Error(`Razorpay API Error: ${err.message || 'Failed to create order'}`);
       }
+    }
+
+    // In production without demo mode and without credentials, throw an explicit error
+    if (process.env.NODE_ENV === 'production' && !this.isDemoMode && !this.client) {
+      throw new Error('RAZORPAY_KEY_ID and RAZORPAY_KEY_SECRET must be configured in production.');
     }
 
     // Deterministic Test Sandbox Adapter
