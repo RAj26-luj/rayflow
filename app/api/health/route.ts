@@ -32,7 +32,9 @@ export async function GET() {
         status: 'unhealthy',
         timestamp: new Date().toISOString(),
         error: {
-          message: 'Database connection failed',
+          message: 'Database check failed',
+          code: err?.code || 'UNKNOWN',
+          details: err?.message ? err.message.replace(/postgresql:\/\/.*@/, 'postgresql://***@').slice(0, 150) : undefined,
         },
       },
       { status: 503 }
