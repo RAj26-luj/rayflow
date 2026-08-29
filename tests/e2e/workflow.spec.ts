@@ -1,5 +1,13 @@
 import { test, expect } from '@playwright/test';
 
+async function loginAsMerchant(page: any) {
+  await page.goto('/login');
+  await page.fill('input[type="email"]', 'arjun@auraathletics.com');
+  await page.fill('input[type="password"]', 'demo123');
+  await page.click('button[type="submit"]');
+  await page.waitForURL('**/overview', { timeout: 15000 });
+}
+
 test.describe('RAYFLOW E2E Production Workflows', () => {
   test('1. Landing page renders hero value proposition', async ({ page }) => {
     await page.goto('/');
@@ -12,32 +20,19 @@ test.describe('RAYFLOW E2E Production Workflows', () => {
     await page.goto('/login');
     await expect(page.getByRole('heading', { name: 'Sign in to RAYFLOW' })).toBeVisible();
 
-    // Fill Demo Login credentials
-    await page.click('button:has-text("Fill Demo Login")');
-    await page.click('button[type="submit"]');
-
-    // Redirection to overview dashboard
-    await page.waitForURL('**/overview');
+    await loginAsMerchant(page);
     await expect(page.getByText('Autonomous Revenue Copilot')).toBeVisible();
     await expect(page.getByText('Revenue Influenced')).toBeVisible();
   });
 
   test('3. Opportunities Feed renders AI revenue opportunities', async ({ page }) => {
-    await page.goto('/login');
-    await page.click('button:has-text("Fill Demo Login")');
-    await page.click('button[type="submit"]');
-    await page.waitForURL('**/overview');
-
+    await loginAsMerchant(page);
     await page.goto('/opportunities');
     await expect(page.getByRole('heading', { name: 'AI Revenue Opportunities' })).toBeVisible();
   });
 
   test('4. AI Agent interface loads chat workspace and guard state', async ({ page }) => {
-    await page.goto('/login');
-    await page.click('button:has-text("Fill Demo Login")');
-    await page.click('button[type="submit"]');
-    await page.waitForURL('**/overview');
-
+    await loginAsMerchant(page);
     await page.goto('/agent');
     await expect(page.getByRole('heading', { name: 'Revenue Agent' })).toBeVisible();
     await expect(page.getByText('Active Policy Guard')).toBeVisible();
@@ -50,11 +45,7 @@ test.describe('RAYFLOW E2E Production Workflows', () => {
   });
 
   test('6. Policy Engine evaluates governance and discount bounds', async ({ page }) => {
-    await page.goto('/login');
-    await page.click('button:has-text("Fill Demo Login")');
-    await page.click('button[type="submit"]');
-    await page.waitForURL('**/overview');
-
+    await loginAsMerchant(page);
     await page.goto('/policies');
     await expect(page.getByRole('heading', { name: 'Agent Policy Engine' })).toBeVisible();
     await expect(page.getByText('Hard Economic Caps')).toBeVisible();
@@ -62,11 +53,7 @@ test.describe('RAYFLOW E2E Production Workflows', () => {
   });
 
   test('7. Compliance & Audit Trail displays verifiable ledger', async ({ page }) => {
-    await page.goto('/login');
-    await page.click('button:has-text("Fill Demo Login")');
-    await page.click('button[type="submit"]');
-    await page.waitForURL('**/overview');
-
+    await loginAsMerchant(page);
     await page.goto('/audit');
     await expect(page.getByRole('heading', { name: 'Autonomous Agent Audit Trail' })).toBeVisible();
   });
