@@ -28,6 +28,7 @@ jobs:
 
     env:
       DATABASE_URL: "postgresql://postgres:postgrespassword@localhost:5432/rayflow_test?sslmode=disable"
+      DATABASE_URL_UNPOOLED: "postgresql://postgres:postgrespassword@localhost:5432/rayflow_test?sslmode=disable"
       NEXTAUTH_SECRET: "ci_jwt_super_secret_for_tests_only"
       NEXTAUTH_URL: "http://localhost:3000"
       RAZORPAY_KEY_ID: "rzp_test_ci_id"
