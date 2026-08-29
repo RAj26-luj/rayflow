@@ -11,8 +11,23 @@ jobs:
     name: Typecheck, Test & Build
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgrespassword
+          POSTGRES_DB: rayflow_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
     env:
-      DATABASE_URL: "file:./dev.db"
+      DATABASE_URL: "postgresql://postgres:postgrespassword@localhost:5432/rayflow_test?sslmode=disable"
       NEXTAUTH_SECRET: "ci_jwt_super_secret_for_tests_only"
       NEXTAUTH_URL: "http://localhost:3000"
       RAZORPAY_KEY_ID: "rzp_test_ci_id"
