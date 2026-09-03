@@ -110,6 +110,17 @@ export default function OpportunitiesPage() {
           </div>
         </div>
 
+        {/* Contextual Guide Card */}
+        <div className="rounded-xl border border-blue-100 bg-blue-50/50 p-3.5 sm:p-4 text-xs text-blue-900 flex items-start gap-3">
+          <Info className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
+          <div className="space-y-1">
+            <div className="font-bold text-blue-950">What are Revenue Opportunities?</div>
+            <p className="text-slate-600 text-[11px] sm:text-xs leading-relaxed">
+              These are high-probability revenue interventions autonomously detected by RAYFLOW across your catalogue and customer intent data. You can simulate their revenue uplift using Monte Carlo models, review policy constraints, and approve them with a cryptographically verifiable audit trail.
+            </p>
+          </div>
+        </div>
+
         {/* Notification Banner */}
         {notification && (
           <div className="rounded-xl border border-blue-200 bg-blue-50 p-3 sm:p-4 text-xs text-blue-900 flex items-center gap-2 animate-in fade-in">
@@ -147,9 +158,15 @@ export default function OpportunitiesPage() {
             <div className="rounded-xl border border-slate-200 bg-white p-8 text-center shadow-xs">
               <Sparkles className="h-8 w-8 mx-auto text-slate-300 mb-2" />
               <div className="font-semibold text-slate-800 text-sm">No Revenue Opportunities Pending</div>
-              <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1">
+              <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1 mb-4">
                 Your autonomous agent is monitoring store telemetry. Opportunities will appear here when affinity correlations or abandoned checkouts are detected.
               </p>
+              <button
+                onClick={() => fetchOpps()}
+                className="rounded-lg border border-slate-200 bg-slate-50 px-3.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
+              >
+                Refresh Telemetry
+              </button>
             </div>
           )}
           {filteredOpps.map((opp) => (
@@ -158,6 +175,10 @@ export default function OpportunitiesPage() {
               className={`rounded-xl border bg-white p-4 sm:p-6 shadow-xs transition-all ${
                 opp.status === 'EXECUTED'
                   ? 'border-emerald-200 bg-emerald-50/20'
+                  : opp.status === 'APPROVED'
+                  ? 'border-indigo-200 bg-indigo-50/20'
+                  : opp.status === 'SIMULATED'
+                  ? 'border-purple-200 bg-purple-50/20'
                   : opp.status === 'REJECTED'
                   ? 'border-slate-200 opacity-60'
                   : 'border-slate-200 hover:border-slate-300'
@@ -175,12 +196,22 @@ export default function OpportunitiesPage() {
                       {opp.affectedCustomerCohort}
                     </span>
                     {opp.status === 'EXECUTED' && (
-                      <span className="rounded-full bg-emerald-100 text-emerald-800 px-2 py-0.5 text-[10px] font-bold">
+                      <span className="rounded-full bg-emerald-100 text-emerald-800 px-2 py-0.5 text-[10px] font-bold border border-emerald-200">
                         ACTIVE ✓
                       </span>
                     )}
+                    {opp.status === 'APPROVED' && (
+                      <span className="rounded-full bg-indigo-100 text-indigo-800 px-2 py-0.5 text-[10px] font-bold border border-indigo-200">
+                        APPROVED
+                      </span>
+                    )}
+                    {opp.status === 'SIMULATED' && (
+                      <span className="rounded-full bg-purple-100 text-purple-800 px-2 py-0.5 text-[10px] font-bold border border-purple-200">
+                        SIMULATED
+                      </span>
+                    )}
                     {opp.status === 'REJECTED' && (
-                      <span className="rounded-full bg-slate-100 text-slate-600 px-2 py-0.5 text-[10px] font-medium">
+                      <span className="rounded-full bg-slate-100 text-slate-600 px-2 py-0.5 text-[10px] font-medium border border-slate-200">
                         DISMISSED
                       </span>
                     )}
@@ -263,6 +294,30 @@ export default function OpportunitiesPage() {
                           </button>
                         </div>
                       </>
+                    ) : opp.status === 'SIMULATED' ? (
+                      <>
+                        <button
+                          onClick={() => handleOpenApproval(opp)}
+                          className="w-full rounded-lg bg-blue-600 py-2 text-xs font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors flex items-center justify-center gap-1.5"
+                        >
+                          <CheckCircle2 className="h-3.5 w-3.5" />
+                          <span>Approve Opportunity</span>
+                        </button>
+                        <button
+                          onClick={() => handleReject(opp.id)}
+                          className="w-full rounded-lg border border-slate-200 bg-white py-1.5 text-xs font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-colors"
+                        >
+                          Dismiss
+                        </button>
+                      </>
+                    ) : opp.status === 'APPROVED' ? (
+                      <button
+                        onClick={() => handleOpenApproval(opp)}
+                        className="w-full rounded-lg bg-emerald-600 py-2 text-xs font-semibold text-white shadow-xs hover:bg-emerald-700 transition-colors flex items-center justify-center gap-1.5"
+                      >
+                        <Zap className="h-3.5 w-3.5" />
+                        <span>Execute & Deploy Action</span>
+                      </button>
                     ) : (
                       <button
                         onClick={() => handleOpenApproval(opp)}

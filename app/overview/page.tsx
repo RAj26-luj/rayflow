@@ -137,14 +137,14 @@ export default function OverviewPage() {
               className="flex-1 sm:flex-none justify-center rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs flex items-center gap-1.5"
             >
               <Zap className="h-3.5 w-3.5 text-blue-600" />
-              <span>Ask Agent</span>
+              <span>Ask Growth Agent</span>
             </Link>
             <Link
-              href="/shop"
+              href="/opportunities"
               className="flex-1 sm:flex-none justify-center rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors flex items-center gap-1.5"
             >
-              <ShoppingBag className="h-3.5 w-3.5" />
-              <span>Shop with AI</span>
+              <Sparkles className="h-3.5 w-3.5" />
+              <span>Explore Opportunities</span>
             </Link>
           </div>
         </div>

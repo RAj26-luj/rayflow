@@ -1,28 +1,40 @@
 'use client';
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import {
   ShoppingBag,
   Sparkles,
-  Send,
+  Search,
+  Tag,
+  Star,
   ShieldCheck,
   Zap,
-  Lock,
-  ArrowRight,
-  RotateCcw,
   CheckCircle2,
   AlertTriangle,
   CreditCard,
   ChevronRight,
-  TrendingUp,
-  Tag,
+  Plus,
+  Minus,
+  Trash2,
+  X,
+  Lock,
+  ArrowRight,
+  Send,
+  SlidersHorizontal,
+  Bot,
+  Package,
 } from 'lucide-react';
 import { useSession, signIn } from 'next-auth/react';
-import { RazorpayTestModal } from '@/components/payment/RazorpayTestModal';
 import { CustomerNavbar } from '@/components/layout/CustomerNavbar';
+import { RazorpayTestModal } from '@/components/payment/RazorpayTestModal';
 import { Product, Order } from '@/lib/types';
 import { formatINR } from '@/lib/utils';
+
+interface CartItem {
+  product: Product;
+  quantity: number;
+}
 
 interface BuyerMessage {
   id: string;
@@ -41,16 +53,28 @@ interface BuyerMessage {
   timestamp: string;
 }
 
-export default function ShopWithAiPage() {
+export default function AmazonStyleShopPage() {
   const { data: session } = useSession();
-  const storeName = (session?.user as any)?.merchantName || 'Store';
 
+  // State: Products Catalogue
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loadingProducts, setLoadingProducts] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedCategory, setSelectedCategory] = useState('ALL');
+
+  // State: Shopping Cart
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [isCartOpen, setIsCartOpen] = useState(false);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  // State: AI Shopping Copilot
+  const [isAiCopilotOpen, setIsAiCopilotOpen] = useState(false);
   const [messages, setMessages] = useState<BuyerMessage[]>([
     {
-      id: 'msg_shop_welcome',
+      id: 'msg_welcome',
       role: 'assistant',
       content:
-        '👋 Welcome to **RAYFLOW Storefront**!\n\nTell me what gear you are looking for, your sport, or budget, and I will find the best match and bundle savings for you.',
+        '👋 Welcome to **RAYFLOW Storefront Copilot**!\n\nTell me what sports gear you are looking for, your budget, or your training goals, and I will find the best match and calculate bundle discounts for you.',
       suggestedReplies: [
         'Show me marathon running gear under ₹6,000.',
         'Find products with exclusive bundle savings.',
@@ -59,10 +83,11 @@ export default function ShopWithAiPage() {
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ]);
-  const [inputVal, setInputVal] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [activeOrder, setActiveOrder] = useState<Order | null>(null);
-  const [isPayModalOpen, setIsPayModalOpen] = useState(false);
+  const [aiInput, setAiInput] = useState('');
+  const [aiLoading, setAiLoading] = useState(false);
+  const chatEndRef = useRef<HTMLDivElement>(null);
+
+  // State: Checkout & Payment
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [authMode, setAuthMode] = useState<'signin' | 'signup'>('signin');
   const [authEmail, setAuthEmail] = useState('');
@@ -74,15 +99,31 @@ export default function ShopWithAiPage() {
   const [buyerName, setBuyerName] = useState('');
   const [buyerEmail, setBuyerEmail] = useState('');
   const [buyerPhone, setBuyerPhone] = useState('');
-  const [confirmationOrder, setConfirmationOrder] = useState<{
-    items: { productId: string; quantity: number; name?: string; price?: number }[];
-    totalAmount: number;
-    discountAmount: number;
-    isBundle: boolean;
-    bundleDetails?: any;
-  } | null>(null);
+  const [activeOrder, setActiveOrder] = useState<Order | null>(null);
+  const [isPayModalOpen, setIsPayModalOpen] = useState(false);
+  const [orderSubmitting, setOrderSubmitting] = useState(false);
   const [paidSuccessOrder, setPaidSuccessOrder] = useState<Order | null>(null);
   const [paymentFailError, setPaymentFailError] = useState<string | null>(null);
+
+  // Load products from real database API
+  const fetchProducts = async () => {
+    try {
+      setLoadingProducts(true);
+      const res = await fetch('/api/products');
+      const data = await res.json();
+      if (data.success && data.data?.products) {
+        setProducts(data.data.products);
+      }
+    } catch (err) {
+      console.error('Failed to fetch products:', err);
+    } finally {
+      setLoadingProducts(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducts();
+  }, []);
 
   // Sync buyer details from authenticated session
   useEffect(() => {
@@ -92,19 +133,68 @@ export default function ShopWithAiPage() {
     }
   }, [session]);
 
-  const chatEndRef = useRef<HTMLDivElement>(null);
-
-  const scrollToBottom = () => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  const showToast = (msg: string) => {
+    setToastMessage(msg);
+    setTimeout(() => setToastMessage(null), 3000);
   };
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages, loading]);
+  // Cart Operations
+  const addToCart = (product: Product, quantity = 1) => {
+    setCart((prev) => {
+      const existing = prev.find((item) => item.product.id === product.id);
+      if (existing) {
+        return prev.map((item) =>
+          item.product.id === product.id
+            ? { ...item, quantity: item.quantity + quantity }
+            : item
+        );
+      }
+      return [...prev, { product, quantity }];
+    });
+    showToast(`Added "${product.name}" to cart.`);
+  };
 
-  const handleSendMessage = async (textToSend?: string) => {
-    const query = (textToSend || inputVal).trim();
-    if (!query || loading) return;
+  const updateQuantity = (productId: string, delta: number) => {
+    setCart((prev) =>
+      prev
+        .map((item) => {
+          if (item.product.id === productId) {
+            const newQty = item.quantity + delta;
+            return newQty > 0 ? { ...item, quantity: newQty } : null;
+          }
+          return item;
+        })
+        .filter(Boolean) as CartItem[]
+    );
+  };
+
+  const removeFromCart = (productId: string) => {
+    setCart((prev) => prev.filter((item) => item.product.id !== productId));
+  };
+
+  const clearCart = () => {
+    setCart([]);
+  };
+
+  const totalCartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const cartSubtotal = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
+
+  // Bundle savings calculation (10% bundle discount for 2+ items)
+  const isBundleEligible = cart.length >= 2;
+  const bundleSavings = isBundleEligible ? Number((cartSubtotal * 0.1).toFixed(2)) : 0;
+  const cartFinalTotal = cartSubtotal - bundleSavings;
+
+  // Add Entire AI Bundle
+  const addBundleToCart = (bundle: { items: Product[]; bundlePrice: number; savingsAmount: number }) => {
+    bundle.items.forEach((p) => addToCart(p, 1));
+    setIsCartOpen(true);
+    showToast(`Added ${bundle.items.length}-item bundle to cart with ₹${bundle.savingsAmount} savings!`);
+  };
+
+  // AI Copilot Query
+  const handleSendAiMessage = async (queryText?: string) => {
+    const query = (queryText || aiInput).trim();
+    if (!query || aiLoading) return;
 
     const userMsg: BuyerMessage = {
       id: `usr_${Date.now()}`,
@@ -114,17 +204,14 @@ export default function ShopWithAiPage() {
     };
 
     setMessages((prev) => [...prev, userMsg]);
-    setInputVal('');
-    setLoading(true);
+    setAiInput('');
+    setAiLoading(true);
 
     try {
       const res = await fetch('/api/agent/query', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          prompt: query,
-          type: 'buyer',
-        }),
+        body: JSON.stringify({ prompt: query, type: 'buyer' }),
       });
 
       const data = await res.json();
@@ -143,53 +230,42 @@ export default function ShopWithAiPage() {
     } catch (err) {
       console.error(err);
     } finally {
-      setLoading(false);
+      setAiLoading(false);
+      chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }
   };
 
-  // Step 1: Open Pre-Payment Explicit Confirmation
-  const initiateBundleBuy = (bundle: any) => {
-    setPaymentFailError(null);
-    setPaidSuccessOrder(null);
+  // Handle Checkout Process
+  const handleProceedToCheckout = async (directProduct?: Product) => {
+    const itemsToOrder = directProduct
+      ? [{ product: directProduct, quantity: 1 }]
+      : cart;
 
-    setConfirmationOrder({
-      items: bundle.items.map((it: any) => ({
-        productId: it.id,
-        quantity: 1,
-        name: it.name,
-        price: it.price,
-      })),
-      totalAmount: bundle.bundlePrice,
-      discountAmount: bundle.savingsAmount,
-      isBundle: true,
-      bundleDetails: bundle,
-    });
-  };
+    if (itemsToOrder.length === 0) return;
 
-  // Step 2: Handle Checkout Click (Amazon-style Auth Check)
-  const handleProceedToRazorpay = async () => {
-    if (!confirmationOrder) return;
-
-    // If not signed in and no buyer email entered, prompt inline authentication
+    // Amazon-Style Auth Gate: Prompt sign-in if guest
     if (!session?.user && !buyerEmail.trim()) {
       setIsAuthModalOpen(true);
       return;
     }
 
-    setLoading(true);
+    setOrderSubmitting(true);
+    setPaymentFailError(null);
+
+    const discount = directProduct ? 0 : bundleSavings;
 
     try {
       const res = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          items: confirmationOrder.items.map((it) => ({
-            productId: it.productId,
+          items: itemsToOrder.map((it) => ({
+            productId: it.product.id,
             quantity: it.quantity,
           })),
-          discountAmount: confirmationOrder.discountAmount,
-          isBundle: confirmationOrder.isBundle,
-          bundleSavings: confirmationOrder.discountAmount,
+          discountAmount: discount,
+          isBundle: itemsToOrder.length >= 2,
+          bundleSavings: discount,
           customerDetails: {
             name: (buyerName || session?.user?.name || 'Valued Customer').trim(),
             email: (buyerEmail || session?.user?.email || 'customer@example.com').trim(),
@@ -201,21 +277,49 @@ export default function ShopWithAiPage() {
       const data = await res.json();
       if (data.success && data.data?.order) {
         setActiveOrder(data.data.order);
-        setConfirmationOrder(null);
+        setIsCartOpen(false);
         setIsAuthModalOpen(false);
         setIsPayModalOpen(true);
       } else {
-        setPaymentFailError(data.error?.message || 'Failed to create order.');
+        setPaymentFailError(data.error?.message || 'Failed to create checkout order.');
       }
     } catch (err: any) {
-      console.error(err);
-      setPaymentFailError(err.message || 'Network error creating order.');
+      setPaymentFailError(err.message || 'Network error during checkout.');
     } finally {
-      setLoading(false);
+      setOrderSubmitting(false);
     }
   };
 
-  // Step 3: Handle Inline Customer Login (Preserves Cart!)
+  // 1-Click Demo Customer Checkout
+  const handleInlineDemoCustomer = async () => {
+    setAuthError(null);
+    setAuthLoading(true);
+    try {
+      const res = await signIn('credentials', {
+        redirect: false,
+        email: 'priya@auraathletics.com',
+        password: 'demo123',
+        userType: 'customer',
+      });
+
+      if (res?.error) {
+        setAuthError('Demo customer login failed.');
+      } else {
+        setIsAuthModalOpen(false);
+        setBuyerName('Priya Sharma');
+        setBuyerEmail('priya@auraathletics.com');
+        showToast('Signed in as Demo Customer (Priya Sharma). Proceeding to checkout...');
+        // Immediately trigger checkout
+        setTimeout(() => handleProceedToCheckout(), 400);
+      }
+    } catch {
+      setAuthError('Failed to sign in as Demo Customer');
+    } finally {
+      setAuthLoading(false);
+    }
+  };
+
+  // Regular Customer Sign in / Sign up
   const handleInlineCustomerLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setAuthError(null);
@@ -249,43 +353,16 @@ export default function ShopWithAiPage() {
 
       if (res?.error) {
         setAuthError('Invalid email or password.');
-        setAuthLoading(false);
       } else {
         setIsAuthModalOpen(false);
-        setAuthLoading(false);
         setBuyerEmail(authEmail);
         if (authName) setBuyerName(authName);
+        showToast('Signed in successfully.');
+        setTimeout(() => handleProceedToCheckout(), 400);
       }
     } catch {
       setAuthError('Authentication failed. Please try again.');
-      setAuthLoading(false);
-    }
-  };
-
-  // Step 4: 1-Click Demo Customer Checkout
-  const handleInlineDemoCustomer = async () => {
-    setAuthError(null);
-    setAuthLoading(true);
-
-    try {
-      const res = await signIn('credentials', {
-        redirect: false,
-        email: 'priya@auraathletics.com',
-        password: 'demo123',
-        userType: 'customer',
-      });
-
-      if (res?.error) {
-        setAuthError('Demo customer login failed.');
-        setAuthLoading(false);
-      } else {
-        setIsAuthModalOpen(false);
-        setAuthLoading(false);
-        setBuyerName('Priya Sharma');
-        setBuyerEmail('priya@auraathletics.com');
-      }
-    } catch {
-      setAuthError('Failed to sign in as Demo Customer');
+    } finally {
       setAuthLoading(false);
     }
   };
@@ -293,284 +370,612 @@ export default function ShopWithAiPage() {
   const handlePaymentSuccess = (paymentData: any) => {
     setIsPayModalOpen(false);
     setPaidSuccessOrder(paymentData.order);
-
-    const successMsg: BuyerMessage = {
-      id: `ast_success_${Date.now()}`,
-      role: 'assistant',
-      content: `🎉 **Payment Captured & Verified!**\n\nThank you **${paymentData.order?.customerName || buyerName || 'Priya'}**! Your order **#${paymentData.order.orderNumber}** (${formatINR(paymentData.order.totalAmount)}) has been processed successfully.\n\nRazorpay Payment ID: \`${paymentData.payment.razorpayPaymentId}\`\n\nYour purchase is confirmed and available in your order history.`,
-      timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-    };
-
-    setMessages((prev) => [...prev, successMsg]);
+    clearCart();
+    showToast(`Order #${paymentData.order.orderNumber} confirmed!`);
   };
 
   const handlePaymentFailure = (errorData: any) => {
-    setPaymentFailError(errorData.details || errorData.message || 'Payment attempt failed.');
+    setPaymentFailError(errorData.details || errorData.message || 'Payment authorization failed.');
   };
 
+  // Filter products by category and search
+  const categories = ['ALL', 'Footwear', 'Apparel', 'Hydration', 'Recovery', 'Tech', 'Accessories'];
+  const filteredProducts = products.filter((p) => {
+    const matchesCategory =
+      selectedCategory === 'ALL' || p.category.toLowerCase() === selectedCategory.toLowerCase();
+    const matchesSearch =
+      !searchQuery.trim() ||
+      p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      p.description.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
   return (
-    <div className="min-h-screen bg-slate-900 text-slate-100 flex flex-col justify-between">
-      {/* Top Customer Storefront Navbar */}
-      <CustomerNavbar cartCount={confirmationOrder ? confirmationOrder.items.length : 0} />
+    <div className="min-h-screen bg-slate-50 text-slate-900 flex flex-col justify-between">
+      {/* 1. Customer Navigation Bar */}
+      <CustomerNavbar cartCount={totalCartCount} onOpenCart={() => setIsCartOpen(true)} />
 
-      {/* Main Conversational Storefront Container */}
-      <main className="flex-1 max-w-4xl w-full mx-auto p-3 sm:p-6 flex flex-col justify-between">
-        {/* Messages Stream */}
-        <div className="space-y-4 sm:space-y-6 pb-6">
-          {messages.map((msg) => (
-            <div
-              key={msg.id}
-              className={`flex gap-2 sm:gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
-            >
-              {msg.role === 'assistant' && (
-                <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-blue-600 text-white font-bold text-xs flex-shrink-0 mt-0.5">
-                  <Sparkles className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+      {/* Toast Notification */}
+      {toastMessage && (
+        <div className="fixed bottom-6 right-6 z-50 rounded-xl bg-slate-900 text-white px-4 py-3 text-xs font-semibold shadow-2xl flex items-center gap-2 animate-in slide-in-from-bottom-2">
+          <CheckCircle2 className="h-4 w-4 text-emerald-400" />
+          <span>{toastMessage}</span>
+        </div>
+      )}
+
+      {/* Main E-Commerce Content */}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6 sm:space-y-8">
+        {/* Order Paid Success Banner */}
+        {paidSuccessOrder && (
+          <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-5 sm:p-6 shadow-sm animate-in fade-in">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="flex items-start gap-3">
+                <CheckCircle2 className="h-6 w-6 text-emerald-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <h3 className="font-bold text-slate-900 text-base">
+                    🎉 Order Confirmed: #{paidSuccessOrder.orderNumber}
+                  </h3>
+                  <p className="text-xs text-slate-600 mt-1">
+                    Thank you {paidSuccessOrder.customerName}! Payment of {formatINR(paidSuccessOrder.totalAmount)} was captured and verified via Razorpay Test Mode.
+                  </p>
                 </div>
-              )}
-
-              <div
-                className={`max-w-[88%] sm:max-w-xl rounded-2xl p-3.5 sm:p-4 text-xs leading-relaxed ${
-                  msg.role === 'user'
-                    ? 'bg-blue-600 text-white shadow-md'
-                    : 'bg-slate-800 border border-slate-700 text-slate-200 shadow-md'
-                }`}
+              </div>
+              <Link
+                href="/customer/orders"
+                className="self-start sm:self-auto rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-emerald-700 transition-colors"
               >
-                <div className="whitespace-pre-line space-y-2 text-[11px] sm:text-xs">{msg.content}</div>
-
-                {/* Render Product Cards */}
-                {msg.products && !msg.recommendedBundle && (
-                  <div className="mt-3 sm:mt-4 grid grid-cols-1 gap-2.5 sm:gap-3">
-                    {msg.products.map((prod) => (
-                      <div
-                        key={prod.id}
-                        className="rounded-xl border border-slate-700 bg-slate-900/80 p-3 flex items-center gap-3 sm:gap-4"
-                      >
-                        <div className="h-14 w-14 sm:h-16 sm:w-16 relative rounded-lg overflow-hidden flex-shrink-0 bg-slate-800">
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img
-                            src={prod.image}
-                            alt={prod.name}
-                            className="object-cover h-full w-full"
-                          />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <div className="font-bold text-white text-xs sm:text-sm">{prod.name}</div>
-                          <div className="text-slate-400 text-[10px] sm:text-[11px] line-clamp-1">
-                            {prod.description}
-                          </div>
-                          <div className="flex items-center gap-2 mt-1">
-                            <span className="font-bold text-emerald-400 text-xs">
-                              {formatINR(prod.price)}
-                            </span>
-                            {prod.compareAtPrice && (
-                              <span className="text-slate-500 line-through text-[10px]">
-                                {formatINR(prod.compareAtPrice)}
-                              </span>
-                            )}
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                )}
-
-                {/* Render Recommended Bundle Card */}
-                {msg.recommendedBundle && (
-                  <div className="mt-3 sm:mt-4 rounded-xl border border-indigo-500/40 bg-indigo-950/40 p-3 sm:p-4 space-y-2.5 sm:space-y-3">
-                    <div className="flex items-center justify-between border-b border-indigo-800/60 pb-2">
-                      <div className="flex items-center gap-1.5 text-indigo-300 font-bold text-[11px] sm:text-xs uppercase tracking-wider">
-                        <Tag className="h-3.5 w-3.5" />
-                        AI Recommended Running Bundle
-                      </div>
-                      <span className="rounded bg-emerald-500/20 text-emerald-300 text-[9px] sm:text-[10px] font-bold px-1.5 sm:px-2 py-0.5 border border-emerald-500/30">
-                        Save {formatINR(msg.recommendedBundle.savingsAmount)}
-                      </span>
-                    </div>
-
-                    <div className="space-y-1.5">
-                      {msg.recommendedBundle.items.map((item, idx) => (
-                        <div key={idx} className="flex items-center justify-between text-xs text-slate-300">
-                          <div className="flex items-center gap-1.5 min-w-0">
-                            <span className="text-slate-500">{idx + 1}.</span>
-                            <span className="font-medium text-white truncate">{item.name}</span>
-                          </div>
-                          <span className="font-mono text-slate-400 ml-2">{formatINR(item.price)}</span>
-                        </div>
-                      ))}
-                    </div>
-
-                    <div className="pt-2 border-t border-indigo-800/60 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2">
-                      <div>
-                        <div className="text-[10px] text-slate-400">Regular: <span className="line-through">{formatINR(msg.recommendedBundle.originalPrice)}</span></div>
-                        <div className="text-sm sm:text-base font-bold text-white">
-                          Bundle: <span className="text-emerald-400">{formatINR(msg.recommendedBundle.bundlePrice)}</span>
-                        </div>
-                      </div>
-
-                      <button
-                        onClick={() => initiateBundleBuy(msg.recommendedBundle)}
-                        className="w-full sm:w-auto rounded-xl bg-blue-600 px-3.5 py-2 text-xs font-semibold text-white shadow-md hover:bg-blue-500 transition-colors flex items-center justify-center gap-1.5"
-                      >
-                        <ShoppingBag className="h-3.5 w-3.5" />
-                        <span>Buy Bundle</span>
-                      </button>
-                    </div>
-                  </div>
-                )}
-
-                {/* Suggested Follow-up Replies */}
-                {msg.suggestedReplies && (
-                  <div className="mt-2.5 pt-2 border-t border-slate-700 flex flex-wrap gap-1.5">
-                    {msg.suggestedReplies.map((reply, i) => (
-                      <button
-                        key={i}
-                        onClick={() => handleSendMessage(reply)}
-                        className="rounded-full bg-slate-900 border border-slate-700 px-2.5 py-1 text-[10px] sm:text-[11px] text-slate-300 hover:text-white hover:border-slate-500 transition-colors"
-                      >
-                        {reply}
-                      </button>
-                    ))}
-                  </div>
-                )}
-
-                <div className="mt-1.5 text-right text-[9px] opacity-40">{msg.timestamp}</div>
-              </div>
+                View in Order History →
+              </Link>
             </div>
-          ))}
+          </div>
+        )}
 
-          {loading && (
-            <div className="flex gap-2 sm:gap-3 items-center">
-              <div className="flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-blue-600 text-white font-bold text-xs">
-                <Sparkles className="h-3.5 w-3.5 animate-pulse" />
-              </div>
-              <div className="rounded-xl bg-slate-800 border border-slate-700 p-2.5 sm:p-3 text-[11px] sm:text-xs text-slate-400 flex items-center gap-2">
-                <span className="h-2 w-2 rounded-full bg-blue-500 animate-ping" />
-                <span>Formulating personalized bundle savings...</span>
-              </div>
+        {/* 2. Amazon-Style Search & AI Hero Banner */}
+        <div className="relative rounded-3xl bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 p-6 sm:p-10 text-white shadow-xl overflow-hidden">
+          <div className="relative z-10 max-w-2xl space-y-4">
+            <div className="inline-flex items-center gap-2 rounded-full bg-blue-500/20 border border-blue-400/30 px-3 py-1 text-[11px] font-bold text-blue-200 uppercase tracking-wider">
+              <Sparkles className="h-3.5 w-3.5 text-blue-300" />
+              Autonomous Shopping & AI Bundles
             </div>
-          )}
+            <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight">
+              Premium Athletic Gear with AI-Negotiated Bundle Savings
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
+              Browse top performance shoes, apparel, and recovery tech. Ask our AI Shopping Copilot to configure tailored gear bundles with verified merchant discounts.
+            </p>
 
-          <div ref={chatEndRef} />
+            {/* Interactive Search Bar */}
+            <div className="pt-2 flex flex-col sm:flex-row items-center gap-2 max-w-xl">
+              <div className="relative w-full">
+                <Search className="absolute left-3.5 top-3 h-4 w-4 text-slate-400" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search running shoes, hydration bottles, singlets..."
+                  className="w-full rounded-xl bg-white/10 border border-white/20 pl-10 pr-4 py-2.5 text-xs text-white placeholder:text-slate-400 focus:outline-none focus:bg-white/20 focus:border-white/40 transition-all backdrop-blur"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-3 top-2.5 text-slate-400 hover:text-white"
+                  >
+                    ✕
+                  </button>
+                )}
+              </div>
+
+              <button
+                onClick={() => setIsAiCopilotOpen(true)}
+                className="w-full sm:w-auto rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 px-4 py-2.5 text-xs font-bold text-white shadow-lg hover:from-blue-600 hover:to-indigo-700 transition-all flex items-center justify-center gap-2 flex-shrink-0"
+              >
+                <Bot className="h-4 w-4" />
+                <span>Ask AI Copilot</span>
+              </button>
+            </div>
+
+            {/* Quick Suggestion Chips */}
+            <div className="flex flex-wrap gap-1.5 pt-1 text-[11px]">
+              <span className="text-slate-400">Try searching:</span>
+              {['Running Shoes under ₹5,000', 'Hydration Bottle', 'Recovery Roller', 'Marathon Bundle'].map(
+                (term) => (
+                  <button
+                    key={term}
+                    onClick={() => {
+                      if (term.includes('Bundle') || term.includes('under')) {
+                        setIsAiCopilotOpen(true);
+                        handleSendAiMessage(term);
+                      } else {
+                        setSearchQuery(term);
+                      }
+                    }}
+                    className="rounded-full bg-white/10 hover:bg-white/20 px-2.5 py-0.5 text-[10px] text-slate-200 transition-colors"
+                  >
+                    {term}
+                  </button>
+                )
+              )}
+            </div>
+          </div>
         </div>
 
-        {/* Bottom Input Area */}
-        <div className="sticky bottom-3 sm:bottom-4 pt-2">
-          <form
-            onSubmit={(e) => {
-              e.preventDefault();
-              handleSendMessage();
-            }}
-            className="flex items-center gap-2 rounded-2xl border border-slate-700 bg-slate-800/95 p-1.5 sm:p-2 shadow-2xl backdrop-blur"
-          >
-            <input
-              type="text"
-              value={inputVal}
-              onChange={(e) => setInputVal(e.target.value)}
-              placeholder="Tell AI what you need (e.g. 'Running shoes under ₹6,000')..."
-              className="flex-1 bg-transparent px-3 sm:px-4 py-2 text-xs text-white placeholder:text-slate-500 focus:outline-none"
-            />
+        {/* 3. Category Filter Tabs */}
+        <div className="flex items-center gap-2 border-b border-slate-200 pb-3 overflow-x-auto no-scrollbar">
+          {categories.map((cat) => (
             <button
-              type="submit"
-              disabled={!inputVal.trim() || loading}
-              className="rounded-xl bg-blue-600 px-3.5 sm:px-4 py-2 text-xs font-semibold text-white hover:bg-blue-500 transition-colors disabled:opacity-40 flex items-center gap-1.5 flex-shrink-0"
+              key={cat}
+              onClick={() => setSelectedCategory(cat)}
+              className={`flex-shrink-0 rounded-xl px-4 py-2 text-xs font-semibold transition-all ${
+                selectedCategory === cat
+                  ? 'bg-blue-600 text-white shadow-sm'
+                  : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+              }`}
             >
-              <span className="hidden xs:inline">Send</span>
-              <Send className="h-3 w-3" />
+              {cat === 'ALL' ? 'All Products' : cat}
             </button>
-          </form>
+          ))}
+        </div>
+
+        {/* 4. AI-Negotiated Featured Bundles Spotlight */}
+        {selectedCategory === 'ALL' && products.length >= 2 && (
+          <div className="rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-50/60 to-blue-50/40 p-5 sm:p-6 shadow-xs space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white shadow-sm">
+                  <Tag className="h-4 w-4" />
+                </div>
+                <div>
+                  <h2 className="text-sm sm:text-base font-bold text-slate-900">
+                    AI Curated Bundle — Velocity Runner + Performance Socks
+                  </h2>
+                  <p className="text-xs text-slate-500">
+                    Co-purchase affinity score: 94% • 15% Instant Merchant Bundle Discount
+                  </p>
+                </div>
+              </div>
+              <span className="self-start sm:self-auto rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 px-2.5 py-1 text-[11px] font-bold">
+                Save ₹935 Instantly
+              </span>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+              {products.slice(0, 2).map((prod) => (
+                <div key={prod.id} className="rounded-xl border border-white bg-white/90 p-3 flex items-center gap-3 shadow-xs">
+                  <div className="h-14 w-14 rounded-lg overflow-hidden flex-shrink-0 bg-slate-100">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={prod.image} alt={prod.name} className="h-full w-full object-cover" />
+                  </div>
+                  <div className="min-w-0">
+                    <div className="font-bold text-slate-900 text-xs truncate">{prod.name}</div>
+                    <div className="text-[11px] text-slate-500">{formatINR(prod.price)}</div>
+                  </div>
+                </div>
+              ))}
+              <div className="rounded-xl border border-dashed border-indigo-300 bg-white/60 p-3 flex flex-col justify-center items-center text-center">
+                <div className="text-[11px] text-slate-500">Bundle Price:</div>
+                <div className="text-base font-bold text-emerald-600">
+                  {formatINR(
+                    products.slice(0, 2).reduce((sum, p) => sum + p.price, 0) * 0.85
+                  )}
+                </div>
+                <button
+                  onClick={() =>
+                    addBundleToCart({
+                      items: products.slice(0, 2),
+                      bundlePrice: products.slice(0, 2).reduce((sum, p) => sum + p.price, 0) * 0.85,
+                      savingsAmount: products.slice(0, 2).reduce((sum, p) => sum + p.price, 0) * 0.15,
+                    })
+                  }
+                  className="mt-1.5 rounded-lg bg-indigo-600 px-3 py-1 text-[11px] font-bold text-white hover:bg-indigo-700 transition-colors shadow-xs"
+                >
+                  Add Bundle to Cart
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* 5. Product Grid (Amazon-Style Cards) */}
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <h2 className="text-base sm:text-lg font-bold text-slate-900">
+              {searchQuery ? `Search Results for "${searchQuery}"` : 'Catalogue Products'}
+            </h2>
+            <span className="text-xs text-slate-500">{filteredProducts.length} items found</span>
+          </div>
+
+          {loadingProducts ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 py-8">
+              {[1, 2, 3, 4].map((n) => (
+                <div key={n} className="rounded-2xl border border-slate-200 bg-white p-4 h-72 animate-pulse space-y-3">
+                  <div className="h-40 bg-slate-200 rounded-xl" />
+                  <div className="h-4 bg-slate-200 rounded w-3/4" />
+                  <div className="h-4 bg-slate-200 rounded w-1/2" />
+                </div>
+              ))}
+            </div>
+          ) : filteredProducts.length === 0 ? (
+            <div className="rounded-2xl border border-slate-200 bg-white p-12 text-center shadow-xs">
+              <ShoppingBag className="h-10 w-10 mx-auto text-slate-300 mb-2" />
+              <h3 className="font-bold text-slate-800 text-sm">No products matched your search</h3>
+              <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1 mb-4">
+                Try searching for a different keyword or ask our AI Shopping Copilot to find relevant alternatives.
+              </p>
+              <button
+                onClick={() => {
+                  setSearchQuery('');
+                  setSelectedCategory('ALL');
+                }}
+                className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
+              >
+                Reset Filters
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
+              {filteredProducts.map((product) => {
+                const savingsPercent = product.compareAtPrice
+                  ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
+                  : 0;
+
+                return (
+                  <div
+                    key={product.id}
+                    className="group rounded-2xl border border-slate-200 bg-white p-3.5 sm:p-4 shadow-xs hover:border-slate-300 hover:shadow-md transition-all flex flex-col justify-between"
+                  >
+                    <div>
+                      {/* Product Image & Badges */}
+                      <div className="relative aspect-square w-full rounded-xl overflow-hidden bg-slate-100 mb-3">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={product.image}
+                          alt={product.name}
+                          className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                        />
+                        {savingsPercent > 0 && (
+                          <span className="absolute top-2 left-2 rounded-md bg-emerald-600 px-2 py-0.5 text-[10px] font-bold text-white shadow-xs">
+                            {savingsPercent}% OFF
+                          </span>
+                        )}
+                        <span className="absolute top-2 right-2 rounded-md bg-slate-900/80 backdrop-blur px-2 py-0.5 text-[9px] font-semibold text-white uppercase tracking-wider">
+                          {product.category}
+                        </span>
+                      </div>
+
+                      {/* Product Title & Rating */}
+                      <div className="space-y-1">
+                        <div className="flex items-center gap-1 text-amber-500 text-[11px]">
+                          <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                          <span className="font-bold text-slate-800">4.9</span>
+                          <span className="text-slate-400 text-[10px]">(128)</span>
+                        </div>
+                        <h3 className="font-bold text-slate-900 text-sm line-clamp-1 group-hover:text-blue-600 transition-colors">
+                          {product.name}
+                        </h3>
+                        <p className="text-[11px] text-slate-500 line-clamp-2 leading-relaxed">
+                          {product.description}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Price & Actions */}
+                    <div className="pt-3 border-t border-slate-100 mt-3 space-y-2.5">
+                      <div className="flex items-baseline gap-2">
+                        <span className="text-base sm:text-lg font-extrabold text-slate-900">
+                          {formatINR(product.price)}
+                        </span>
+                        {product.compareAtPrice && (
+                          <span className="text-xs text-slate-400 line-through">
+                            {formatINR(product.compareAtPrice)}
+                          </span>
+                        )}
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          onClick={() => addToCart(product, 1)}
+                          className="w-full rounded-xl border border-slate-200 bg-slate-50 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 hover:border-slate-300 transition-colors shadow-2xs flex items-center justify-center gap-1"
+                        >
+                          <Plus className="h-3.5 w-3.5" />
+                          <span>Add</span>
+                        </button>
+                        <button
+                          onClick={() => handleProceedToCheckout(product)}
+                          className="w-full rounded-xl bg-blue-600 py-2 text-xs font-semibold text-white hover:bg-blue-700 transition-colors shadow-xs flex items-center justify-center gap-1"
+                        >
+                          <span>Buy Now</span>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
       </main>
 
-      {/* Pre-Payment Explicit Confirmation Modal */}
-      {confirmationOrder && (
-        <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="w-full max-w-md bg-slate-900 border border-slate-800 rounded-2xl p-5 sm:p-6 space-y-4 sm:space-y-5 shadow-2xl text-slate-200 animate-in zoom-in-95">
-            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+      {/* 6. Real-Time Slide-Over Cart Drawer */}
+      {isCartOpen && (
+        <div className="fixed inset-0 z-50 overflow-hidden bg-slate-900/50 backdrop-blur-xs flex justify-end animate-in fade-in duration-200">
+          <div className="w-full max-w-md bg-white h-full shadow-2xl flex flex-col justify-between overflow-y-auto animate-in slide-in-from-right duration-300">
+            {/* Cart Header */}
+            <div className="p-4 sm:p-5 border-b border-slate-200 flex items-center justify-between sticky top-0 bg-white/95 backdrop-blur z-10">
               <div className="flex items-center gap-2">
-                <ShieldCheck className="h-5 w-5 text-emerald-400" />
-                <h3 className="font-bold text-white text-base">Payment Confirmation</h3>
+                <ShoppingBag className="h-5 w-5 text-blue-600" />
+                <h3 className="font-bold text-slate-900 text-base">Your Shopping Cart ({totalCartCount})</h3>
               </div>
               <button
-                onClick={() => setConfirmationOrder(null)}
-                className="text-slate-400 hover:text-white text-xs"
+                onClick={() => setIsCartOpen(false)}
+                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
               >
-                ✕
+                <X className="h-5 w-5" />
               </button>
             </div>
 
-            <div className="space-y-3 text-xs">
-              <div className="text-sm font-semibold text-white">
-                You&apos;re about to pay <span className="text-emerald-400 font-bold text-base">{formatINR(confirmationOrder.totalAmount)}</span>
-              </div>
-
-              {/* Dynamic Items List */}
-              <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-3 sm:p-3.5 space-y-2">
-                {confirmationOrder.items.map((item, idx) => (
-                  <div key={idx} className="flex items-center justify-between text-slate-300">
-                    <span>{item.name || `Product #${item.productId}`}</span>
-                    <span className="font-mono">{item.price ? formatINR(item.price) : ''}</span>
-                  </div>
-                ))}
-                {confirmationOrder.discountAmount > 0 && (
-                  <div className="flex items-center justify-between text-emerald-400 font-medium pt-1.5 border-t border-slate-800">
-                    <span>AI Bundle Savings</span>
-                    <span className="font-mono">-{formatINR(confirmationOrder.discountAmount)}</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Customer Checkout Details */}
-              <div className="space-y-2 pt-1">
-                <div className="text-slate-400 font-semibold text-[11px]">Buyer Information:</div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  <input
-                    type="text"
-                    placeholder="Full Name"
-                    value={buyerName}
-                    onChange={(e) => setBuyerName(e.target.value)}
-                    className="rounded-lg border border-slate-700 bg-slate-950 p-2 text-white text-xs focus:border-blue-500 focus:outline-none"
-                  />
-                  <input
-                    type="email"
-                    placeholder="Email Address"
-                    value={buyerEmail}
-                    onChange={(e) => setBuyerEmail(e.target.value)}
-                    className="rounded-lg border border-slate-700 bg-slate-950 p-2 text-white text-xs focus:border-blue-500 focus:outline-none"
-                  />
+            {/* Cart Items List */}
+            <div className="p-4 sm:p-5 space-y-3 flex-1 overflow-y-auto">
+              {cart.length === 0 ? (
+                <div className="py-16 text-center space-y-3">
+                  <ShoppingBag className="h-12 w-12 mx-auto text-slate-300" />
+                  <div className="font-semibold text-slate-800 text-sm">Your cart is empty</div>
+                  <p className="text-xs text-slate-500 max-w-xs mx-auto">
+                    Add performance gear from our catalogue or ask our AI Copilot for personalized running bundles.
+                  </p>
+                  <button
+                    onClick={() => setIsCartOpen(false)}
+                    className="rounded-xl bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-blue-700 transition-colors"
+                  >
+                    Continue Shopping
+                  </button>
                 </div>
-              </div>
+              ) : (
+                cart.map((item) => (
+                  <div
+                    key={item.product.id}
+                    className="rounded-xl border border-slate-200 bg-white p-3 flex items-center gap-3 shadow-2xs"
+                  >
+                    <div className="h-16 w-16 rounded-lg overflow-hidden bg-slate-100 flex-shrink-0">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={item.product.image}
+                        alt={item.product.name}
+                        className="h-full w-full object-cover"
+                      />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="font-bold text-slate-900 text-xs truncate">{item.product.name}</div>
+                      <div className="text-xs font-semibold text-slate-700 mt-0.5">
+                        {formatINR(item.product.price)}
+                      </div>
 
-              <div className="rounded-lg bg-blue-950/60 border border-blue-800 p-2.5 sm:p-3 text-[11px] text-blue-200 space-y-1">
-                <div className="font-semibold flex items-center gap-1">
-                  <Lock className="h-3.5 w-3.5 text-blue-400" />
-                  Razorpay Test-Mode Guarantee
-                </div>
-                <p className="text-slate-300">
-                  Payment will be processed securely using Razorpay test mode. No real bank accounts are debited.
-                </p>
-              </div>
+                      {/* Quantity Selector */}
+                      <div className="flex items-center gap-2 mt-2">
+                        <div className="flex items-center border border-slate-200 rounded-lg bg-slate-50">
+                          <button
+                            onClick={() => updateQuantity(item.product.id, -1)}
+                            className="p-1 text-slate-600 hover:text-slate-900"
+                          >
+                            <Minus className="h-3 w-3" />
+                          </button>
+                          <span className="px-2 text-xs font-bold text-slate-800">{item.quantity}</span>
+                          <button
+                            onClick={() => updateQuantity(item.product.id, 1)}
+                            className="p-1 text-slate-600 hover:text-slate-900"
+                          >
+                            <Plus className="h-3 w-3" />
+                          </button>
+                        </div>
+                        <button
+                          onClick={() => removeFromCart(item.product.id)}
+                          className="text-slate-400 hover:text-red-600 transition-colors p-1"
+                          title="Remove item"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                    <div className="text-right font-bold text-slate-900 text-xs">
+                      {formatINR(item.product.price * item.quantity)}
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
 
-            <div className="flex items-center gap-2.5 sm:gap-3 pt-2">
+            {/* Cart Footer */}
+            {cart.length > 0 && (
+              <div className="p-4 sm:p-5 border-t border-slate-200 bg-slate-50 space-y-3 sticky bottom-0">
+                <div className="space-y-1.5 text-xs">
+                  <div className="flex justify-between text-slate-600">
+                    <span>Items Subtotal ({totalCartCount}):</span>
+                    <span className="font-medium">{formatINR(cartSubtotal)}</span>
+                  </div>
+                  {bundleSavings > 0 && (
+                    <div className="flex justify-between text-emerald-600 font-semibold">
+                      <span>Multi-Item Bundle Savings (10%):</span>
+                      <span>-{formatINR(bundleSavings)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-slate-900 text-sm font-bold pt-1.5 border-t border-slate-200">
+                    <span>Final Total:</span>
+                    <span className="text-emerald-600">{formatINR(cartFinalTotal)}</span>
+                  </div>
+                </div>
+
+                <div className="flex flex-col gap-2 pt-1">
+                  <button
+                    onClick={() => handleProceedToCheckout()}
+                    disabled={orderSubmitting}
+                    className="w-full rounded-xl bg-blue-600 py-3 text-xs font-bold text-white shadow-md hover:bg-blue-700 transition-colors flex items-center justify-center gap-2 disabled:opacity-50"
+                  >
+                    <CreditCard className="h-4 w-4" />
+                    <span>{orderSubmitting ? 'Preparing Checkout...' : 'Proceed to Checkout'}</span>
+                  </button>
+                  <button
+                    onClick={() => setIsCartOpen(false)}
+                    className="w-full rounded-xl border border-slate-200 bg-white py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors"
+                  >
+                    Continue Shopping
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+
+      {/* 7. AI Shopping Copilot Modal / Drawer */}
+      {isAiCopilotOpen && (
+        <div className="fixed inset-0 z-50 overflow-hidden bg-slate-900/50 backdrop-blur-xs flex justify-end animate-in fade-in duration-200">
+          <div className="w-full max-w-lg bg-slate-900 text-white h-full shadow-2xl flex flex-col justify-between overflow-y-auto animate-in slide-in-from-right duration-300">
+            {/* Copilot Header */}
+            <div className="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between sticky top-0 bg-slate-900/95 backdrop-blur z-10">
+              <div className="flex items-center gap-2.5">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white font-bold text-xs">
+                  <Sparkles className="h-4 w-4" />
+                </div>
+                <div>
+                  <h3 className="font-bold text-white text-sm">AI Shopping Copilot</h3>
+                  <p className="text-[10px] text-slate-400">Natural-Language Gear Discovery & Bundles</p>
+                </div>
+              </div>
               <button
-                onClick={() => setConfirmationOrder(null)}
-                className="flex-1 rounded-xl border border-slate-700 bg-slate-800 py-2.5 text-xs font-semibold text-slate-300 hover:bg-slate-700 transition-colors"
+                onClick={() => setIsAiCopilotOpen(false)}
+                className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-white"
               >
-                Cancel
+                <X className="h-5 w-5" />
               </button>
-              <button
-                onClick={handleProceedToRazorpay}
-                className="flex-1 rounded-xl bg-blue-600 py-2.5 text-xs font-semibold text-white shadow-md hover:bg-blue-500 transition-colors flex items-center justify-center gap-1.5"
+            </div>
+
+            {/* Copilot Chat Messages Stream */}
+            <div className="p-4 sm:p-5 space-y-4 flex-1 overflow-y-auto text-xs">
+              {messages.map((msg) => (
+                <div
+                  key={msg.id}
+                  className={`flex gap-2.5 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                >
+                  {msg.role === 'assistant' && (
+                    <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-600 text-white font-bold text-xs flex-shrink-0 mt-0.5">
+                      <Sparkles className="h-3.5 w-3.5" />
+                    </div>
+                  )}
+
+                  <div
+                    className={`max-w-[85%] rounded-2xl p-3.5 leading-relaxed ${
+                      msg.role === 'user'
+                        ? 'bg-blue-600 text-white shadow-md'
+                        : 'bg-slate-800 border border-slate-700 text-slate-200 shadow-md'
+                    }`}
+                  >
+                    <div className="whitespace-pre-line space-y-2">{msg.content}</div>
+
+                    {/* Copilot Product Recommendations */}
+                    {msg.products && (
+                      <div className="mt-3 space-y-2">
+                        {msg.products.map((p) => (
+                          <div
+                            key={p.id}
+                            className="rounded-xl border border-slate-700 bg-slate-950 p-2.5 flex items-center justify-between gap-2"
+                          >
+                            <div className="min-w-0">
+                              <div className="font-bold text-white text-xs truncate">{p.name}</div>
+                              <div className="text-[11px] text-emerald-400 font-semibold">{formatINR(p.price)}</div>
+                            </div>
+                            <button
+                              onClick={() => {
+                                addToCart(p, 1);
+                                setIsCartOpen(true);
+                              }}
+                              className="rounded-lg bg-blue-600 px-2.5 py-1 text-[11px] font-bold text-white hover:bg-blue-500 transition-colors flex-shrink-0"
+                            >
+                              Add to Cart
+                            </button>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Copilot Recommended Bundle Card */}
+                    {msg.recommendedBundle && (
+                      <div className="mt-3 rounded-xl border border-indigo-500/40 bg-indigo-950/60 p-3 space-y-2">
+                        <div className="flex items-center justify-between text-[11px] text-indigo-300 font-bold">
+                          <span>AI Bundle</span>
+                          <span className="text-emerald-400">Save {formatINR(msg.recommendedBundle.savingsAmount)}</span>
+                        </div>
+                        <div className="text-xs font-bold text-white">
+                          Bundle Price: {formatINR(msg.recommendedBundle.bundlePrice)}
+                        </div>
+                        <button
+                          onClick={() => {
+                            if (msg.recommendedBundle) {
+                              addBundleToCart(msg.recommendedBundle);
+                            }
+                          }}
+                          className="w-full rounded-lg bg-indigo-600 py-1.5 text-xs font-bold text-white hover:bg-indigo-500 transition-colors"
+                        >
+                          Add Full Bundle to Cart
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Suggested Replies */}
+                    {msg.suggestedReplies && (
+                      <div className="mt-2.5 pt-2 border-t border-slate-700 flex flex-wrap gap-1.5">
+                        {msg.suggestedReplies.map((reply, i) => (
+                          <button
+                            key={i}
+                            onClick={() => handleSendAiMessage(reply)}
+                            className="rounded-full bg-slate-950 border border-slate-700 px-2.5 py-1 text-[10px] text-slate-300 hover:text-white hover:border-slate-500 transition-colors"
+                          >
+                            {reply}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))}
+
+              {aiLoading && (
+                <div className="flex gap-2 items-center text-xs text-slate-400">
+                  <Sparkles className="h-4 w-4 text-blue-400 animate-spin" />
+                  <span>Configuring personalized gear recommendation...</span>
+                </div>
+              )}
+              <div ref={chatEndRef} />
+            </div>
+
+            {/* Copilot Input */}
+            <div className="p-3 sm:p-4 border-t border-slate-800 bg-slate-900 sticky bottom-0">
+              <form
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  handleSendAiMessage();
+                }}
+                className="flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800 p-1.5"
               >
-                <CreditCard className="h-4 w-4" />
-                <span>Confirm & Pay</span>
-              </button>
+                <input
+                  type="text"
+                  value={aiInput}
+                  onChange={(e) => setAiInput(e.target.value)}
+                  placeholder="Ask AI Copilot (e.g. 'Build me a running bundle')..."
+                  className="flex-1 bg-transparent px-3 py-1.5 text-xs text-white placeholder:text-slate-500 focus:outline-none"
+                />
+                <button
+                  type="submit"
+                  disabled={!aiInput.trim() || aiLoading}
+                  className="rounded-lg bg-blue-600 px-3 py-1.5 text-xs font-bold text-white hover:bg-blue-500 disabled:opacity-40"
+                >
+                  <Send className="h-3 w-3" />
+                </button>
+              </form>
             </div>
           </div>
         </div>
       )}
 
-      {/* Checkout Authentication Gate Modal (Amazon-Style Zero-Cart-Loss) */}
+      {/* 8. Amazon-Style Zero-Cart-Loss Guest Auth Modal */}
       {isAuthModalOpen && (
         <div className="fixed inset-0 z-50 overflow-y-auto bg-slate-950/80 backdrop-blur-sm flex items-center justify-center p-4 animate-in fade-in duration-200">
           <div className="w-full max-w-md bg-white rounded-2xl p-6 shadow-2xl text-slate-900 animate-in zoom-in-95 space-y-4">
@@ -588,7 +993,7 @@ export default function ShopWithAiPage() {
             </div>
 
             <div className="text-xs text-slate-600">
-              Your cart and AI bundle savings ({confirmationOrder ? formatINR(confirmationOrder.totalAmount) : ''}) are preserved.
+              Your cart ({totalCartCount} items — {formatINR(cartFinalTotal)}) is safely preserved.
             </div>
 
             {authError && (
@@ -665,7 +1070,7 @@ export default function ShopWithAiPage() {
                 disabled={authLoading}
                 className="w-full rounded-xl bg-slate-900 text-white font-semibold py-2.5 hover:bg-slate-800 transition-colors disabled:opacity-50"
               >
-                {authLoading ? 'Signing in...' : authMode === 'signin' ? 'Sign In & Pay' : 'Create Account & Pay'}
+                {authLoading ? 'Signing in...' : authMode === 'signin' ? 'Sign In & Checkout' : 'Create Account & Checkout'}
               </button>
 
               <div className="text-center pt-1 text-slate-500">
@@ -698,11 +1103,11 @@ export default function ShopWithAiPage() {
         </div>
       )}
 
-      {/* Razorpay Test Payment Modal */}
+      {/* 9. Razorpay Test Mode Payment Modal */}
       <RazorpayTestModal
         order={activeOrder}
         isOpen={isPayModalOpen}
-        storeName={storeName}
+        storeName="RAYFLOW Storefront"
         onClose={() => setIsPayModalOpen(false)}
         onPaymentSuccess={handlePaymentSuccess}
         onPaymentFailure={handlePaymentFailure}

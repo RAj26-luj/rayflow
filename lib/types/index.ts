@@ -9,7 +9,7 @@ export type OpportunityType =
   | 'LOW_CONVERSION_RECOVERY'
   | 'PRICE_OPTIMIZATION';
 
-export type OpportunityStatus = 'PENDING' | 'APPROVED' | 'EXECUTED' | 'REJECTED';
+export type OpportunityStatus = 'PENDING' | 'SIMULATED' | 'APPROVED' | 'EXECUTED' | 'REJECTED';
 
 export type PolicyCheckStatus = 'PASSED' | 'REQUIRES_APPROVAL' | 'BLOCKED';
 

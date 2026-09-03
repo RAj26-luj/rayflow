@@ -58,13 +58,6 @@ export const NAV_ITEMS = [
     badge: null,
   },
   {
-    label: 'Shop with AI (Buyer)',
-    href: '/shop',
-    icon: ShoppingBag,
-    badge: 'Hero Demo',
-    badgeColor: 'bg-indigo-100 text-indigo-800 border-indigo-200 font-semibold',
-  },
-  {
     label: 'Payments & Orders',
     href: '/payments',
     icon: CreditCard,

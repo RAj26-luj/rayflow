@@ -38,7 +38,7 @@ export function ApprovalDrawer({
 
   if (!isOpen || !opportunity) return null;
 
-  const handleApprove = async () => {
+  const handleAction = async (action: 'APPROVE' | 'EXECUTE') => {
     setLoading(true);
     setError(null);
     try {
@@ -47,12 +47,12 @@ export function ApprovalDrawer({
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           opportunityId: opportunity.id,
-          action: 'APPROVE',
+          action,
         }),
       });
       const data = await res.json();
       if (!data.success) {
-        setError(data.message || data.error || 'Failed to approve opportunity');
+        setError(data.error?.message || data.message || `Failed to ${action.toLowerCase()} opportunity`);
       } else {
         onApproveSuccess(data.data);
         onClose();
@@ -79,6 +79,10 @@ export function ApprovalDrawer({
       const data = await res.json();
       if (data.success) {
         setSimulationResult(data.simulation);
+        // Also update local opportunity status to SIMULATED
+        onApproveSuccess({ ...opportunity, status: 'SIMULATED' });
+      } else {
+        setError(data.error?.message || 'Simulation failed');
       }
     } catch (err: any) {
       setError(err.message);
@@ -237,35 +241,59 @@ export function ApprovalDrawer({
 
         {/* Footer Actions */}
         <div className="p-4 sm:p-6 border-t border-slate-200 bg-slate-50/90 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2.5 sticky bottom-0">
-          <button
-            onClick={handleSimulate}
-            disabled={simulating}
-            className="w-full sm:w-auto rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors shadow-xs"
-          >
-            {simulating ? 'Simulating...' : 'Simulate Impact'}
-          </button>
+          {opportunity.status === 'PENDING' && (
+            <button
+              onClick={handleSimulate}
+              disabled={simulating || loading}
+              className="w-full sm:w-auto rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors shadow-xs disabled:opacity-50"
+            >
+              {simulating ? 'Simulating...' : 'Simulate Impact'}
+            </button>
+          )}
 
-          <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
+          <div className="flex items-center gap-2 w-full sm:w-auto justify-end ml-auto">
             <button
               onClick={onClose}
               className="flex-1 sm:flex-none rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 transition-colors"
             >
-              Cancel
+              Close
             </button>
-            <button
-              onClick={handleApprove}
-              disabled={loading}
-              className="flex-1 sm:flex-none rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-blue-700 transition-colors flex items-center justify-center gap-1.5"
-            >
-              {loading ? (
-                <span>Executing...</span>
-              ) : (
-                <>
-                  <CheckCircle2 className="h-3.5 w-3.5" />
-                  <span>Approve & Execute</span>
-                </>
-              )}
-            </button>
+            {opportunity.status === 'PENDING' || opportunity.status === 'SIMULATED' ? (
+              <button
+                onClick={() => handleAction('APPROVE')}
+                disabled={loading}
+                className="flex-1 sm:flex-none rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-blue-700 transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50"
+              >
+                {loading ? (
+                  <span>Approving...</span>
+                ) : (
+                  <>
+                    <CheckCircle2 className="h-3.5 w-3.5" />
+                    <span>Approve Opportunity</span>
+                  </>
+                )}
+              </button>
+            ) : opportunity.status === 'APPROVED' ? (
+              <button
+                onClick={() => handleAction('EXECUTE')}
+                disabled={loading}
+                className="flex-1 sm:flex-none rounded-lg bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:bg-emerald-700 transition-colors flex items-center justify-center gap-1.5 disabled:opacity-50"
+              >
+                {loading ? (
+                  <span>Executing...</span>
+                ) : (
+                  <>
+                    <Zap className="h-3.5 w-3.5" />
+                    <span>Execute & Deploy Action</span>
+                  </>
+                )}
+              </button>
+            ) : (
+              <div className="rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 px-3 py-1.5 text-xs font-semibold flex items-center gap-1.5">
+                <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600" />
+                <span>Active & Executed</span>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -20,17 +20,22 @@ const createProductSchema = z.object({
 export async function GET(req: Request) {
   try {
     const auth = await getAuthenticatedMerchant();
-    if (!auth) {
-      return NextResponse.json({ success: false, error: { code: 'UNAUTHORIZED', message: 'Authentication required' } }, { status: 401 });
-    }
-
     const { searchParams } = new URL(req.url);
     const category = searchParams.get('category');
     const search = searchParams.get('search');
+    const merchantSlug = searchParams.get('merchant') || 'aura-athletics';
+
+    let targetMerchantId = auth?.merchantId;
+    if (!targetMerchantId) {
+      const merchant = await prisma.merchant.findFirst({
+        where: { slug: merchantSlug },
+      });
+      targetMerchantId = merchant?.id || 'mch_aura_982';
+    }
 
     const products = await prisma.product.findMany({
       where: {
-        merchantId: auth.merchantId,
+        merchantId: targetMerchantId,
         ...(category && category !== 'ALL' ? { category } : {}),
         ...(search
           ? {
@@ -45,7 +50,7 @@ export async function GET(req: Request) {
       orderBy: { createdAt: 'desc' },
     });
 
-    return NextResponse.json({ success: true, data: products });
+    return NextResponse.json({ success: true, data: { products } });
   } catch (err: any) {
     console.error('GET /api/products error:', err);
     return NextResponse.json({ success: false, error: { code: 'INTERNAL_ERROR', message: err.message } }, { status: 500 });

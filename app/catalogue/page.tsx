@@ -35,7 +35,7 @@ export default function CataloguePage() {
       const res = await fetch('/api/products');
       const data = await res.json();
       if (data.success) {
-        setProducts(data.data);
+        setProducts(data.data?.products || (Array.isArray(data.data) ? data.data : []));
       }
     } catch (err) {
       console.error(err);

@@ -121,15 +121,6 @@ export function Navbar({ onResetData, onToggleMobileSidebar }: NavbarProps) {
           <span className="hidden sm:inline">{resetting ? 'Resetting...' : 'Reset Demo'}</span>
         </button>
 
-        {/* Hero Demo Quick Link */}
-        <Link
-          href="/shop"
-          className="flex items-center gap-1 sm:gap-1.5 rounded-md bg-blue-600 px-2 sm:px-3 py-1.5 text-xs font-medium text-white shadow-xs hover:bg-blue-700 transition-colors flex-shrink-0"
-        >
-          <ShoppingBag className="h-3.5 w-3.5" />
-          <span className="text-xs">Shop with AI</span>
-        </Link>
-
         {/* User Profile & Auth Dropdown */}
         <div className="relative">
           <button

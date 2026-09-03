@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic';
 
 const opportunityActionSchema = z.object({
   opportunityId: z.string().min(1, 'Opportunity ID is required'),
-  action: z.enum(['APPROVE', 'SIMULATE', 'REJECT']),
+  action: z.enum(['APPROVE', 'SIMULATE', 'EXECUTE', 'REJECT']),
 });
 
 export async function GET(req: Request) {
@@ -136,7 +136,7 @@ export async function POST(req: Request) {
       const updated = await prisma.$transaction(async (tx) => {
         const opp = await tx.revenueOpportunity.update({
           where: { id: opportunity.id },
-          data: { status: 'EXECUTED' },
+          data: { status: 'APPROVED' },
         });
 
         await tx.auditLog.create({
@@ -152,7 +152,59 @@ export async function POST(req: Request) {
             policyCheck: 'PASSED',
             approval: 'MERCHANT_APPROVED',
             result: 'SUCCESS',
-            reason: `Merchant approved and deployed revenue opportunity "${opp.title}".`,
+            reason: `Merchant approved revenue opportunity "${opp.title}".`,
+          },
+        });
+
+        return opp;
+      });
+
+      return NextResponse.json({
+        success: true,
+        data: {
+          ...updated,
+          actionPayload: payload,
+        },
+      });
+    }
+
+    if (action === 'EXECUTE') {
+      const discountPercent = payload.discountPercent || 15;
+      const policyVerdict = PolicyEngine.evaluateDiscount(discountPercent, policy || undefined);
+
+      if (!policyVerdict.allowed) {
+        return NextResponse.json(
+          {
+            success: false,
+            error: {
+              code: 'POLICY_BLOCK',
+              message: `Execution blocked: Proposed discount (${discountPercent}%) exceeds policy limit.`,
+            },
+          },
+          { status: 403 }
+        );
+      }
+
+      const updated = await prisma.$transaction(async (tx) => {
+        const opp = await tx.revenueOpportunity.update({
+          where: { id: opportunity.id },
+          data: { status: 'EXECUTED' },
+        });
+
+        await tx.auditLog.create({
+          data: {
+            merchantId: auth.merchantId,
+            actorId: auth.userId,
+            actorName: auth.userName,
+            agentName: 'Revenue Agent',
+            actionType: 'OPPORTUNITY_EXECUTED',
+            entityType: 'OPPORTUNITY',
+            entityId: opp.id,
+            amount: opp.expectedRevenue,
+            policyCheck: 'PASSED',
+            approval: 'MERCHANT_APPROVED',
+            result: 'SUCCESS',
+            reason: `Merchant executed and activated revenue campaign for opportunity "${opp.title}".`,
           },
         });
 

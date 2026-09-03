@@ -21,7 +21,6 @@ const MOBILE_BOTTOM_NAV = [
   { label: 'Overview', href: '/overview', icon: LayoutDashboard },
   { label: 'Opps', href: '/opportunities', icon: Sparkles },
   { label: 'AI Agent', href: '/agent', icon: Bot },
-  { label: 'Shop AI', href: '/shop', icon: ShoppingBag, isHero: true },
   { label: 'Audit', href: '/audit', icon: ShieldCheck },
 ];
 
@@ -58,15 +57,13 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
                 key={item.href}
                 href={item.href}
                 className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-lg text-[10px] font-medium transition-colors relative ${
-                  item.isHero
-                    ? 'text-blue-600 font-bold'
-                    : isActive
+                  isActive
                     ? 'text-blue-600 font-semibold'
                     : 'text-slate-500 hover:text-slate-900'
                 }`}
               >
                 <div className="relative">
-                  <Icon className={`h-4 w-4 ${isActive || item.isHero ? 'text-blue-600' : 'text-slate-400'}`} />
+                  <Icon className={`h-4 w-4 ${isActive ? 'text-blue-600' : 'text-slate-400'}`} />
                 </div>
                 <span className="mt-0.5">{item.label}</span>
               </Link>
