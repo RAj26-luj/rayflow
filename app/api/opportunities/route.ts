@@ -191,6 +191,21 @@ export async function POST(req: Request) {
           data: { status: 'EXECUTED' },
         });
 
+        // Create active Campaign entity for this executed opportunity
+        const campaign = await tx.campaign.create({
+          data: {
+            merchantId: auth.merchantId,
+            name: `${opportunity.title} (Live)`,
+            targetCohort: opportunity.affectedCustomerCohort || 'Target Audience',
+            discountPercent: discountPercent,
+            maxBudget: payload.maxBudget || 15000.0,
+            estimatedAudience: opportunity.affectedCustomersCount || 100,
+            expectedRevenue: opportunity.expectedRevenue,
+            status: 'ACTIVE',
+            aiReasoning: opportunity.reasoning || 'Executed from approved revenue opportunity.',
+          },
+        });
+
         await tx.auditLog.create({
           data: {
             merchantId: auth.merchantId,
@@ -204,7 +219,12 @@ export async function POST(req: Request) {
             policyCheck: 'PASSED',
             approval: 'MERCHANT_APPROVED',
             result: 'SUCCESS',
-            reason: `Merchant executed and activated revenue campaign for opportunity "${opp.title}".`,
+            reason: `Merchant executed and activated live campaign "${campaign.name}" for opportunity "${opp.title}".`,
+            metadata: JSON.stringify({
+              campaignId: campaign.id,
+              discountPercent,
+              expectedRevenue: opp.expectedRevenue,
+            }),
           },
         });
 
