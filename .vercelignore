@@ -1,0 +1,10 @@
+.env
+.env.local
+.env.development
+.env.test
+.git
+.github
+tests
+playwright-report
+test-results
+coverage
