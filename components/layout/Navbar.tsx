@@ -161,7 +161,7 @@ export function Navbar({ onResetData, onToggleMobileSidebar }: NavbarProps) {
                 <span>Store Settings</span>
               </Link>
               <button
-                onClick={() => signOut({ callbackUrl: '/login' })}
+                onClick={() => signOut({ callbackUrl: '/' })}
                 className="w-full text-left flex items-center gap-2 px-3 py-1.5 rounded-lg text-red-600 hover:bg-red-50 transition-colors"
               >
                 <LogOut className="h-3.5 w-3.5" />

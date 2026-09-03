@@ -50,6 +50,41 @@ export const authOptions: NextAuthOptions = {
     }),
   ],
   callbacks: {
+    async redirect({ url, baseUrl }) {
+      // Determine effective base URL from environment or request origin
+      const defaultProdUrl = 'https://rayflow-omega.vercel.app';
+      const effectiveBaseUrl =
+        process.env.NEXTAUTH_URL ||
+        (process.env.VERCEL_PROJECT_PRODUCTION_URL
+          ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
+          : null) ||
+        (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+        baseUrl ||
+        (process.env.NODE_ENV === 'production' ? defaultProdUrl : 'http://localhost:3000');
+
+      // Relative URLs (e.g., "/" or "/login")
+      if (url.startsWith('/')) {
+        const cleanBase = effectiveBaseUrl.replace(/\/+$/, '');
+        return url === '/' ? cleanBase : `${cleanBase}${url}`;
+      }
+
+      // Absolute URLs on the same origin or allowed vercel.app domains
+      try {
+        const parsedUrl = new URL(url);
+        const parsedBase = new URL(effectiveBaseUrl);
+        if (
+          parsedUrl.origin === parsedBase.origin ||
+          parsedUrl.hostname === 'rayflow-omega.vercel.app' ||
+          parsedUrl.hostname.endsWith('.vercel.app')
+        ) {
+          return url;
+        }
+      } catch {
+        // Fallback on malformed URL
+      }
+
+      return effectiveBaseUrl;
+    },
     async jwt({ token, user }) {
       if (user) {
         token.id = user.id;
