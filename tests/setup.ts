@@ -1,4 +1,11 @@
 import { vi } from 'vitest';
+import { createMockPrisma } from './mockPrisma';
+
+const mockPrisma = createMockPrisma();
+
+vi.mock('@/lib/db/prisma', () => ({
+  prisma: mockPrisma,
+}));
 
 if (typeof window !== 'undefined') {
   Object.defineProperty(window, 'matchMedia', {
