@@ -6,12 +6,16 @@ import { seedDatabase } from '@/prisma/seed';
 export async function POST(req: Request) {
   try {
     const auth = await getAuthenticatedMerchant();
-    
-    // 1. Safety Guard: Only permitted in DEMO_MODE or for authenticated demo merchant
-    const isDemoUser = auth?.userEmail === 'arjun@auraathletics.com' || auth?.userEmail === 'rohan@zenithactive.com';
-    const isDemoModeEnabled = process.env.DEMO_MODE !== 'false';
+    if (!auth) {
+      return NextResponse.json(
+        { success: false, error: { code: 'UNAUTHORIZED', message: 'Authentication required to reset data.' } },
+        { status: 401 }
+      );
+    }
 
-    if (!isDemoModeEnabled && !isDemoUser) {
+    // 1. Safety Guard: Only permitted in DEMO_MODE or for authenticated demo merchant
+    const isDemoUser = auth.userEmail === 'arjun@auraathletics.com' || auth.userEmail === 'rohan@zenithactive.com';
+    if (process.env.DEMO_MODE === 'false' && !isDemoUser) {
       return NextResponse.json(
         {
           success: false,
