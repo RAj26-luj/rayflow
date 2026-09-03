@@ -6,6 +6,17 @@ const prisma = new PrismaClient();
 export async function seedDatabase() {
   console.log('🌱 Starting RAYFLOW Database Seed...');
 
+  // 0. Ensure schema columns exist in PostgreSQL
+  try {
+    await prisma.$executeRawUnsafe(`
+      ALTER TABLE "Merchant" ADD COLUMN IF NOT EXISTS "isDemo" BOOLEAN NOT NULL DEFAULT false;
+      ALTER TABLE "Customer" ADD COLUMN IF NOT EXISTS "passwordHash" TEXT;
+      ALTER TABLE "Customer" ADD COLUMN IF NOT EXISTS "isDemo" BOOLEAN NOT NULL DEFAULT false;
+    `);
+  } catch (err) {
+    console.warn('Schema sync notice:', err);
+  }
+
   // Clean existing tables in correct relation order
   await prisma.webhookEvent.deleteMany();
   await prisma.auditLog.deleteMany();

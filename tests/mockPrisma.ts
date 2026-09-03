@@ -431,6 +431,8 @@ export function createMockPrisma() {
     },
 
     $queryRaw: async () => [{ 1: 1 }],
+    $executeRawUnsafe: async () => 1,
+    $executeRaw: async () => 1,
     $connect: async () => {},
     $disconnect: async () => {},
   };
