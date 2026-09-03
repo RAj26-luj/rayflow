@@ -21,6 +21,11 @@ export interface OrchestratorResult {
   products?: any[];
   recommendedBundle?: any;
   suggestedReplies?: string[];
+  autoAction?: {
+    type: 'ADD_PRODUCT' | 'ADD_BUNDLE';
+    product?: any;
+    bundle?: any;
+  };
 }
 
 export class AgentOrchestrator {
@@ -239,6 +244,14 @@ export class AgentOrchestrator {
       timestamp: new Date().toISOString(),
     });
 
+    const isAddIntent =
+      lower.includes('add to cart') ||
+      lower.includes('add bundle') ||
+      lower.includes('add this') ||
+      lower.includes('buy this') ||
+      lower.includes('buy bundle') ||
+      lower.includes('put in cart');
+
     if (searchRes.products.length >= 2) {
       const primary = searchRes.products[0];
       const addon = searchRes.products[1];
@@ -258,26 +271,79 @@ export class AgentOrchestrator {
         timestamp: new Date().toISOString(),
       });
 
+      if (isAddIntent && lower.includes('bundle')) {
+        return {
+          message: `✅ **Added Marathon Starter Bundle to your cart!**\n\n- **${primary.name}**\n- **${addon.name}**\n\nBundle Total: **₹${bundleRes.bundle?.bundlePrice?.toLocaleString('en-IN')}** (You saved ₹${bundleRes.bundle?.savingsAmount?.toLocaleString('en-IN')}).\n\nYour cart has been updated. Open your cart drawer or click Proceed to Checkout whenever you are ready.`,
+          products: searchRes.products,
+          recommendedBundle: bundleRes.bundle,
+          autoAction: {
+            type: 'ADD_BUNDLE',
+            bundle: bundleRes.bundle,
+          },
+          toolsExecuted,
+          suggestedReplies: [
+            'View Cart',
+            'Proceed to Checkout',
+            'Show me other gear',
+          ],
+        };
+      }
+
+      if (isAddIntent) {
+        return {
+          message: `✅ **Added ${primary.name} to your cart!**\n\nPrice: **₹${primary.price.toLocaleString('en-IN')}**.\n\nYour cart count and total have been updated. You can also add **${addon.name}** to get an instant 15% bundle discount!`,
+          products: searchRes.products,
+          recommendedBundle: bundleRes.bundle,
+          autoAction: {
+            type: 'ADD_PRODUCT',
+            product: primary,
+          },
+          toolsExecuted,
+          suggestedReplies: [
+            'Add full bundle with 15% discount',
+            'Proceed to Checkout',
+            'Continue shopping',
+          ],
+        };
+      }
+
       return {
-        message: `I found a great recommendation for you at **${merchantName}**!\n\nThe **${primary.name}** (₹${primary.price.toLocaleString('en-IN')}) is top-rated for performance.\n\nTo give you the best value, I have paired it with **${addon.name}** at an exclusive **15% bundle discount** (Save ₹${bundleRes.bundle?.savingsAmount?.toLocaleString('en-IN') ?? '200'}).`,
+        message: `💡 **Product Recommendation** from **${merchantName}**:\n\nThe **${primary.name}** (₹${primary.price.toLocaleString('en-IN')}) is top-rated for running performance.\n\nI have also paired it with **${addon.name}** at an exclusive **15% bundle discount** (Save ₹${bundleRes.bundle?.savingsAmount?.toLocaleString('en-IN') ?? '200'}).\n\nClick **Add to Cart** or **Add Full Bundle to Cart** below to add them to your shopping cart.`,
         products: searchRes.products,
         recommendedBundle: bundleRes.bundle,
         toolsExecuted,
         suggestedReplies: [
-          'Tell me more about product specifications.',
-          'Show me other gear.',
-          'Are other sizes available?',
+          'Add to cart',
+          'Add bundle to cart',
+          'Tell me more about product specs',
         ],
       };
     } else if (searchRes.products.length === 1) {
       const primary = searchRes.products[0];
+
+      if (isAddIntent) {
+        return {
+          message: `✅ **Added ${primary.name} to your cart!**\n\nPrice: **₹${primary.price.toLocaleString('en-IN')}**.\n\nYour cart has been updated.`,
+          products: searchRes.products,
+          autoAction: {
+            type: 'ADD_PRODUCT',
+            product: primary,
+          },
+          toolsExecuted,
+          suggestedReplies: [
+            'Proceed to checkout',
+            'Browse more products',
+          ],
+        };
+      }
+
       return {
-        message: `Welcome to **${merchantName}**! Here is our featured product: **${primary.name}** for ₹${primary.price.toLocaleString('en-IN')}.`,
+        message: `💡 **Product Recommendation** from **${merchantName}**:\n\n**${primary.name}** for **₹${primary.price.toLocaleString('en-IN')}**.\n\nClick **Add to Cart** below to put it in your cart.`,
         products: searchRes.products,
         toolsExecuted,
         suggestedReplies: [
-          'Tell me more about this product.',
-          'Proceed to checkout.',
+          'Add to cart',
+          'Tell me more about this product',
         ],
       };
     }

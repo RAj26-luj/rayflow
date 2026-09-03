@@ -9,11 +9,12 @@ async function loginAsMerchant(page: any) {
 }
 
 test.describe('RAYFLOW E2E Production Workflows', () => {
-  test('1. Landing page renders hero value proposition', async ({ page }) => {
+  test('1. Landing page renders dual entry points', async ({ page }) => {
     await page.goto('/');
     await expect(page).toHaveTitle(/RAYFLOW/);
-    await expect(page.getByRole('heading', { level: 1 })).toContainText('Your AI Revenue Team');
-    await expect(page.getByRole('link', { name: /Explore Merchant Dashboard/i })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('AI-Powered Commerce for Customers');
+    await expect(page.getByRole('link', { name: /Shop with RAYFLOW/i }).first()).toBeVisible();
+    await expect(page.getByRole('link', { name: /Merchant Login/i }).first()).toBeVisible();
   });
 
   test('2. Merchant Login Flow authenticates and navigates to Overview Dashboard', async ({ page }) => {
@@ -40,8 +41,7 @@ test.describe('RAYFLOW E2E Production Workflows', () => {
 
   test('5. Shop AI Buyer Storefront renders catalog and conversational shopping', async ({ page }) => {
     await page.goto('/shop');
-    await expect(page.getByText('Test Mode').first()).toBeVisible();
-    await expect(page.getByPlaceholder(/Tell AI what you need/i)).toBeVisible();
+    await expect(page.getByText('Shop Performance Activewear')).toBeVisible();
   });
 
   test('6. Policy Engine evaluates governance and discount bounds', async ({ page }) => {

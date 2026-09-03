@@ -23,19 +23,27 @@ export async function GET(req: Request) {
     const { searchParams } = new URL(req.url);
     const category = searchParams.get('category');
     const search = searchParams.get('search');
-    const merchantSlug = searchParams.get('merchant') || 'aura-athletics';
+    const merchantSlug = searchParams.get('merchant');
 
-    let targetMerchantId = auth?.merchantId;
-    if (!targetMerchantId) {
+    let merchantFilter: { merchantId?: string } = {};
+
+    if (auth) {
+      // Merchant Portal: Strictly isolated to authenticated merchant's products only
+      merchantFilter = { merchantId: auth.merchantId };
+    } else if (merchantSlug) {
+      // Filtered storefront query for a specific store
       const merchant = await prisma.merchant.findFirst({
         where: { slug: merchantSlug },
       });
-      targetMerchantId = merchant?.id || 'mch_aura_982';
+      if (merchant) {
+        merchantFilter = { merchantId: merchant.id };
+      }
     }
+    // If buyer / public and no specific merchant requested: return all available marketplace products
 
     const products = await prisma.product.findMany({
       where: {
-        merchantId: targetMerchantId,
+        ...merchantFilter,
         ...(category && category !== 'ALL' ? { category } : {}),
         ...(search
           ? {
@@ -46,6 +54,15 @@ export async function GET(req: Request) {
               ],
             }
           : {}),
+      },
+      include: {
+        merchant: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
       },
       orderBy: { createdAt: 'desc' },
     });

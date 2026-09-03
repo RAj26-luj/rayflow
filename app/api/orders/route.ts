@@ -73,18 +73,6 @@ export async function POST(req: Request) {
     const merchantAuth = await getAuthenticatedMerchant();
     const customerAuth = await getAuthenticatedCustomer();
 
-    let targetMerchantId = merchantAuth?.merchantId || customerAuth?.merchantId;
-    if (!targetMerchantId) {
-      const defaultStore = await prisma.merchant.findFirst({
-        where: { slug: 'aura-athletics' },
-      }) || await prisma.merchant.findFirst();
-      targetMerchantId = defaultStore?.id;
-    }
-
-    if (!targetMerchantId) {
-      return NextResponse.json({ success: false, error: { code: 'UNAUTHORIZED', message: 'No valid merchant store found' } }, { status: 400 });
-    }
-
     const body = await req.json();
     const validated = createOrderSchema.safeParse(body);
 
@@ -96,18 +84,31 @@ export async function POST(req: Request) {
 
     // Server-Side Price & Stock Verification from Database
     let calculatedSubtotal = 0;
+    let resolvedMerchantId = merchantAuth?.merchantId;
     const validatedItemsData: { productId: string; productName: string; quantity: number; unitPrice: number; totalAmount: number }[] = [];
 
     for (const item of items) {
-      const product = await prisma.product.findFirst({
-        where: { id: item.productId, merchantId: targetMerchantId },
+      const product = await prisma.product.findUnique({
+        where: { id: item.productId },
       });
 
       if (!product) {
         return NextResponse.json(
-          { success: false, error: { code: 'PRODUCT_NOT_FOUND', message: `Product ${item.productId} not found in merchant catalogue.` } },
+          { success: false, error: { code: 'PRODUCT_NOT_FOUND', message: `Product ${item.productId} not found in database.` } },
           { status: 404 }
         );
+      }
+
+      // If merchant admin is calling, ensure product belongs to their merchant
+      if (merchantAuth && product.merchantId !== merchantAuth.merchantId) {
+        return NextResponse.json(
+          { success: false, error: { code: 'FORBIDDEN', message: `Product ${item.productId} belongs to another merchant.` } },
+          { status: 403 }
+        );
+      }
+
+      if (!resolvedMerchantId) {
+        resolvedMerchantId = product.merchantId;
       }
 
       if (product.inventory < item.quantity) {
@@ -127,6 +128,8 @@ export async function POST(req: Request) {
         totalAmount: itemTotal,
       });
     }
+
+    const targetMerchantId = resolvedMerchantId || 'mch_aura_982';
 
     // Validate discount bounds against Policy Engine
     const policy = await prisma.agentPolicy.findUnique({ where: { merchantId: targetMerchantId } });

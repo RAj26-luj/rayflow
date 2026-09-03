@@ -226,6 +226,15 @@ export default function AmazonStyleShopPage() {
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         };
         setMessages((prev) => [...prev, assistantMsg]);
+
+        // If user asked to add product/bundle to cart, execute action immediately
+        if (data.data.autoAction?.type === 'ADD_BUNDLE' && data.data.recommendedBundle) {
+          addBundleToCart(data.data.recommendedBundle);
+          setIsCartOpen(true);
+        } else if (data.data.autoAction?.type === 'ADD_PRODUCT' && data.data.autoAction?.product) {
+          addToCart(data.data.autoAction.product, 1);
+          setIsCartOpen(true);
+        }
       }
     } catch (err) {
       console.error(err);
@@ -886,6 +895,15 @@ export default function AmazonStyleShopPage() {
                               onClick={() => {
                                 addToCart(p, 1);
                                 setIsCartOpen(true);
+                                setMessages((prev) => [
+                                  ...prev,
+                                  {
+                                    id: `sys_${Date.now()}`,
+                                    role: 'assistant',
+                                    content: `✅ Added **${p.name}** (${formatINR(p.price)}) to your cart.`,
+                                    timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                                  },
+                                ]);
                               }}
                               className="rounded-lg bg-blue-600 px-2.5 py-1 text-[11px] font-bold text-white hover:bg-blue-500 transition-colors flex-shrink-0"
                             >
@@ -910,6 +928,15 @@ export default function AmazonStyleShopPage() {
                           onClick={() => {
                             if (msg.recommendedBundle) {
                               addBundleToCart(msg.recommendedBundle);
+                              setMessages((prev) => [
+                                ...prev,
+                                {
+                                  id: `sys_${Date.now()}`,
+                                  role: 'assistant',
+                                  content: `✅ Added **AI Bundle** (${msg.recommendedBundle?.items.map(i => i.name).join(' + ')}) to your cart! You saved ${formatINR(msg.recommendedBundle?.savingsAmount ?? 0)}.`,
+                                  timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                                },
+                              ]);
                             }
                           }}
                           className="w-full rounded-lg bg-indigo-600 py-1.5 text-xs font-bold text-white hover:bg-indigo-500 transition-colors"
