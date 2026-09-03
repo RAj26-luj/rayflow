@@ -6,30 +6,43 @@ const prisma = new PrismaClient();
 export async function seedDatabase() {
   console.log('🌱 Starting RAYFLOW Database Seed...');
 
-  // 0. Ensure schema columns exist in PostgreSQL
+  // 0. Ensure schema columns exist in PostgreSQL by executing single statements
   try {
-    await prisma.$executeRawUnsafe(`
-      ALTER TABLE "Merchant" ADD COLUMN IF NOT EXISTS "isDemo" BOOLEAN NOT NULL DEFAULT false;
-      ALTER TABLE "Customer" ADD COLUMN IF NOT EXISTS "passwordHash" TEXT;
-      ALTER TABLE "Customer" ADD COLUMN IF NOT EXISTS "isDemo" BOOLEAN NOT NULL DEFAULT false;
-    `);
+    await prisma.$executeRawUnsafe(
+      `ALTER TABLE "Merchant" ADD COLUMN IF NOT EXISTS "isDemo" BOOLEAN NOT NULL DEFAULT false;`
+    );
+    await prisma.$executeRawUnsafe(
+      `ALTER TABLE "Customer" ADD COLUMN IF NOT EXISTS "passwordHash" TEXT;`
+    );
+    await prisma.$executeRawUnsafe(
+      `ALTER TABLE "Customer" ADD COLUMN IF NOT EXISTS "isDemo" BOOLEAN NOT NULL DEFAULT false;`
+    );
   } catch (err) {
     console.warn('Schema sync notice:', err);
   }
 
-  // Clean existing tables in correct relation order
-  await prisma.webhookEvent.deleteMany();
-  await prisma.auditLog.deleteMany();
-  await prisma.payment.deleteMany();
-  await prisma.orderItem.deleteMany();
-  await prisma.order.deleteMany();
-  await prisma.campaign.deleteMany();
-  await prisma.revenueOpportunity.deleteMany();
-  await prisma.customer.deleteMany();
-  await prisma.product.deleteMany();
-  await prisma.agentPolicy.deleteMany();
-  await prisma.user.deleteMany();
-  await prisma.merchant.deleteMany();
+  const demoMerchantIds = ['mch_aura_982', 'mch_zenith_101'];
+  const demoOrders = await prisma.order.findMany({
+    where: { merchantId: { in: demoMerchantIds } },
+    select: { id: true },
+  });
+  const demoOrderIds = demoOrders.map((o) => o.id);
+
+  // Clean demo-specific records in correct relation order so real non-demo merchants are untouched
+  await prisma.webhookEvent.deleteMany({ where: { merchantId: { in: demoMerchantIds } } });
+  await prisma.auditLog.deleteMany({ where: { merchantId: { in: demoMerchantIds } } });
+  await prisma.payment.deleteMany({ where: { merchantId: { in: demoMerchantIds } } });
+  if (demoOrderIds.length > 0) {
+    await prisma.orderItem.deleteMany({ where: { orderId: { in: demoOrderIds } } });
+  }
+  await prisma.order.deleteMany({ where: { merchantId: { in: demoMerchantIds } } });
+  await prisma.campaign.deleteMany({ where: { merchantId: { in: demoMerchantIds } } });
+  await prisma.revenueOpportunity.deleteMany({ where: { merchantId: { in: demoMerchantIds } } });
+  await prisma.customer.deleteMany({ where: { merchantId: { in: demoMerchantIds } } });
+  await prisma.product.deleteMany({ where: { merchantId: { in: demoMerchantIds } } });
+  await prisma.agentPolicy.deleteMany({ where: { merchantId: { in: demoMerchantIds } } });
+  await prisma.user.deleteMany({ where: { merchantId: { in: demoMerchantIds } } });
+  await prisma.merchant.deleteMany({ where: { id: { in: demoMerchantIds } } });
 
   // 1. Create Primary Merchant: Aura Athletics
   const passwordHash = await bcrypt.hash('demo123', 10);
