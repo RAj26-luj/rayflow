@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { prisma } from '@/lib/db/prisma';
-import { getAuthenticatedMerchant } from '@/lib/auth/session';
+import { getAuthenticatedMerchant, getAuthenticatedCustomer } from '@/lib/auth/session';
 import { razorpayService } from '@/lib/razorpay/client';
 import { PolicyEngine } from '@/lib/policy/engine';
 
@@ -27,24 +27,41 @@ const createOrderSchema = z.object({
 
 export async function GET(req: Request) {
   try {
-    const auth = await getAuthenticatedMerchant();
-    if (!auth) {
+    const merchantAuth = await getAuthenticatedMerchant();
+    const customerAuth = await getAuthenticatedCustomer();
+
+    if (!merchantAuth && !customerAuth) {
       return NextResponse.json({ success: false, error: { code: 'UNAUTHORIZED', message: 'Authentication required' } }, { status: 401 });
     }
 
     const { searchParams } = new URL(req.url);
     const status = searchParams.get('status');
 
-    const orders = await prisma.order.findMany({
-      where: {
-        merchantId: auth.merchantId,
-        ...(status && status !== 'ALL' ? { status } : {}),
-      },
-      include: { items: true, payments: true },
-      orderBy: { createdAt: 'desc' },
-    });
+    if (merchantAuth) {
+      const orders = await prisma.order.findMany({
+        where: {
+          merchantId: merchantAuth.merchantId,
+          ...(status && status !== 'ALL' ? { status } : {}),
+        },
+        include: { items: true, payments: true },
+        orderBy: { createdAt: 'desc' },
+      });
+      return NextResponse.json({ success: true, data: orders });
+    }
 
-    return NextResponse.json({ success: true, data: orders });
+    if (customerAuth) {
+      const orders = await prisma.order.findMany({
+        where: {
+          customerEmail: customerAuth.customerEmail,
+          ...(status && status !== 'ALL' ? { status } : {}),
+        },
+        include: { items: true, payments: true },
+        orderBy: { createdAt: 'desc' },
+      });
+      return NextResponse.json({ success: true, data: orders });
+    }
+
+    return NextResponse.json({ success: false, error: { code: 'UNAUTHORIZED', message: 'Authentication required' } }, { status: 401 });
   } catch (err: any) {
     console.error('GET /api/orders error:', err);
     return NextResponse.json({ success: false, error: { code: 'INTERNAL_ERROR', message: err.message } }, { status: 500 });
@@ -53,9 +70,19 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const auth = await getAuthenticatedMerchant();
-    if (!auth) {
-      return NextResponse.json({ success: false, error: { code: 'UNAUTHORIZED', message: 'Authentication required' } }, { status: 401 });
+    const merchantAuth = await getAuthenticatedMerchant();
+    const customerAuth = await getAuthenticatedCustomer();
+
+    let targetMerchantId = merchantAuth?.merchantId || customerAuth?.merchantId;
+    if (!targetMerchantId) {
+      const defaultStore = await prisma.merchant.findFirst({
+        where: { slug: 'aura-athletics' },
+      }) || await prisma.merchant.findFirst();
+      targetMerchantId = defaultStore?.id;
+    }
+
+    if (!targetMerchantId) {
+      return NextResponse.json({ success: false, error: { code: 'UNAUTHORIZED', message: 'No valid merchant store found' } }, { status: 400 });
     }
 
     const body = await req.json();
@@ -73,7 +100,7 @@ export async function POST(req: Request) {
 
     for (const item of items) {
       const product = await prisma.product.findFirst({
-        where: { id: item.productId, merchantId: auth.merchantId },
+        where: { id: item.productId, merchantId: targetMerchantId },
       });
 
       if (!product) {
@@ -102,7 +129,7 @@ export async function POST(req: Request) {
     }
 
     // Validate discount bounds against Policy Engine
-    const policy = await prisma.agentPolicy.findUnique({ where: { merchantId: auth.merchantId } });
+    const policy = await prisma.agentPolicy.findUnique({ where: { merchantId: targetMerchantId } });
     const effectiveDiscountPercent = calculatedSubtotal > 0 ? (discountAmount / calculatedSubtotal) * 100 : 0;
     const policyCheck = PolicyEngine.evaluateDiscount(effectiveDiscountPercent, policy || undefined);
 
@@ -122,7 +149,7 @@ export async function POST(req: Request) {
       currency: 'INR',
       receipt: `rcpt_${Date.now().toString().slice(-8)}`,
       notes: {
-        merchantId: auth.merchantId,
+        merchantId: targetMerchantId,
         customerEmail: customerDetails.email,
         isBundle: isBundle ? 'true' : 'false',
       },
@@ -136,7 +163,7 @@ export async function POST(req: Request) {
       const customer = await tx.customer.upsert({
         where: {
           merchantId_email: {
-            merchantId: auth.merchantId,
+            merchantId: targetMerchantId,
             email: customerDetails.email.toLowerCase().trim(),
           },
         },
@@ -147,7 +174,7 @@ export async function POST(req: Request) {
           lastPurchaseDate: new Date(),
         },
         create: {
-          merchantId: auth.merchantId,
+          merchantId: targetMerchantId,
           name: customerDetails.name,
           email: customerDetails.email.toLowerCase().trim(),
           phone: customerDetails.phone,
@@ -161,12 +188,12 @@ export async function POST(req: Request) {
 
       const ord = await tx.order.create({
         data: {
-          merchantId: auth.merchantId,
+          merchantId: targetMerchantId,
           orderNumber,
           razorpayOrderId: rzpOrder.id,
           customerId: customer.id,
           customerName: customerDetails.name,
-          customerEmail: customerDetails.email,
+          customerEmail: customerDetails.email.toLowerCase().trim(),
           customerPhone: customerDetails.phone,
           subtotalAmount: calculatedSubtotal,
           discountAmount,
@@ -175,26 +202,40 @@ export async function POST(req: Request) {
           isBundle,
           bundleSavings,
           items: {
-            create: validatedItemsData,
+            create: validatedItemsData.map((item) => ({
+              productId: item.productId,
+              productName: item.productName,
+              quantity: item.quantity,
+              unitPrice: item.unitPrice,
+              totalAmount: item.totalAmount,
+            })),
           },
         },
         include: { items: true },
       });
 
+      // Audit Log
       await tx.auditLog.create({
         data: {
-          merchantId: auth.merchantId,
-          actorId: auth.userId,
+          merchantId: targetMerchantId,
+          actorId: customerAuth?.customerId || merchantAuth?.userId || 'guest_buyer',
           actorName: customerDetails.name,
-          agentName: 'AI Buyer Agent',
+          agentName: 'Storefront Checkout Agent',
           actionType: 'ORDER_CREATED',
           entityType: 'ORDER',
           entityId: ord.id,
           amount: finalTotalAmount,
-          policyCheck: 'PASSED',
+          policyCheck: policyCheck.allowed ? 'PASSED' : 'FAILED',
           approval: 'AUTO_APPROVED',
           result: 'SUCCESS',
-          reason: `Created order #${orderNumber} (${isBundle ? 'Bundle Offer' : 'Standard'}) with Razorpay Order ID ${rzpOrder.id}.`,
+          reason: isBundle
+            ? `Order created with AI bundle savings of ₹${bundleSavings}. Total: ₹${finalTotalAmount}`
+            : `Standard order created. Total: ₹${finalTotalAmount}`,
+          metadata: JSON.stringify({
+            orderNumber,
+            razorpayOrderId: rzpOrder.id,
+            itemCount: validatedItemsData.length,
+          }),
         },
       });
 

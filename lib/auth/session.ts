@@ -11,15 +11,33 @@ export interface AuthenticatedMerchantContext {
   role: string;
 }
 
+export interface AuthenticatedCustomerContext {
+  customerId: string;
+  customerEmail: string;
+  customerName: string;
+  customerPhone: string;
+  merchantId: string;
+  merchantName: string;
+  role: 'CUSTOMER';
+}
+
 /**
  * Resolves the authenticated merchant context strictly from the server-side JWT session.
- * Returns null if the request is unauthenticated or session is invalid.
+ * Returns null if the request is unauthenticated, session is invalid, or user is a customer.
  */
 export async function getAuthenticatedMerchant(): Promise<AuthenticatedMerchantContext | null> {
   try {
     const session = await getServerSession(authOptions);
 
     if (!session?.user) {
+      return null;
+    }
+
+    const tokenRole = (session.user as any).role;
+    const tokenUserType = (session.user as any).userType;
+
+    // Reject customer sessions from accessing merchant APIs
+    if (tokenRole === 'CUSTOMER' || tokenUserType === 'CUSTOMER') {
       return null;
     }
 
@@ -67,6 +85,61 @@ export async function getAuthenticatedMerchant(): Promise<AuthenticatedMerchantC
   } catch (err: any) {
     if (process.env.NODE_ENV !== 'test') {
       console.error('Failed to resolve authenticated session:', err?.message || err);
+    }
+    return null;
+  }
+}
+
+/**
+ * Resolves the authenticated customer context strictly from the server-side JWT session.
+ * Returns null if the request is unauthenticated or user is not a customer.
+ */
+export async function getAuthenticatedCustomer(): Promise<AuthenticatedCustomerContext | null> {
+  try {
+    const session = await getServerSession(authOptions);
+
+    if (!session?.user) {
+      return null;
+    }
+
+    const tokenCustomerId = (session.user as any).customerId || (session.user as any).id;
+    const tokenEmail = session.user.email?.toLowerCase().trim();
+
+    if (!tokenCustomerId && !tokenEmail) {
+      return null;
+    }
+
+    let customer = null;
+    if (tokenCustomerId) {
+      customer = await prisma.customer.findUnique({
+        where: { id: tokenCustomerId },
+        include: { merchant: true },
+      });
+    }
+
+    if (!customer && tokenEmail) {
+      customer = await prisma.customer.findFirst({
+        where: { email: tokenEmail },
+        include: { merchant: true },
+      });
+    }
+
+    if (!customer) {
+      return null;
+    }
+
+    return {
+      customerId: customer.id,
+      customerEmail: customer.email,
+      customerName: customer.name,
+      customerPhone: customer.phone,
+      merchantId: customer.merchantId,
+      merchantName: customer.merchant?.name || 'Store',
+      role: 'CUSTOMER',
+    };
+  } catch (err: any) {
+    if (process.env.NODE_ENV !== 'test') {
+      console.error('Failed to resolve customer session:', err?.message || err);
     }
     return null;
   }

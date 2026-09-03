@@ -223,12 +223,46 @@ export default function OverviewPage() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {opportunities.length === 0 && (
-              <div className="col-span-full rounded-xl border border-slate-200 bg-white p-8 text-center shadow-xs">
-                <Sparkles className="h-7 w-7 mx-auto text-slate-300 mb-2" />
-                <div className="font-semibold text-slate-800 text-xs sm:text-sm">No Pending Interventions</div>
-                <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1">
-                  When customers browse catalogue items or abandon carts, autonomous opportunities will appear here.
+              <div className="col-span-full rounded-2xl border border-blue-100 bg-gradient-to-b from-white to-blue-50/40 p-6 sm:p-8 shadow-xs text-center">
+                <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 text-white shadow-md shadow-blue-500/20 mb-3">
+                  <Sparkles className="h-6 w-6" />
+                </div>
+                <h3 className="font-bold text-slate-900 text-base sm:text-lg">Welcome to RAYFLOW</h3>
+                <p className="text-xs text-slate-600 max-w-md mx-auto mt-1 mb-6">
+                  Your store is ready to set up. Follow these 5 steps to activate autonomous revenue growth:
                 </p>
+
+                <div className="grid grid-cols-1 sm:grid-cols-5 gap-3 text-left max-w-4xl mx-auto mb-6">
+                  <Link href="/catalogue" className="rounded-xl border border-slate-200 bg-white p-3.5 hover:border-blue-400 hover:shadow-xs transition-all group">
+                    <span className="text-[10px] font-bold text-blue-600 uppercase">Step 1</span>
+                    <div className="text-xs font-bold text-slate-900 mt-1 group-hover:text-blue-600 transition-colors">Add Products</div>
+                    <p className="text-[10px] text-slate-500 mt-0.5">Upload products and stock margins.</p>
+                  </Link>
+
+                  <Link href="/policies" className="rounded-xl border border-slate-200 bg-white p-3.5 hover:border-blue-400 hover:shadow-xs transition-all group">
+                    <span className="text-[10px] font-bold text-amber-600 uppercase">Step 2</span>
+                    <div className="text-xs font-bold text-slate-900 mt-1 group-hover:text-amber-600 transition-colors">Set Policies</div>
+                    <p className="text-[10px] text-slate-500 mt-0.5">Define hard caps and approval limits.</p>
+                  </Link>
+
+                  <Link href="/opportunities" className="rounded-xl border border-slate-200 bg-white p-3.5 hover:border-blue-400 hover:shadow-xs transition-all group">
+                    <span className="text-[10px] font-bold text-indigo-600 uppercase">Step 3</span>
+                    <div className="text-xs font-bold text-slate-900 mt-1 group-hover:text-indigo-600 transition-colors">Review Opps</div>
+                    <p className="text-[10px] text-slate-500 mt-0.5">Inspect AI discovered revenue bounds.</p>
+                  </Link>
+
+                  <Link href="/opportunities" className="rounded-xl border border-slate-200 bg-white p-3.5 hover:border-blue-400 hover:shadow-xs transition-all group">
+                    <span className="text-[10px] font-bold text-cyan-600 uppercase">Step 4</span>
+                    <div className="text-xs font-bold text-slate-900 mt-1 group-hover:text-cyan-600 transition-colors">Run Simulation</div>
+                    <p className="text-[10px] text-slate-500 mt-0.5">Test Monte Carlo probability distribution.</p>
+                  </Link>
+
+                  <Link href="/opportunities" className="rounded-xl border border-slate-200 bg-white p-3.5 hover:border-blue-400 hover:shadow-xs transition-all group">
+                    <span className="text-[10px] font-bold text-emerald-600 uppercase">Step 5</span>
+                    <div className="text-xs font-bold text-slate-900 mt-1 group-hover:text-emerald-600 transition-colors">Approve & Run</div>
+                    <p className="text-[10px] text-slate-500 mt-0.5">Execute with verifiable audit log.</p>
+                  </Link>
+                </div>
               </div>
             )}
             {opportunities.slice(0, 4).map((opp) => (

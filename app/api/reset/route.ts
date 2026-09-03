@@ -5,23 +5,23 @@ import { seedDatabase } from '@/prisma/seed';
 
 export async function POST(req: Request) {
   try {
-    // 1. Safety Guard: Only permitted when DEMO_MODE is true
-    if (process.env.DEMO_MODE === 'false') {
+    const auth = await getAuthenticatedMerchant();
+    
+    // 1. Safety Guard: Only permitted in DEMO_MODE or for authenticated demo merchant
+    const isDemoUser = auth?.userEmail === 'arjun@auraathletics.com' || auth?.userEmail === 'rohan@zenithactive.com';
+    const isDemoModeEnabled = process.env.DEMO_MODE !== 'false';
+
+    if (!isDemoModeEnabled && !isDemoUser) {
       return NextResponse.json(
         {
           success: false,
           error: {
             code: 'FORBIDDEN',
-            message: 'Database reset is disabled in production mode (DEMO_MODE=false).',
+            message: 'Database reset is restricted to demo accounts and environments.',
           },
         },
         { status: 403 }
       );
-    }
-
-    const auth = await getAuthenticatedMerchant();
-    if (!auth) {
-      return NextResponse.json({ success: false, error: { code: 'UNAUTHORIZED', message: 'Authentication required' } }, { status: 401 });
     }
 
     // Re-seed demo database cleanly
@@ -30,7 +30,7 @@ export async function POST(req: Request) {
     return NextResponse.json({
       success: true,
       message: 'Demo dataset successfully reset to initial pristine state.',
-      merchantId: auth.merchantId,
+      merchantId: auth?.merchantId || 'mch_aura_982',
     });
   } catch (err: any) {
     console.error('POST /api/reset error:', err);

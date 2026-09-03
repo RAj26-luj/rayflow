@@ -28,6 +28,7 @@ export async function seedDatabase() {
       name: 'Aura Athletics',
       slug: 'aura-athletics',
       email: 'arjun@auraathletics.com',
+      isDemo: true,
       users: {
         create: [
           {
@@ -66,6 +67,7 @@ export async function seedDatabase() {
       name: 'Zenith Active',
       slug: 'zenith-active',
       email: 'rohan@zenithactive.com',
+      isDemo: true,
       users: {
         create: [
           {
@@ -234,6 +236,8 @@ export async function seedDatabase() {
   });
 
   // 4. Create Customers for Aura Athletics
+  const customerPasswordHash = await bcrypt.hash('demo123', 10);
+
   const c1 = await prisma.customer.create({
     data: {
       id: 'cust_rahul_01',
@@ -241,6 +245,8 @@ export async function seedDatabase() {
       name: 'Rahul Mehta',
       email: 'rahul.mehta@example.com',
       phone: '+919820144521',
+      passwordHash: customerPasswordHash,
+      isDemo: true,
       cohort: 'High-Intent Marathoners',
       lifetimeValue: 14850.0,
       orderCount: 3,
@@ -256,8 +262,10 @@ export async function seedDatabase() {
       id: 'cust_priya_02',
       merchantId: auraMerchant.id,
       name: 'Priya Sharma',
-      email: 'priya.sharma@example.com',
+      email: 'priya@auraathletics.com',
       phone: '+919811234567',
+      passwordHash: customerPasswordHash,
+      isDemo: true,
       cohort: 'Tech Fitness Enthusiasts',
       lifetimeValue: 8499.0,
       orderCount: 2,
@@ -275,6 +283,8 @@ export async function seedDatabase() {
       name: 'Vikram Patel',
       email: 'vikram.patel@example.com',
       phone: '+919899887766',
+      passwordHash: customerPasswordHash,
+      isDemo: true,
       cohort: 'Weekend Runners',
       lifetimeValue: 4999.0,
       orderCount: 1,
@@ -292,6 +302,8 @@ export async function seedDatabase() {
       name: 'Ananya Iyer',
       email: 'ananya.iyer@example.com',
       phone: '+919711223344',
+      passwordHash: customerPasswordHash,
+      isDemo: true,
       cohort: 'VIP Runners Club',
       lifetimeValue: 24500.0,
       orderCount: 5,
@@ -308,14 +320,16 @@ export async function seedDatabase() {
       merchantId: auraMerchant.id,
       name: 'Sameer Joshi',
       email: 'sameer.joshi@example.com',
-      phone: '+919833445566',
-      cohort: 'Weekend Runners',
-      lifetimeValue: 3499.0,
-      orderCount: 1,
-      intentScore: 66,
+      phone: '+919655443322',
+      passwordHash: customerPasswordHash,
+      isDemo: true,
+      cohort: 'New Store Visitors',
+      lifetimeValue: 0.0,
+      orderCount: 0,
+      intentScore: 45,
       cartStatus: 'EMPTY',
-      notes: 'Browsed running caps and socks. Low price sensitivity.',
-      lastPurchaseDate: new Date(Date.now() - 1000 * 60 * 60 * 24 * 60),
+      notes: 'First time visitor exploring footwear catalogue.',
+      lastPurchaseDate: new Date(),
     },
   });
 

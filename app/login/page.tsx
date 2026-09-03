@@ -27,6 +27,7 @@ export default function LoginPage() {
       const res = await signIn('credentials', {
         email: email.trim(),
         password,
+        userType: 'merchant',
         redirect: false,
       });
 
