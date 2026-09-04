@@ -83,7 +83,7 @@ export default function CustomerOrdersPage() {
             My Purchase History
           </h1>
           <p className="mt-1 text-xs sm:text-sm text-slate-500">
-            Track your orders, review AI bundle savings, and view Razorpay payment receipts.
+            Track your orders, review bundle savings, and view Razorpay payment receipts.
           </p>
         </div>
 
@@ -126,7 +126,7 @@ export default function CustomerOrdersPage() {
               Welcome to RAYFLOW 👋
             </h2>
             <p className="mt-2 text-sm text-slate-600 max-w-md mx-auto">
-              Let&apos;s get you started with autonomous AI shopping.
+              Let&apos;s get you started with smart bundle shopping.
             </p>
 
             <div className="mt-8 grid grid-cols-1 md:grid-cols-3 gap-4 text-left max-w-2xl mx-auto">
@@ -144,7 +144,7 @@ export default function CustomerOrdersPage() {
                 <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 font-bold text-xs mb-2">
                   2
                 </div>
-                <h3 className="text-xs font-bold text-slate-900">Ask AI Agent</h3>
+                <h3 className="text-xs font-bold text-slate-900">Ask Shopping Assistant</h3>
                 <p className="mt-1 text-[11px] text-slate-500 leading-snug">
                   Get personalized gear recommendations and custom bundle savings.
                 </p>
@@ -192,7 +192,7 @@ export default function CustomerOrdersPage() {
                       {order.isBundle && (
                         <span className="rounded-full bg-indigo-50 px-2.5 py-0.5 text-[10px] font-semibold text-indigo-700 border border-indigo-200 flex items-center gap-1">
                           <Tag className="h-3 w-3" />
-                          AI Bundle Offer
+                          Curated Bundle
                         </span>
                       )}
                     </div>

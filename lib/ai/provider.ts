@@ -38,18 +38,18 @@ export class DeterministicAIProvider implements AIProvider {
     if (lower.includes('action') || lower.includes('today') || lower.includes('log')) {
       return {
         message:
-          'Today your revenue agent evaluated 14 opportunities, executed 1 bundle checkout (ORD-2026-9901 for ₹5,298 via Razorpay UPI), and verified all actions against your 20% discount and ₹50,000 campaign budget policies.',
+          'Today your store evaluated opportunities, recorded 1 verified checkout (ORD-2026-9901 for ₹5,298 via Razorpay UPI), and verified all actions against your 20% discount and ₹50,000 campaign budget policies.',
         suggestedFollowUps: [
-          'View compliance audit trail',
-          'Inspect payment settlement ledger',
-          'Test a simulated discount in the sandbox',
+          'View audit log',
+          'Inspect payments & orders',
+          'Test policy controls',
         ],
       };
     }
 
     return {
       message:
-        'I have analyzed your catalogue inventory and customer purchase propensities. All proposed revenue interventions are bound by your 20% max discount and ₹50k campaign budget caps.',
+        'I have analyzed your store catalogue and customer segments. All recommended actions are checked against your 20% maximum discount and campaign policy limits.',
       suggestedFollowUps: [
         'Find products with strong upsell potential',
         'Which product should I bundle with Running Shoes?',
@@ -92,14 +92,14 @@ export class OpenRouterAIProvider implements AIProvider {
           Authorization: `Bearer ${this.apiKey.trim()}`,
           'Content-Type': 'application/json',
           'HTTP-Referer': 'https://rayflow.local',
-          'X-Title': 'RAYFLOW Autonomous Revenue Agent',
+          'X-Title': 'RAYFLOW Revenue Assistant',
         },
         body: JSON.stringify({
           model: this.model,
           messages: [
             {
               role: 'system',
-              content: `You are the RAYFLOW AI Commercial Agent for ${context.merchantName || 'the merchant store'}. Provide concise, business-focused insights with markdown formatting. Note: prices, policy limits (max 20% discount), and financial totals are fixed and deterministically verified by the platform.`,
+              content: `You are the RAYFLOW Revenue Assistant for ${context.merchantName || 'the merchant store'}. Provide concise, business-focused insights with markdown formatting. Note: prices, policy limits (max 20% discount), and financial totals are verified by store policies.`,
             },
             {
               role: 'user',

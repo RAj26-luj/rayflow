@@ -40,7 +40,7 @@ export const NAV_ITEMS = [
     badgeColor: 'bg-emerald-100 text-emerald-800 border-emerald-200',
   },
   {
-    label: 'Customers & Intent',
+    label: 'Customers',
     href: '/customers',
     icon: Users,
     badge: null,
@@ -64,20 +64,20 @@ export const NAV_ITEMS = [
     badge: null,
   },
   {
-    label: 'Audit Trail',
+    label: 'Audit Log',
     href: '/audit',
     icon: ShieldCheck,
     badge: 'Verified',
     badgeColor: 'bg-slate-100 text-slate-700 border-slate-200',
   },
   {
-    label: 'Policies & Governance',
+    label: 'Policy Controls',
     href: '/policies',
     icon: Sliders,
     badge: null,
   },
   {
-    label: 'Settings & API',
+    label: 'Settings',
     href: '/settings',
     icon: Settings,
     badge: null,
@@ -170,10 +170,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       <div className="p-4 border-t border-slate-100 bg-slate-50/60 m-3 rounded-lg border">
         <div className="flex items-center gap-2 text-xs font-semibold text-slate-800 mb-1">
           <ShieldCheck className="h-4 w-4 text-emerald-600" />
-          <span>Policy Governance</span>
+          <span>Policy Controls</span>
         </div>
         <p className="text-[11px] text-slate-500 leading-relaxed">
-          Discounts and campaigns bounded by 20% max discount & ₹50,000 budget caps.
+          Discounts and campaigns bounded by 20% max discount and policy caps.
         </p>
         <div className="mt-2.5 flex items-center justify-between text-[11px]">
           <span className="text-slate-400 font-mono">RZP Test API</span>

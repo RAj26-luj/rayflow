@@ -116,13 +116,13 @@ export default function CampaignsPage() {
           <div>
             <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 uppercase tracking-wider">
               <Megaphone className="h-3.5 w-3.5" />
-              Autonomous Growth Engine
+              Promotions & Marketing
             </div>
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 mt-1">
-              Campaign Orchestrator
+              Campaigns
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              Deploy bounded, AI-simulated growth campaigns with Razorpay test checkout delivery.
+              Manage targeted promotional campaigns, simulate outcomes, and track conversion.
             </p>
           </div>
 
@@ -147,9 +147,9 @@ export default function CampaignsPage() {
           {campaigns.length === 0 ? (
             <div className="rounded-xl border border-slate-200 bg-white p-12 text-center shadow-xs space-y-3">
               <Megaphone className="h-10 w-10 mx-auto text-slate-300" />
-              <div className="font-semibold text-slate-800 text-sm">No Active Growth Campaigns</div>
+              <div className="font-semibold text-slate-800 text-sm">No Active Campaigns</div>
               <p className="text-xs text-slate-500 max-w-sm mx-auto">
-                Launch an AI-simulated growth campaign targeting high-propensity shopper cohorts with policy-guarded discounts.
+                Create a targeted campaign to reach customer segments within your policy limits.
               </p>
               <button
                 onClick={() => setIsCreateModalOpen(true)}
@@ -219,11 +219,11 @@ export default function CampaignsPage() {
                 </div>
               </div>
 
-              {/* AI Reasoning Block */}
+              {/* Audience Insight Block */}
               <div className="rounded-lg border border-blue-100 bg-blue-50/50 p-2.5 sm:p-3 text-xs text-slate-700 leading-relaxed flex items-start gap-2">
                 <Sparkles className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
                 <div>
-                  <span className="font-bold text-blue-900 text-[11px] sm:text-xs">AI Reasoning: </span>
+                  <span className="font-bold text-blue-900 text-[11px] sm:text-xs">Audience Insight: </span>
                   <span className="text-[11px] sm:text-xs">&quot;{camp.aiReasoning}&quot;</span>
                 </div>
               </div>
@@ -238,7 +238,7 @@ export default function CampaignsPage() {
               <div className="flex items-center justify-between border-b border-slate-100 pb-3">
                 <div className="flex items-center gap-2">
                   <Megaphone className="h-4 w-4 text-blue-600" />
-                  <h3 className="font-bold text-slate-900 text-sm">Launch AI Orchestrated Campaign</h3>
+                  <h3 className="font-bold text-slate-900 text-sm">Create Campaign</h3>
                 </div>
                 <button
                   onClick={() => setIsCreateModalOpen(false)}
@@ -293,9 +293,9 @@ export default function CampaignsPage() {
                   </div>
                 </div>
 
-                {/* AI Rationale Preview */}
+                {/* Audience Insight Preview */}
                 <div className="p-3 rounded-lg border border-blue-100 bg-blue-50/60 text-[11px] text-blue-900 leading-relaxed">
-                  <strong className="font-bold">AI Rationale:</strong> Customers in this 90-day cohort have a 42% historical probability of purchasing accessories when offered a 15% bundle discount.
+                  <strong className="font-bold">Audience Insight:</strong> Customers in this 90-day cohort have a 42% historical probability of purchasing accessories when offered a 15% bundle discount.
                 </div>
 
                 {/* Simulation Output Card */}
@@ -303,7 +303,7 @@ export default function CampaignsPage() {
                   <div className="p-3.5 rounded-lg border border-indigo-200 bg-indigo-50/70 text-[11px] text-indigo-950 space-y-1.5 animate-in fade-in">
                     <div className="font-bold flex items-center gap-1.5 text-indigo-900">
                       <TrendingUp className="h-3.5 w-3.5 text-indigo-600" />
-                      Simulation Engine Verdict:
+                      Simulation Summary:
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-slate-700">
                       <div>Projected Orders: <strong>{simResult.projectedOrders} orders</strong></div>

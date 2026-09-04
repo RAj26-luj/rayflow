@@ -102,7 +102,7 @@ export function ApprovalDrawer({
             </div>
             <div className="min-w-0">
               <div className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-blue-600">
-                Action Approval Gate
+                Opportunity Review & Approval
               </div>
               <h2 className="text-sm sm:text-base font-bold text-slate-900 leading-snug truncate">
                 {opportunity.title}
@@ -132,41 +132,41 @@ export function ApprovalDrawer({
           {/* Expected Impact Summary Grid */}
           <div className="grid grid-cols-3 gap-2 sm:gap-3">
             <div className="rounded-lg border border-slate-200 bg-slate-50/70 p-2.5 sm:p-3">
-              <div className="text-[10px] sm:text-[11px] font-medium text-slate-500">Expected Uplift</div>
+              <div className="text-[10px] sm:text-[11px] font-medium text-slate-500">Estimated Additional Revenue</div>
               <div className="text-sm sm:text-base font-bold text-emerald-600 mt-0.5">
                 {formatINR(opportunity.expectedRevenue)}
               </div>
             </div>
             <div className="rounded-lg border border-slate-200 bg-slate-50/70 p-2.5 sm:p-3">
-              <div className="text-[10px] sm:text-[11px] font-medium text-slate-500">AI Confidence</div>
+              <div className="text-[10px] sm:text-[11px] font-medium text-slate-500">Confidence</div>
               <div className="text-sm sm:text-base font-bold text-blue-600 mt-0.5">
                 {opportunity.confidence}%
               </div>
             </div>
             <div className="rounded-lg border border-slate-200 bg-slate-50/70 p-2.5 sm:p-3">
-              <div className="text-[10px] sm:text-[11px] font-medium text-slate-500">Target Cohort</div>
+              <div className="text-[10px] sm:text-[11px] font-medium text-slate-500">Audience</div>
               <div className="text-sm sm:text-base font-bold text-slate-900 mt-0.5">
-                {opportunity.affectedCustomersCount} shoppers
+                {opportunity.affectedCustomersCount} customers
               </div>
             </div>
           </div>
 
-          {/* Section 1: AI Recommendation */}
+          {/* Section 1: Recommended Action */}
           <div className="space-y-1.5">
             <div className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
               <Zap className="h-3.5 w-3.5 text-blue-600" />
-              AI Recommendation
+              Recommended Action
             </div>
             <div className="rounded-lg border border-blue-100 bg-blue-50/40 p-3 sm:p-3.5 text-slate-800 font-medium text-xs leading-relaxed">
               {opportunity.recommendedAction}
             </div>
           </div>
 
-          {/* Section 2: Why the Agent chose it (Evidence) */}
+          {/* Section 2: Why this action was identified (Evidence) */}
           <div className="space-y-1.5">
             <div className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
               <Info className="h-3.5 w-3.5 text-slate-600" />
-              Decision Evidence & Rationale
+              Why this action was identified
             </div>
             <div className="rounded-lg border border-slate-200 bg-white p-3 sm:p-3.5 text-xs text-slate-600 leading-relaxed space-y-1.5">
               <p>{opportunity.reasoning}</p>
@@ -181,7 +181,7 @@ export function ApprovalDrawer({
           <div className="space-y-2">
             <div className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
               <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
-              Policy Validation & Bounds
+              Policy Limits & Checks
             </div>
 
             <div className="rounded-lg border border-slate-200 bg-slate-50/50 p-3 sm:p-3.5 space-y-2 text-xs">
@@ -201,24 +201,24 @@ export function ApprovalDrawer({
                 <span className="text-slate-600">Policy Status:</span>
                 <span className="inline-flex items-center gap-1 text-emerald-700 font-semibold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200 text-[11px]">
                   <CheckCircle2 className="h-3 w-3" />
-                  Within merchant limits ✓
+                  Within store limits ✓
                 </span>
               </div>
             </div>
           </div>
 
-          {/* Section 4: Failure Handling Guarantee */}
+          {/* Section 4: Failure Handling */}
           <div className="space-y-1.5">
             <div className="text-[11px] sm:text-xs font-semibold uppercase tracking-wider text-slate-500 flex items-center gap-1.5">
               <Lock className="h-3.5 w-3.5 text-slate-600" />
-              Safe Failure Handling Protocol
+              Payment & Failure Handling
             </div>
             <div className="rounded-lg border border-slate-200 bg-slate-50/30 p-2.5 sm:p-3 text-[11px] text-slate-600 leading-relaxed">
-              If customer checkout is interrupted or bank payment authorization fails:
+              If a customer checkout is interrupted or payment authorization fails:
               <ul className="list-disc pl-4 mt-1 space-y-0.5 text-slate-500">
-                <li>No revenue is falsely credited in dashboard or order ledger.</li>
-                <li>The customer checkout remains open with 1-click retry state.</li>
-                <li>Audit log records the exact bank gateway error code.</li>
+                <li>No revenue is credited in reports or orders.</li>
+                <li>The checkout remains available for retry.</li>
+                <li>The failure is logged in the audit trail.</li>
               </ul>
             </div>
           </div>
@@ -228,7 +228,7 @@ export function ApprovalDrawer({
             <div className="rounded-lg border border-indigo-200 bg-indigo-50/50 p-3 sm:p-4 space-y-2 text-xs text-indigo-900 animate-in fade-in">
               <div className="font-bold flex items-center gap-1.5">
                 <TrendingUp className="h-4 w-4 text-indigo-600" />
-                Monte Carlo Simulation Result
+                Simulation Result
               </div>
               <div className="grid grid-cols-2 gap-2 text-[11px]">
                 <div>Audience Size: <strong>{simulationResult.targetAudienceCount}</strong></div>
@@ -284,7 +284,7 @@ export function ApprovalDrawer({
                 ) : (
                   <>
                     <Zap className="h-3.5 w-3.5" />
-                    <span>Execute & Deploy Action</span>
+                    <span>Execute Opportunity</span>
                   </>
                 )}
               </button>

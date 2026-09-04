@@ -90,32 +90,31 @@ export default function SettingsPage() {
           <div>
             <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 uppercase tracking-wider">
               <Settings className="h-3.5 w-3.5" />
-              API Gateway & Environment
+              Settings & Integrations
             </div>
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 mt-1">
               Settings & Integrations
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              Configure your Razorpay Test API keys, webhook endpoints, and deterministic demo modes.
+              Manage payment and application integrations.
             </p>
           </div>
 
           {savedSuccess && (
             <div className="rounded-lg bg-emerald-50 border border-emerald-200 px-3 py-1.5 text-xs text-emerald-800 font-semibold flex items-center gap-1.5 animate-in fade-in self-start sm:self-auto">
               <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 flex-shrink-0" />
-              <span>Settings Saved & Active</span>
+              <span>Settings Saved</span>
             </div>
           )}
         </div>
 
-        {/* Razorpay Test API Settings Card */}
         {/* Settings Form */}
         <form onSubmit={handleSave} className="space-y-5 sm:space-y-6">
           {/* Store Profile Card */}
           <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6 shadow-xs space-y-4 sm:space-y-5">
             <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
               <Server className="h-4 w-4 text-blue-600" />
-              <h2 className="font-bold text-slate-900 text-sm">Merchant Store Profile</h2>
+              <h2 className="font-bold text-slate-900 text-sm">Store Profile</h2>
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
@@ -130,7 +129,7 @@ export default function SettingsPage() {
                 />
               </div>
               <div>
-                <label className="font-semibold text-slate-700">Merchant Primary Email</label>
+                <label className="font-semibold text-slate-700">Primary Email</label>
                 <input
                   type="email"
                   disabled
@@ -141,55 +140,55 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          {/* Razorpay Test API Settings Card */}
+          {/* Razorpay Integration Card */}
           <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6 shadow-xs space-y-4 sm:space-y-5">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
                 <CreditCard className="h-4 w-4 text-blue-600" />
-                <h2 className="font-bold text-slate-900 text-sm">Razorpay Payment Gateway</h2>
+                <h2 className="font-bold text-slate-900 text-sm">Razorpay Integration</h2>
               </div>
               <span className="rounded-full bg-emerald-50 text-emerald-800 border border-emerald-200 px-2.5 py-0.5 text-[9px] sm:text-[10px] font-bold flex items-center gap-1">
                 <CheckCircle2 className="h-3 w-3 text-emerald-600" />
-                TEST MODE READY
+                TEST MODE • Connected
               </span>
             </div>
 
             <div className="space-y-3 sm:space-y-4 text-xs">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="rounded-lg border border-slate-100 bg-slate-50/70 p-3.5 space-y-1">
-                  <div className="text-slate-500 font-medium text-[11px]">Razorpay Client Key ID</div>
+                  <div className="text-slate-500 font-medium text-[11px]">Razorpay Client Key</div>
                   <div className="font-mono text-slate-800 font-semibold text-xs truncate">
                     {keyId || 'rzp_test_TVFAWq8IVlo6pz'}
                   </div>
-                  <div className="text-[10px] text-slate-400">Used for client checkout modal initialization</div>
+                  <div className="text-[10px] text-slate-400">Public client key used for checkout initialization</div>
                 </div>
 
                 <div className="rounded-lg border border-slate-100 bg-slate-50/70 p-3.5 space-y-1">
-                  <div className="text-slate-500 font-medium text-[11px]">Server Key Secret & HMAC</div>
+                  <div className="text-slate-500 font-medium text-[11px]">Server Credentials</div>
                   <div className="text-emerald-700 font-semibold text-xs flex items-center gap-1.5">
                     <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 flex-shrink-0" />
-                    <span>Configured & Encrypted on Server</span>
+                    <span>Configured securely</span>
                   </div>
-                  <div className="text-[10px] text-slate-400">Timing-safe HMAC-SHA256 signature verification</div>
+                  <div className="text-[10px] text-slate-400">Secure payment verification</div>
                 </div>
               </div>
 
               <div className="rounded-lg border border-slate-100 bg-slate-50/70 p-3.5 space-y-1">
                 <div className="flex items-center justify-between">
-                  <span className="text-slate-500 font-medium text-[11px]">Asynchronous Webhook Reconciler</span>
-                  <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-100/60 px-2 py-0.5 rounded border border-emerald-200">Active</span>
+                  <span className="text-slate-500 font-medium text-[11px]">Payment Webhooks</span>
+                  <span className="text-[10px] font-semibold text-emerald-700 bg-emerald-100/60 px-2 py-0.5 rounded border border-emerald-200">Connected</span>
                 </div>
                 <div className="text-xs font-mono text-blue-600 bg-white border border-slate-200 px-2.5 py-1 rounded inline-block">
                   /api/webhooks/razorpay
                 </div>
-                <div className="text-[10px] text-slate-400">Deduplicated event ledger with signature validation</div>
+                <div className="text-[10px] text-slate-400">Payment events are verified and processed automatically.</div>
               </div>
             </div>
 
             <div className="pt-3 border-t border-slate-100 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2">
-              <span className="text-[11px] text-emerald-700 font-medium flex items-center gap-1">
-                <ShieldCheck className="h-3.5 w-3.5 flex-shrink-0" />
-                <span>Zero client-side credential exposure verified</span>
+              <span className="text-[11px] text-slate-600 font-medium flex items-center gap-1">
+                <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 flex-shrink-0" />
+                <span>Credentials are stored securely on the server.</span>
               </span>
               <button
                 type="submit"
@@ -201,21 +200,21 @@ export default function SettingsPage() {
             </div>
           </div>
 
-          {/* Demo Mode & Deterministic Testing Control */}
+          {/* Demo & Test Mode Card */}
           <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6 shadow-xs space-y-4">
             <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
               <Zap className="h-4 w-4 text-indigo-600" />
-              <h2 className="font-bold text-slate-900 text-sm">Demo Mode & Deterministic Gateway</h2>
+              <h2 className="font-bold text-slate-900 text-sm">Demo & Test Mode</h2>
             </div>
 
             <p className="text-xs text-slate-500 leading-relaxed">
-              When Demo Mode is active, RAYFLOW generates deterministic test order IDs and payment signatures, allowing hackathon evaluators to run and verify the entire experience even without live external credentials.
+              Use Demo Mode to test the complete shopping and payment flow without external payment credentials.
             </p>
 
             <div className="flex items-center justify-between p-3.5 sm:p-4 rounded-lg bg-slate-50 border border-slate-200 gap-3">
               <div>
-                <div className="font-semibold text-slate-800 text-xs">Deterministic Demo Adapter</div>
-                <div className="text-[10px] sm:text-[11px] text-slate-500">Enable zero-configuration testing sandbox</div>
+                <div className="font-semibold text-slate-800 text-xs">Demo Payment Mode</div>
+                <div className="text-[10px] sm:text-[11px] text-slate-500">Test the complete checkout flow without external credentials.</div>
               </div>
               <button
                 type="button"
@@ -234,8 +233,8 @@ export default function SettingsPage() {
 
             <div className="pt-2 flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-t border-slate-100">
               <div>
-                <div className="font-semibold text-slate-800 text-xs">Reset All Demo Datasets</div>
-                <div className="text-[10px] text-slate-500">Restore catalogue, orders, and audit logs to original state</div>
+                <div className="font-semibold text-slate-800 text-xs">Reset Demo Data</div>
+                <div className="text-[10px] text-slate-500">Restore the demo store, orders, and activity to their starting state.</div>
               </div>
               <button
                 type="button"

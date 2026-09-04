@@ -118,20 +118,20 @@ export default function PoliciesPage() {
           <div>
             <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 uppercase tracking-wider">
               <Sliders className="h-3.5 w-3.5" />
-              Safety & Governance Controls
+              Policy Controls
             </div>
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 mt-1">
-              Agent Policy Engine
+              Policy Controls
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              Configure hard bounds, budget ceilings, and mandatory human-in-the-loop approval thresholds.
+              Set limits for discounts, campaign budgets, and actions that require approval.
             </p>
           </div>
 
           {savedSuccess && (
             <div className="rounded-lg bg-emerald-50 border border-emerald-200 px-3 py-1.5 text-xs text-emerald-800 font-semibold flex items-center gap-1.5 animate-in fade-in self-start sm:self-auto">
               <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 flex-shrink-0" />
-              <span>Policies Updated & Audited</span>
+              <span>Policies Updated & Saved</span>
             </div>
           )}
         </div>
@@ -140,16 +140,16 @@ export default function PoliciesPage() {
           {/* Left 2 Cols: Main Policy Configuration Form */}
           <div className="lg:col-span-2 space-y-5 sm:space-y-6">
             <form onSubmit={handleSavePolicy} className="space-y-5 sm:space-y-6">
-              {/* Hard Quantitative Limits */}
+              {/* Quantitative Limits */}
               <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6 shadow-xs space-y-4 sm:space-y-5">
                 <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
                   <Lock className="h-4 w-4 text-blue-600" />
-                  <h2 className="font-bold text-slate-900 text-sm">Hard Economic Caps</h2>
+                  <h2 className="font-bold text-slate-900 text-sm">Limits</h2>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-xs">
                   <div>
-                    <label className="font-semibold text-slate-700">Maximum Discount (%)</label>
+                    <label className="font-semibold text-slate-700">Maximum Discount</label>
                     <input
                       type="number"
                       value={policy.maxDiscountPercent}
@@ -159,12 +159,12 @@ export default function PoliciesPage() {
                       className="w-full mt-1.5 rounded-lg border border-slate-300 p-2 text-slate-900 font-mono focus:border-blue-500 focus:outline-none"
                     />
                     <p className="text-[10px] text-slate-400 mt-1">
-                      Upper ceiling for any autonomous bundle discount.
+                      Upper limit for bundle and product discounts.
                     </p>
                   </div>
 
                   <div>
-                    <label className="font-semibold text-slate-700">Max Campaign Budget (INR)</label>
+                    <label className="font-semibold text-slate-700">Campaign Budget Limit</label>
                     <input
                       type="number"
                       value={policy.maxCampaignBudget}
@@ -174,12 +174,12 @@ export default function PoliciesPage() {
                       className="w-full mt-1.5 rounded-lg border border-slate-300 p-2 text-slate-900 font-mono focus:border-blue-500 focus:outline-none"
                     />
                     <p className="text-[10px] text-slate-400 mt-1">
-                      Max total promotional budget an agent can allocate.
+                      Maximum budget for promotional campaigns.
                     </p>
                   </div>
 
                   <div>
-                    <label className="font-semibold text-slate-700">Max Single Txn (INR)</label>
+                    <label className="font-semibold text-slate-700">Transaction Limit</label>
                     <input
                       type="number"
                       value={policy.maxSingleTransaction}
@@ -189,22 +189,22 @@ export default function PoliciesPage() {
                       className="w-full mt-1.5 rounded-lg border border-slate-300 p-2 text-slate-900 font-mono focus:border-blue-500 focus:outline-none"
                     />
                     <p className="text-[10px] text-slate-400 mt-1">
-                      Single order velocity threshold.
+                      Maximum value for single transactions.
                     </p>
                   </div>
                 </div>
               </div>
 
-              {/* Approval Gates */}
+              {/* Approval Thresholds */}
               <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6 shadow-xs space-y-4 sm:space-y-5">
                 <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
                   <ShieldCheck className="h-4 w-4 text-emerald-600" />
-                  <h2 className="font-bold text-slate-900 text-sm">Merchant Approval Thresholds</h2>
+                  <h2 className="font-bold text-slate-900 text-sm">Approval Rules</h2>
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs">
                   <div>
-                    <label className="font-semibold text-slate-700">Require Approval for Discounts &gt; (%)</label>
+                    <label className="font-semibold text-slate-700">Discount Approval Threshold</label>
                     <input
                       type="number"
                       value={policy.approvalThresholdDiscount}
@@ -214,12 +214,12 @@ export default function PoliciesPage() {
                       className="w-full mt-1.5 rounded-lg border border-slate-300 p-2 text-slate-900 font-mono focus:border-blue-500 focus:outline-none"
                     />
                     <p className="text-[10px] text-slate-400 mt-1">
-                      Discounts above this threshold trigger the Approval Drawer.
+                      Discounts above this threshold require approval.
                     </p>
                   </div>
 
                   <div>
-                    <label className="font-semibold text-slate-700">Require Approval for Campaigns &gt; (INR)</label>
+                    <label className="font-semibold text-slate-700">Campaign Approval Threshold</label>
                     <input
                       type="number"
                       value={policy.approvalThresholdCampaign}
@@ -229,28 +229,28 @@ export default function PoliciesPage() {
                       className="w-full mt-1.5 rounded-lg border border-slate-300 p-2 text-slate-900 font-mono focus:border-blue-500 focus:outline-none"
                     />
                     <p className="text-[10px] text-slate-400 mt-1">
-                      Campaigns above this amount require merchant sign-off.
+                      Campaigns above this amount require approval.
                     </p>
                   </div>
                 </div>
               </div>
 
-              {/* Permissions & Restrictions Matrix */}
+              {/* Action Permissions Matrix */}
               <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6 shadow-xs space-y-3 sm:space-y-4">
-                <h2 className="font-bold text-slate-900 text-sm">Action Permissions Matrix</h2>
+                <h2 className="font-bold text-slate-900 text-sm">Action Permissions</h2>
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs">
                   {/* Allowed Actions */}
                   <div className="p-3.5 sm:p-4 rounded-lg bg-emerald-50/50 border border-emerald-200 space-y-2">
                     <div className="font-bold text-emerald-900 flex items-center gap-1.5">
                       <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                      Allowed Autonomous Actions
+                      Allowed Actions
                     </div>
                     <ul className="space-y-1 text-slate-700 text-[11px]">
                       <li>✓ Recommend complementary products</li>
-                      <li>✓ Calculate bounded bundle discounts</li>
-                      <li>✓ Create AI campaigns (with simulation)</li>
-                      <li>✓ Initiate Razorpay test-mode checkout</li>
+                      <li>✓ Calculate bundle discounts</li>
+                      <li>✓ Create campaigns after simulation</li>
+                      <li>✓ Start Razorpay Test Mode checkout</li>
                     </ul>
                   </div>
 
@@ -258,13 +258,13 @@ export default function PoliciesPage() {
                   <div className="p-3.5 sm:p-4 rounded-lg bg-amber-50/50 border border-amber-200 space-y-2">
                     <div className="font-bold text-amber-900 flex items-center gap-1.5">
                       <AlertTriangle className="h-4 w-4 text-amber-600" />
-                      Restricted Actions (Guarded)
+                      Restricted Actions
                     </div>
                     <ul className="space-y-1 text-slate-700 text-[11px]">
-                      <li>⚠ Direct unverified customer refunds</li>
-                      <li>⚠ Arbitrary catalogue base-price tampering</li>
-                      <li>⚠ Automated orders exceeding ₹25,000</li>
-                      <li>⚠ Discounts exceeding 20%</li>
+                      <li>⚠ Customer refunds</li>
+                      <li>⚠ Product base-price changes</li>
+                      <li>⚠ Orders above ₹25,000</li>
+                      <li>⚠ Discounts above 20%</li>
                     </ul>
                   </div>
                 </div>
@@ -275,7 +275,7 @@ export default function PoliciesPage() {
                 className="w-full sm:w-auto rounded-lg bg-blue-600 px-5 py-2.5 text-xs font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
               >
                 <Save className="h-4 w-4" />
-                <span>Save & Audit Policy Configuration</span>
+                <span>Save Policy Settings</span>
               </button>
             </form>
           </div>
@@ -285,10 +285,10 @@ export default function PoliciesPage() {
             <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-xs space-y-4">
               <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
                 <Zap className="h-4 w-4 text-indigo-600" />
-                <h3 className="font-bold text-slate-900 text-sm">Policy Testing Sandbox</h3>
+                <h3 className="font-bold text-slate-900 text-sm">Policy Test Sandbox</h3>
               </div>
               <p className="text-xs text-slate-500 leading-relaxed">
-                Test how the Policy Engine reacts to candidate actions before agents execute them.
+                Test how your policies evaluate potential discounts and budgets.
               </p>
 
               <div className="space-y-3 text-xs">
@@ -318,7 +318,7 @@ export default function PoliciesPage() {
                   className="w-full rounded-lg border border-indigo-200 bg-indigo-50 py-2 text-xs font-semibold text-indigo-900 hover:bg-indigo-100 transition-colors flex items-center justify-center gap-1.5"
                 >
                   <Play className="h-3.5 w-3.5 text-indigo-600" />
-                  <span>Evaluate Policy Bounds</span>
+                  <span>Evaluate Rules</span>
                 </button>
 
                 {sandboxResult && (

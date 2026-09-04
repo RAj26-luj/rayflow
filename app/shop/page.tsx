@@ -608,7 +608,7 @@ export default function AmazonStyleShopPage() {
               <ShoppingBag className="h-10 w-10 mx-auto text-slate-300 mb-2" />
               <h3 className="font-bold text-slate-800 text-sm">No products matched your search</h3>
               <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1 mb-4">
-                Try searching for a different keyword or ask our AI Shopping Copilot to find relevant alternatives.
+                Try searching for a different keyword or ask our Shopping Assistant to find relevant alternatives.
               </p>
               <button
                 onClick={() => {
@@ -729,7 +729,7 @@ export default function AmazonStyleShopPage() {
                   <ShoppingBag className="h-12 w-12 mx-auto text-slate-300" />
                   <div className="font-semibold text-slate-800 text-sm">Your cart is empty</div>
                   <p className="text-xs text-slate-500 max-w-xs mx-auto">
-                    Add performance gear from our catalogue or ask our AI Copilot for personalized running bundles.
+                    Add performance gear from our catalogue or ask our Shopping Assistant for personalized running bundles.
                   </p>
                   <button
                     onClick={() => setIsCartOpen(false)}
@@ -918,7 +918,7 @@ export default function AmazonStyleShopPage() {
                     {msg.recommendedBundle && (
                       <div className="mt-3 rounded-xl border border-indigo-500/40 bg-indigo-950/60 p-3 space-y-2">
                         <div className="flex items-center justify-between text-[11px] text-indigo-300 font-bold">
-                          <span>AI Bundle</span>
+                          <span>Curated Bundle</span>
                           <span className="text-emerald-400">Save {formatINR(msg.recommendedBundle.savingsAmount)}</span>
                         </div>
                         <div className="text-xs font-bold text-white">
@@ -933,7 +933,7 @@ export default function AmazonStyleShopPage() {
                                 {
                                   id: `sys_${Date.now()}`,
                                   role: 'assistant',
-                                  content: `✅ Added **AI Bundle** (${msg.recommendedBundle?.items.map(i => i.name).join(' + ')}) to your cart! You saved ${formatINR(msg.recommendedBundle?.savingsAmount ?? 0)}.`,
+                                  content: `✅ Added **Curated Bundle** (${msg.recommendedBundle?.items.map(i => i.name).join(' + ')}) to your cart! You saved ${formatINR(msg.recommendedBundle?.savingsAmount ?? 0)}.`,
                                   timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
                                 },
                               ]);
@@ -986,7 +986,7 @@ export default function AmazonStyleShopPage() {
                   type="text"
                   value={aiInput}
                   onChange={(e) => setAiInput(e.target.value)}
-                  placeholder="Ask AI Copilot (e.g. 'Build me a running bundle')..."
+                  placeholder="Ask Shopping Assistant (e.g. 'Build me a running bundle')..."
                   className="flex-1 bg-transparent px-3 py-1.5 text-xs text-white placeholder:text-slate-500 focus:outline-none"
                 />
                 <button

@@ -121,7 +121,7 @@ export default function OverviewPage() {
           <div>
             <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 uppercase tracking-wider">
               <TrendingUp className="h-3.5 w-3.5" />
-              Merchant Performance Dashboard
+              Merchant Dashboard
             </div>
             <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-slate-900 mt-1">
               Welcome back, {session?.user?.name ? session.user.name.split(' ')[0] : 'Merchant'}
@@ -197,7 +197,7 @@ export default function OverviewPage() {
             </div>
             <div className="mt-2 flex items-center gap-1.5 text-xs text-amber-600 font-medium">
               <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
-              <span>Policy constrained</span>
+              <span>Within policy limits</span>
             </div>
             <div className="text-[10px] text-slate-400 mt-1">Pending approval & deployment</div>
           </div>
@@ -209,7 +209,7 @@ export default function OverviewPage() {
             <div>
               <h2 className="text-sm sm:text-base font-bold text-slate-900">Revenue Opportunities</h2>
               <p className="text-xs text-slate-500">
-                Actionable interventions computed from catalogue affinity graphs and checkout intent.
+                Actionable recommendations identified across catalogue and checkout activity.
               </p>
             </div>
             <Link
@@ -229,7 +229,7 @@ export default function OverviewPage() {
                 </div>
                 <h3 className="font-bold text-slate-900 text-base sm:text-lg">Welcome to RAYFLOW</h3>
                 <p className="text-xs text-slate-600 max-w-md mx-auto mt-1 mb-6">
-                  Your store is ready to set up. Follow these 5 steps to activate autonomous revenue growth:
+                  Your store is ready to set up. Follow these 5 steps to start optimizing revenue:
                 </p>
 
                 <div className="grid grid-cols-1 sm:grid-cols-5 gap-3 text-left max-w-4xl mx-auto mb-6">
@@ -248,13 +248,13 @@ export default function OverviewPage() {
                   <Link href="/opportunities" className="rounded-xl border border-slate-200 bg-white p-3.5 hover:border-blue-400 hover:shadow-xs transition-all group">
                     <span className="text-[10px] font-bold text-indigo-600 uppercase">Step 3</span>
                     <div className="text-xs font-bold text-slate-900 mt-1 group-hover:text-indigo-600 transition-colors">Review Opps</div>
-                    <p className="text-[10px] text-slate-500 mt-0.5">Inspect AI discovered revenue bounds.</p>
+                    <p className="text-[10px] text-slate-500 mt-0.5">Inspect discovered revenue bounds.</p>
                   </Link>
 
                   <Link href="/opportunities" className="rounded-xl border border-slate-200 bg-white p-3.5 hover:border-blue-400 hover:shadow-xs transition-all group">
                     <span className="text-[10px] font-bold text-cyan-600 uppercase">Step 4</span>
                     <div className="text-xs font-bold text-slate-900 mt-1 group-hover:text-cyan-600 transition-colors">Run Simulation</div>
-                    <p className="text-[10px] text-slate-500 mt-0.5">Test Monte Carlo probability distribution.</p>
+                    <p className="text-[10px] text-slate-500 mt-0.5">Test revenue and margin projection.</p>
                   </Link>
 
                   <Link href="/opportunities" className="rounded-xl border border-slate-200 bg-white p-3.5 hover:border-blue-400 hover:shadow-xs transition-all group">
@@ -312,13 +312,13 @@ export default function OverviewPage() {
                   <div className="mt-3 rounded-lg border border-slate-100 bg-slate-50/70 p-3 text-xs space-y-1.5">
                     <div className="text-[10px] sm:text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1">
                       <Sparkles className="h-3 w-3 text-blue-600" />
-                      WHY THIS?
+                      WHY:
                     </div>
                     <p className="text-slate-600 text-[11px] leading-relaxed">
                       &quot;{opp.reasoning}&quot;
                     </p>
                     <div className="pt-1 flex flex-wrap items-center justify-between gap-1 text-[10px] text-slate-500">
-                      <span>Affected: <strong>{opp.affectedCustomersCount} shoppers</strong></span>
+                      <span>Audience: <strong>{opp.affectedCustomersCount} customers</strong></span>
                       <span>Confidence: <strong className="text-blue-600">{opp.confidence}%</strong></span>
                     </div>
                   </div>
@@ -328,7 +328,7 @@ export default function OverviewPage() {
                 <div className="mt-4 pt-3 border-t border-slate-100 flex flex-wrap sm:flex-nowrap items-center justify-between gap-2">
                   <span className="text-[11px] text-emerald-700 font-medium flex items-center gap-1">
                     <ShieldCheck className="h-3.5 w-3.5" />
-                    Policy Passed ✓
+                    Within limits ✓
                   </span>
 
                   <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
@@ -375,7 +375,7 @@ export default function OverviewPage() {
                         onClick={() => handleReviewOpp(opp)}
                         className="rounded-md border border-slate-200 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
                       >
-                        Inspect Action Details
+                        View Details
                       </button>
                     )}
                   </div>
@@ -391,15 +391,15 @@ export default function OverviewPage() {
           <div className="lg:col-span-2 rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-xs">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
               <div>
-                <h3 className="font-bold text-slate-900 text-sm">Revenue Influence Over Time</h3>
-                <p className="text-xs text-slate-500">Daily gross merchant revenue vs AI-influenced uplift</p>
+                <h3 className="font-bold text-slate-900 text-sm">Revenue Over Time</h3>
+                <p className="text-xs text-slate-500">Daily gross merchant revenue vs campaign uplift</p>
               </div>
               <div className="flex items-center gap-3 text-xs">
                 <span className="flex items-center gap-1.5 text-slate-600">
                   <span className="h-2.5 w-2.5 rounded-full bg-slate-300" /> Baseline
                 </span>
                 <span className="flex items-center gap-1.5 text-blue-700 font-medium">
-                  <span className="h-2.5 w-2.5 rounded-full bg-blue-600" /> AI Influenced
+                  <span className="h-2.5 w-2.5 rounded-full bg-blue-600" /> Additional Revenue
                 </span>
               </div>
             </div>
@@ -440,7 +440,7 @@ export default function OverviewPage() {
                     formatter={(value: any) => [`₹${Number(value).toLocaleString('en-IN')}`, 'Revenue']}
                     contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', fontSize: '12px' }}
                   />
-                  <Area type="monotone" dataKey="aiBoost" stroke="#0c83fe" strokeWidth={2} fillOpacity={1} fill="url(#colorAi)" name="AI Influenced" />
+                  <Area type="monotone" dataKey="aiBoost" stroke="#0c83fe" strokeWidth={2} fillOpacity={1} fill="url(#colorAi)" name="Additional Revenue" />
                   <Area type="monotone" dataKey="baseline" stroke="#94a3b8" strokeWidth={2} strokeDasharray="4 4" fill="none" name="Baseline" />
                 </AreaChart>
               </ResponsiveContainer>
@@ -451,7 +451,7 @@ export default function OverviewPage() {
           <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-xs space-y-4 sm:space-y-5 flex flex-col justify-between">
             <div>
               <h3 className="font-bold text-slate-900 text-sm">AOV & Margin Impact</h3>
-              <p className="text-xs text-slate-500">Comparison before and after RAYFLOW deployment</p>
+              <p className="text-xs text-slate-500">Performance summary and margin safety</p>
 
               <div className="mt-4 space-y-3">
                 <div className="p-3 rounded-lg border border-slate-100 bg-slate-50/70 space-y-1.5 text-xs">
@@ -481,7 +481,7 @@ export default function OverviewPage() {
                         <span>₹0.00</span>
                       </div>
                       <div className="pt-1 border-t border-slate-200/80 text-slate-400 text-[11px]">
-                        Awaiting first customer checkout transaction
+                        Awaiting customer checkout transactions
                       </div>
                     </>
                   )}
@@ -494,7 +494,7 @@ export default function OverviewPage() {
                     <span className="text-emerald-700">≥ 60.0%</span>
                   </div>
                   <div className="text-[10px] text-slate-400">
-                    Automated discounts preserve ≥60% gross product margin under active policy rules.
+                    Discounts preserve ≥60% gross product margin under active policy rules.
                   </div>
                 </div>
               </div>
@@ -503,7 +503,7 @@ export default function OverviewPage() {
             <div className="rounded-lg bg-blue-50 border border-blue-100 p-3 text-xs text-blue-900 flex items-center justify-between">
               <div>
                 <div className="font-semibold text-xs">Ready to test checkout?</div>
-                <div className="text-[10px] text-blue-700">Experience agentic commerce as buyer</div>
+                <div className="text-[10px] text-blue-700">Browse marketplace products as customer</div>
               </div>
               <Link
                 href="/shop"

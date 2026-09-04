@@ -54,14 +54,14 @@ export class AgentOrchestrator {
 
       return {
         message:
-          '🚨 **Safety Block**: Autonomous agents cannot override merchant policy boundaries. All actions must strictly adhere to the configured maximum discount (20%) and campaign budget caps.',
+          '🚨 **Safety Block**: Actions must adhere to your configured store policies. The requested discount or action exceeds allowed policy thresholds (e.g. 20% max discount or campaign budget caps).',
         decisionSummary: {
-          intent: 'Policy Override Request',
-          evidence: 'Merchant policy explicitly denies autonomous policy bypass.',
+          intent: 'Policy Limit Check',
+          evidence: 'Request exceeds configured store policy boundaries.',
           policyCheck: {
             passed: false,
-            ruleName: 'RULE_POLICY_BYPASS_BLOCKED',
-            details: 'Rejected: Hard policy boundaries cannot be overridden by conversational prompts.',
+            ruleName: 'RULE_POLICY_LIMIT_EXCEEDED',
+            details: 'Blocked: Requested values exceed configured policy limits.',
           },
           recommendedAction: 'Keep discounts within configured <= 20% cap.',
         },
@@ -88,9 +88,9 @@ export class AgentOrchestrator {
       });
 
       return {
-        message: `🚫 **Policy Block**: Proposed discount of **${requestedDiscount}%** violates your merchant policy cap of **20%**.\n\nThe action was prevented by the zero-hallucination Policy Engine before executing any order or campaign mutation.`,
+        message: `🚫 **Policy Block**: Proposed discount of **${requestedDiscount}%** exceeds your configured maximum discount limit of **20%**.\n\nDiscounts must stay within store policy limits before actions or campaigns can be created.`,
         decisionSummary: {
-          intent: 'High Discount Simulation',
+          intent: 'Discount Policy Check',
           evidence: `Requested discount ${requestedDiscount}% vs merchant cap 20%.`,
           policyCheck: {
             passed: false,
@@ -102,7 +102,7 @@ export class AgentOrchestrator {
         toolsExecuted,
         suggestedReplies: [
           'Simulate a compliant 15% discount',
-          'Inspect policy engine sandbox',
+          'Inspect policy controls',
         ],
       };
     }

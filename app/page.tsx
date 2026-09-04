@@ -65,14 +65,14 @@ export default function LandingPage() {
         </div>
 
         <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight text-white max-w-4xl mx-auto leading-[1.15]">
-          AI-Powered Commerce for Customers.{' '}
+          Smart Shopping for Customers.{' '}
           <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-indigo-300 to-sky-400">
-            Autonomous Growth for Merchants.
+            Revenue Growth for Merchants.
           </span>
         </h1>
 
         <p className="mt-4 sm:mt-6 text-sm sm:text-base md:text-lg text-slate-400 max-w-2xl mx-auto leading-relaxed">
-          RAYFLOW powers conversational product discovery and dynamic bundle discounts for shoppers, backed by bounded AI policy governance and Razorpay payment execution for store owners.
+          RAYFLOW offers conversational product discovery and bundle savings for shoppers, paired with merchant revenue opportunities, policy controls, and Razorpay payment integration.
         </p>
 
         {/* Primary CTA Buttons */}
@@ -119,7 +119,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-xl font-bold text-white mb-2">Shop as Customer</h3>
               <p className="text-xs sm:text-sm text-slate-300 leading-relaxed mb-4">
-                Discover products, ask the AI shopping assistant for recommendations, build custom gear bundles with automatic savings, and checkout with Razorpay.
+                Discover products, ask the shopping assistant for recommendations, build custom gear bundles with automatic savings, and checkout with Razorpay.
               </p>
               <ul className="space-y-2 text-xs text-slate-400 mb-6">
                 <li className="flex items-center gap-2">
@@ -128,7 +128,7 @@ export default function LandingPage() {
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="h-3.5 w-3.5 text-blue-400 flex-shrink-0" />
-                  <span>Natural language AI product discovery</span>
+                  <span>Natural language product discovery</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="h-3.5 w-3.5 text-blue-400 flex-shrink-0" />
@@ -153,7 +153,7 @@ export default function LandingPage() {
               </div>
               <h3 className="text-xl font-bold text-white mb-2">Login as Merchant</h3>
               <p className="text-xs sm:text-sm text-slate-400 leading-relaxed mb-4">
-                Manage your store catalogue, revenue opportunities, Monte Carlo simulations, policy guardrails, and autonomous AI growth agent.
+                Manage your store catalogue, revenue opportunities, outcome simulations, policy controls, and revenue assistant.
               </p>
               <ul className="space-y-2 text-xs text-slate-400 mb-6">
                 <li className="flex items-center gap-2">
@@ -162,11 +162,11 @@ export default function LandingPage() {
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="h-3.5 w-3.5 text-slate-500 flex-shrink-0" />
-                  <span>Strict policy engine guardrails & human approvals</span>
+                  <span>Configurable policy limits & approval workflows</span>
                 </li>
                 <li className="flex items-center gap-2">
                   <CheckCircle2 className="h-3.5 w-3.5 text-slate-500 flex-shrink-0" />
-                  <span>Settlement analytics and compliance audit trails</span>
+                  <span>Payment analytics and complete audit logs</span>
                 </li>
               </ul>
             </div>
@@ -188,7 +188,7 @@ export default function LandingPage() {
             <div className="flex items-center gap-2">
               <span className="h-2.5 w-2.5 rounded-full bg-blue-500 animate-ping" />
               <span className="text-[10px] sm:text-xs font-mono uppercase tracking-wider text-slate-400">
-                Agentic Commerce Execution Loop
+                Commerce Execution Flow
               </span>
             </div>
             <span className="text-[11px] sm:text-xs font-medium text-emerald-400 flex items-center gap-1">

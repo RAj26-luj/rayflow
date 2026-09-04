@@ -1,4 +1,4 @@
-# RAYFLOW — Autonomous AI Revenue Agent for Agentic Commerce
+# RAYFLOW — Smart Commerce & Revenue Growth Platform
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.7-blue.svg)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-14.2-black.svg)](https://nextjs.org/)
@@ -16,11 +16,11 @@
 
 ## 🌟 Executive Summary
 
-**RAYFLOW** is a production-grade autonomous AI revenue copilot and agentic commerce platform built for the **Razorpay AI Buildathon 2026 (Track 01: AI Growth & Agentic Commerce)**. It bridges the gap between conversational AI intelligence and financial safety:
+**RAYFLOW** is a production-grade commerce and revenue platform built for the **Razorpay AI Buildathon 2026 (Track 01: AI Growth & Agentic Commerce)**. It bridges the gap between conversational AI intelligence and financial safety:
 
 1. **Grows Merchant Revenue**: Continuously surfaces high-affinity bundle recommendations, checkout recovery incentives, and targeted campaigns from real database telemetry.
-2. **Agentic Commerce Storefront**: Enables shoppers to browse live inventory, receive AI-negotiated bundle incentives, and complete Razorpay test checkouts with zero cart loss.
-3. **Zero-Hallucination Policy Engine**: Enforces strict, deterministic governance with hard discount caps ($\le 20\%$), campaign budget caps ($\le ₹50,000$), single transaction velocity limits ($\le ₹25,000$), and human approval thresholds ($>15\%$).
+2. **Smart Commerce Storefront**: Enables shoppers to browse live inventory, receive smart bundle incentives, and complete Razorpay test checkouts with zero cart loss.
+3. **Deterministic Policy Controls**: Enforces strict, deterministic governance with hard discount caps ($\le 20\%$), campaign budget caps ($\le ₹50,000$), single transaction velocity limits ($\le ₹25,000$), and human approval thresholds ($>15\%$).
 4. **Server-Side Financial Security**: Timing-safe HMAC-SHA256 signature verification (`crypto.timingSafeEqual`) for all test-mode payments and webhooks with idempotent ledger recording.
 5. **Strict Multi-Tenancy**: Tenant context is resolved strictly from verified server-side JWT session cookies—cross-tenant data leakage is cryptographically prevented.
 

@@ -64,20 +64,20 @@ export default function AuditPage() {
           <div>
             <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 uppercase tracking-wider">
               <ShieldCheck className="h-3.5 w-3.5" />
-              Compliance & Safety Verification
+              Server-Side Audit Log
             </div>
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 mt-1">
-              Autonomous Agent Audit Trail
+              Audit Log
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              Immutable ledger of every AI decision, policy verification outcome, approval gate, and payment event.
+              Server-side log of store actions, policy checks, approvals, and payment events.
             </p>
           </div>
 
           <div className="flex items-center gap-2.5 sm:gap-3 self-start sm:self-auto">
             <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-2.5 sm:px-3 py-1.5 text-xs text-emerald-800 font-semibold flex items-center gap-1.5 shadow-2xs">
               <Lock className="h-3.5 w-3.5 text-emerald-600 flex-shrink-0" />
-              <span>Verifiable Ledger</span>
+              <span>Verified Events</span>
             </div>
             <button
               onClick={fetchAuditLogs}

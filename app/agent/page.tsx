@@ -55,7 +55,7 @@ export default function AgentPage() {
       id: 'msg_welcome',
       role: 'assistant',
       content:
-        "Hello! I am your **Revenue Growth Assistant**.\n\nI analyze your catalogue inventory, customer purchase affinity, and Razorpay checkout trends to formulate bounded revenue recommendations.\n\nAsk me about product bundling strategies, checkout recovery campaigns, or simulate policy limits.",
+        "Hello! I am your **Revenue Assistant**.\n\nI analyze catalogue inventory, customer purchase affinity, and checkout trends to suggest revenue opportunities within your store policies.\n\nAsk me about product bundling strategies, checkout recovery campaigns, or simulate policy limits.",
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ]);
@@ -144,21 +144,21 @@ export default function AgentPage() {
             </div>
             <div>
               <div className="flex items-center gap-1.5 sm:gap-2">
-                <h1 className="font-bold text-slate-900 text-sm sm:text-base">Revenue Growth Assistant</h1>
+                <h1 className="font-bold text-slate-900 text-sm sm:text-base">Revenue Assistant</h1>
                 <span className="flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[9px] sm:text-[10px] font-bold text-emerald-700 border border-emerald-200">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  Policy Constrained
+                  Policy Active
                 </span>
               </div>
               <p className="text-[10px] sm:text-xs text-slate-500 line-clamp-1">
-                Constrained by 20% discount cap and ₹50,000 budget policy bounds.
+                Ask about sales, customers, products, or revenue opportunities.
               </p>
             </div>
           </div>
 
           <div className="text-right hidden md:block text-xs">
-            <div className="text-slate-400 font-mono text-[11px]">Max Discount Cap: 20%</div>
-            <div className="text-slate-400 font-mono text-[11px]">Max Campaign: ₹50,000</div>
+            <div className="text-slate-400 font-mono text-[11px]">Max Discount: 20%</div>
+            <div className="text-slate-400 font-mono text-[11px]">Budget Limit: ₹50,000</div>
           </div>
         </div>
 
@@ -194,7 +194,7 @@ export default function AgentPage() {
                       <div className="text-[10px] sm:text-[11px] font-bold uppercase tracking-wider text-slate-700 flex flex-wrap items-center justify-between gap-1">
                         <span className="flex items-center gap-1.5">
                           <Sparkles className="h-3.5 w-3.5 text-blue-600" />
-                          Decision Summary
+                          Recommendation Details
                         </span>
                         {msg.agentResponse.decisionSummary.expectedUplift && (
                           <span className="text-emerald-700 font-semibold">
@@ -205,7 +205,7 @@ export default function AgentPage() {
 
                       <div className="text-[10px] sm:text-[11px] text-slate-600 space-y-1">
                         <div>
-                          <strong className="text-slate-800">Evidence: </strong>
+                          <strong className="text-slate-800">Why: </strong>
                           <span>{msg.agentResponse.decisionSummary.evidence}</span>
                         </div>
                         <div>
@@ -230,7 +230,7 @@ export default function AgentPage() {
                     {/* Tools Executed Trace */}
                     {msg.agentResponse.toolsExecuted && msg.agentResponse.toolsExecuted.length > 0 && (
                       <div className="flex flex-wrap items-center gap-1 text-[9px] sm:text-[10px] text-slate-500 font-mono">
-                        <span className="font-semibold text-slate-400">Tools:</span>
+                        <span className="font-semibold text-slate-400">Actions checked:</span>
                         {msg.agentResponse.toolsExecuted.map((t, i) => (
                           <span
                             key={i}
@@ -262,7 +262,7 @@ export default function AgentPage() {
               </div>
               <div className="rounded-2xl bg-white border border-slate-200 p-2.5 sm:p-3 text-[11px] sm:text-xs text-slate-500 flex items-center gap-2 shadow-xs">
                 <span className="h-2 w-2 rounded-full bg-blue-600 animate-ping" />
-                <span>Evaluating catalogue affinity, intent & policy rules...</span>
+                <span>Reviewing catalogue data and policies...</span>
               </div>
             </div>
           )}
@@ -299,7 +299,7 @@ export default function AgentPage() {
               type="text"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Ask Revenue Agent (e.g. 'Find products with strong upsell potential')..."
+              placeholder="Ask about products, bundles, or sales opportunities..."
               className="flex-1 rounded-xl border border-slate-200 bg-slate-50 px-3 sm:px-4 py-2 sm:py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:outline-none transition-colors"
             />
             <button

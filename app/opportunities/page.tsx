@@ -93,13 +93,13 @@ export default function OpportunitiesPage() {
           <div>
             <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 uppercase tracking-wider">
               <TrendingUp className="h-3.5 w-3.5" />
-              Store Revenue Intelligence
+              Revenue Opportunities
             </div>
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 mt-1">
               Revenue Opportunities
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              Actionable revenue interventions recommended from catalogue co-purchase data and checkout trends.
+              Potential ways to increase sales based on customer and catalogue activity.
             </p>
           </div>
 
@@ -114,9 +114,9 @@ export default function OpportunitiesPage() {
         <div className="rounded-xl border border-blue-100 bg-blue-50/50 p-3.5 sm:p-4 text-xs text-blue-900 flex items-start gap-3">
           <Info className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
           <div className="space-y-1">
-            <div className="font-bold text-blue-950">How Revenue Opportunities Work</div>
+            <div className="font-bold text-blue-950">About these opportunities</div>
             <p className="text-slate-600 text-[11px] sm:text-xs leading-relaxed">
-              These are data-backed revenue interventions identified across your catalogue and customer checkout behavior. You can simulate their revenue uplift, verify discount policy bounds, and approve them with an immutable audit trail.
+              These opportunities are based on product, customer, and checkout activity. Review the expected impact, simulate the result, and approve changes before they go live.
             </p>
           </div>
         </div>
@@ -159,13 +159,13 @@ export default function OpportunitiesPage() {
               <Sparkles className="h-8 w-8 mx-auto text-slate-300 mb-2" />
               <div className="font-semibold text-slate-800 text-sm">No Revenue Opportunities Pending</div>
               <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1 mb-4">
-                Your autonomous agent is monitoring store telemetry. Opportunities will appear here when affinity correlations or abandoned checkouts are detected.
+                Opportunities will appear here when product affinity correlations or abandoned checkouts are detected.
               </p>
               <button
                 onClick={() => fetchOpps()}
                 className="rounded-lg border border-slate-200 bg-slate-50 px-3.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
               >
-                Refresh Telemetry
+                Refresh Opportunities
               </button>
             </div>
           )}
@@ -222,11 +222,11 @@ export default function OpportunitiesPage() {
                     <p className="text-xs text-slate-500 mt-0.5">{opp.description}</p>
                   </div>
 
-                  {/* AI Recommendation Box */}
+                  {/* Recommended Action Box */}
                   <div className="rounded-lg border border-blue-100 bg-blue-50/50 p-3 sm:p-3.5 space-y-1.5 text-xs">
                     <div className="font-bold text-blue-900 flex items-center gap-1.5">
                       <Zap className="h-3.5 w-3.5 text-blue-600" />
-                      AI Recommendation:
+                      Recommended action
                     </div>
                     <p className="text-slate-700 font-medium leading-relaxed text-[11px] sm:text-xs">
                       &quot;{opp.recommendedAction}&quot;
@@ -235,7 +235,7 @@ export default function OpportunitiesPage() {
 
                   {/* Evidence & Policy Status */}
                   <div className="text-[11px] sm:text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-100">
-                    <span className="font-semibold text-slate-800">Reasoning: </span>
+                    <span className="font-semibold text-slate-800">Why: </span>
                     <span>{opp.reasoning}</span>
                   </div>
                 </div>
@@ -244,7 +244,7 @@ export default function OpportunitiesPage() {
                 <div className="lg:w-72 flex-shrink-0 flex flex-col justify-between border-t lg:border-t-0 lg:border-l border-slate-100 pt-4 lg:pt-0 lg:pl-6 space-y-3 sm:space-y-4">
                   <div className="space-y-2.5 sm:space-y-3">
                     <div>
-                      <div className="text-[10px] sm:text-[11px] font-medium text-slate-500">Expected Incremental Revenue</div>
+                      <div className="text-[10px] sm:text-[11px] font-medium text-slate-500">Estimated Additional Revenue</div>
                       <div className="text-lg sm:text-xl font-bold text-emerald-600 mt-0.5">
                         {formatINR(opp.expectedRevenue)}
                       </div>
@@ -256,14 +256,14 @@ export default function OpportunitiesPage() {
                         <div className="font-bold text-blue-700">{opp.confidence}%</div>
                       </div>
                       <div className="p-2 rounded bg-slate-50 border border-slate-100">
-                        <div className="text-[10px] text-slate-400">Affected</div>
-                        <div className="font-bold text-slate-800">{opp.affectedCustomersCount} shoppers</div>
+                        <div className="text-[10px] text-slate-400">Audience</div>
+                        <div className="font-bold text-slate-800">{opp.affectedCustomersCount} customers</div>
                       </div>
                     </div>
 
                     <div className="rounded p-2 bg-emerald-50 border border-emerald-100 text-[10px] sm:text-[11px] text-emerald-800 flex items-center gap-1.5 font-medium">
                       <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 flex-shrink-0" />
-                      <span className="truncate">{opp.policyNotes || 'Within merchant discount limit ✓'}</span>
+                      <span className="truncate">{opp.policyNotes || 'Within policy limits ✓'}</span>
                     </div>
                   </div>
 
@@ -276,7 +276,7 @@ export default function OpportunitiesPage() {
                           className="w-full rounded-lg bg-blue-600 py-2 text-xs font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors flex items-center justify-center gap-1.5"
                         >
                           <CheckCircle2 className="h-3.5 w-3.5" />
-                          <span>Review & Approve</span>
+                          <span>Review</span>
                         </button>
 
                         <div className="flex items-center gap-2">
@@ -316,14 +316,14 @@ export default function OpportunitiesPage() {
                         className="w-full rounded-lg bg-emerald-600 py-2 text-xs font-semibold text-white shadow-xs hover:bg-emerald-700 transition-colors flex items-center justify-center gap-1.5"
                       >
                         <Zap className="h-3.5 w-3.5" />
-                        <span>Execute & Deploy Action</span>
+                        <span>Execute Opportunity</span>
                       </button>
                     ) : (
                       <button
                         onClick={() => handleOpenApproval(opp)}
                         className="w-full rounded-lg border border-slate-200 bg-white py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
                       >
-                        Inspect Action Details
+                        View Details
                       </button>
                     )}
                   </div>

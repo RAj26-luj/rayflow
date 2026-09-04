@@ -67,7 +67,7 @@ export default function SignupPage() {
             <TrendingUp className="h-5 w-5" />
           </div>
           <h1 className="text-xl font-bold text-slate-900">Create Merchant Account</h1>
-          <p className="text-xs text-slate-500">Autonomous AI Revenue Agent for Razorpay</p>
+          <p className="text-xs text-slate-500">Merchant Operations & Revenue Platform</p>
         </div>
 
         {error && (

@@ -103,13 +103,13 @@ export default function CustomersPage() {
           <div>
             <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 uppercase tracking-wider">
               <Users className="h-3.5 w-3.5" />
-              Customer Intent Telemetry
+              Customer Intelligence
             </div>
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 mt-1">
-              Customers & Intent Scores
+              Customers
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              Real-time purchase propensity, browsing telemetry, and predicted next-best-product actions.
+              Customer segments, intent scores, purchase history, and recommended next actions.
             </p>
           </div>
 
@@ -248,7 +248,7 @@ export default function CustomersPage() {
                   <th className="px-4 py-3.5">Lifetime Value</th>
                   <th className="px-4 py-3.5">Intent Score</th>
                   <th className="px-4 py-3.5">Cart Status</th>
-                  <th className="px-4 py-3.5">AI Next-Action Prediction</th>
+                  <th className="px-4 py-3.5">Recommended Next Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-slate-700">
@@ -319,11 +319,11 @@ export default function CustomersPage() {
                       </span>
                     </td>
 
-                    {/* AI Recommendation */}
+                    {/* Next Action Recommendation */}
                     <td className="px-4 py-4 max-w-xs">
                       <div className="rounded-lg border border-blue-100 bg-blue-50/60 p-2.5 text-[11px] text-blue-950 leading-relaxed font-medium flex items-start gap-1.5">
                         <Sparkles className="h-3.5 w-3.5 text-blue-600 flex-shrink-0 mt-0.5" />
-                        <span>High-propensity automated cross-sell candidate</span>
+                        <span>Recommended for bundle cross-sell offer</span>
                       </div>
                     </td>
                   </tr>

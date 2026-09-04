@@ -52,7 +52,7 @@ export default function LoginPage() {
             <TrendingUp className="h-5 w-5" />
           </div>
           <h1 className="text-xl font-bold text-slate-900">Sign in to RAYFLOW</h1>
-          <p className="text-xs text-slate-500">Autonomous AI Revenue Agent for Razorpay</p>
+          <p className="text-xs text-slate-500">Merchant Operations & Revenue Platform</p>
         </div>
 
         {error && (

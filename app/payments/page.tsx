@@ -66,13 +66,13 @@ export default function PaymentsPage() {
           <div>
             <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 uppercase tracking-wider">
               <CreditCard className="h-3.5 w-3.5" />
-              Razorpay Settlement Ledger
+              Payment Operations
             </div>
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 mt-1">
               Payments & Orders
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              Cryptographically verified test-mode transactions, signature validation traces, and failure diagnostics.
+              Test-mode transactions, Razorpay order IDs, signature verification, and payment status.
             </p>
           </div>
 
@@ -140,7 +140,7 @@ export default function PaymentsPage() {
                       <CreditCard className="h-8 w-8 mx-auto text-slate-300 mb-2" />
                       <div className="font-semibold text-slate-700 text-xs">No Orders or Payment Records Found</div>
                       <div className="text-[11px] text-slate-400 mt-0.5">
-                        Test-mode orders created in the buyer shop will appear here with cryptographic HMAC verification traces.
+                        Orders placed in the storefront will appear here with Razorpay verification status.
                       </div>
                       <div className="mt-3">
                         <Link
@@ -178,7 +178,7 @@ export default function PaymentsPage() {
                         ))}
                         {ord.isBundle && (
                           <span className="inline-block rounded bg-indigo-50 text-indigo-700 px-1.5 py-0.2 text-[9px] font-bold border border-indigo-200">
-                            AI Bundle (-{formatINR(ord.discountAmount)})
+                            Bundle Discount (-{formatINR(ord.discountAmount)})
                           </span>
                         )}
                       </div>
@@ -219,7 +219,7 @@ export default function PaymentsPage() {
                             <CheckCircle2 className="h-3 w-3" />
                             Captured (Paid)
                           </span>
-                          <div className="text-[10px] text-slate-400">HMAC Verified ✓</div>
+                          <div className="text-[10px] text-slate-400">Verified ✓</div>
                         </div>
                       )}
 
