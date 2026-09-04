@@ -4,8 +4,8 @@ import Script from 'next/script';
 import { SessionProvider } from '@/components/providers/SessionProvider';
 
 export const metadata: Metadata = {
-  title: 'RAYFLOW — AI Revenue Agent for Agentic Commerce',
-  description: 'Bounded AI Revenue Agent powered by Razorpay test-mode commerce and policy safety guards.',
+  title: 'RAYFLOW — Revenue Operations',
+  description: 'Intelligent Revenue Operations and Commerce powered by Razorpay test payments.',
 };
 
 export default function RootLayout({

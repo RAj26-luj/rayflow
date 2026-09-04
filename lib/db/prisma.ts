@@ -4,9 +4,12 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
+const dbUrl = process.env.DATABASE_URL || process.env.DATABASE_URL_UNPOOLED;
+
 export const prisma =
   globalForPrisma.prisma ??
   new PrismaClient({
+    datasources: dbUrl ? { db: { url: dbUrl } } : undefined,
     log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
   });
 

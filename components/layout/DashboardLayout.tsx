@@ -19,9 +19,10 @@ interface DashboardLayoutProps {
 
 const MOBILE_BOTTOM_NAV = [
   { label: 'Overview', href: '/overview', icon: LayoutDashboard },
-  { label: 'Opps', href: '/opportunities', icon: Sparkles },
-  { label: 'AI Agent', href: '/agent', icon: Bot },
-  { label: 'Audit', href: '/audit', icon: ShieldCheck },
+  { label: 'Opportunities', href: '/opportunities', icon: Sparkles },
+  { label: 'Assistant', href: '/agent', icon: Bot },
+  { label: 'Catalogue', href: '/catalogue', icon: ShoppingBag },
+  { label: 'Activity', href: '/audit', icon: ShieldCheck },
 ];
 
 export function DashboardLayout({ children }: DashboardLayoutProps) {
@@ -29,14 +30,14 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const pathname = usePathname();
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex min-h-screen bg-slate-50 overflow-x-hidden w-full">
       {/* Sidebar (Desktop fixed + Mobile slide-over drawer) */}
       <Sidebar
         isOpen={isMobileSidebarOpen}
         onClose={() => setIsMobileSidebarOpen(false)}
       />
 
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
         {/* Navbar with mobile drawer toggle */}
         <Navbar onToggleMobileSidebar={() => setIsMobileSidebarOpen(true)} />
 

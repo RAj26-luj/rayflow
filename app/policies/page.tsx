@@ -12,14 +12,42 @@ import {
   Check,
   RotateCcw,
   Play,
+  Layers,
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { AgentPolicy } from '@/lib/types';
 import { formatINR } from '@/lib/utils';
+import { PageShell, SectionHeader } from '@/components/ui/SectionHeader';
+import { ActionButton, SecondaryButton } from '@/components/ui/Button';
+import { StatusBadge } from '@/components/ui/Badge';
+import { LoadingState } from '@/components/ui/Feedback';
+
+const DEFAULT_POLICY: AgentPolicy = {
+  id: 'pol_aura_01',
+  maxDiscountPercent: 20,
+  maxCampaignBudget: 50000,
+  maxSingleTransaction: 25000,
+  approvalThresholdDiscount: 15,
+  approvalThresholdCampaign: 10000,
+  allowDirectDiscounts: true,
+  allowAutoBundle: true,
+  allowAutoCampaign: true,
+  allowRefunds: false,
+  allowDirectPriceChange: false,
+  restrictedActions: [
+    'Direct price overwrite without verification',
+    'Customer credit processing (Manual Approval Only)',
+    'Campaign budgets exceeding ₹50,000 threshold',
+    'Bundles discounting beyond 20% limit',
+  ],
+  updatedAt: new Date().toISOString(),
+};
 
 export default function PoliciesPage() {
-  const [policy, setPolicy] = useState<AgentPolicy | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [policy, setPolicy] = useState<AgentPolicy>(DEFAULT_POLICY);
+  const [loading, setLoading] = useState(false);
+  const [saving, setSaving] = useState(false);
   const [savedSuccess, setSavedSuccess] = useState(false);
 
   // Policy Sandbox Interactive State
@@ -54,6 +82,7 @@ export default function PoliciesPage() {
     if (!policy) return;
 
     try {
+      setSaving(true);
       const res = await fetch('/api/policies', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
@@ -61,17 +90,18 @@ export default function PoliciesPage() {
       });
       if (res.ok) {
         setSavedSuccess(true);
-        setTimeout(() => setSavedSuccess(false), 3000);
+        setTimeout(() => setSavedSuccess(false), 3500);
       }
     } catch (err) {
       console.error(err);
+    } finally {
+      setSaving(false);
     }
   };
 
   const handleTestSandbox = async () => {
     if (!policy) return;
 
-    // Evaluate in real-time
     const discountAllowed = sandboxDiscount <= policy.maxDiscountPercent;
     const discountReqApproval = sandboxDiscount > policy.approvalThresholdDiscount && discountAllowed;
 
@@ -86,7 +116,7 @@ export default function PoliciesPage() {
           ? `Blocked by merchant policy. Proposed discount (${sandboxDiscount}%) exceeds maximum permitted discount cap of ${policy.maxDiscountPercent}%.`
           : discountReqApproval
           ? `Permitted, but requires merchant sign-off (exceeds ${policy.approvalThresholdDiscount}% auto threshold).`
-          : `Compliant and auto-approved.`,
+          : `Compliant and auto-approved within threshold.`,
       },
       budgetEvaluation: {
         allowed: budgetAllowed,
@@ -95,99 +125,99 @@ export default function PoliciesPage() {
           ? `Blocked by merchant policy. Proposed budget (${formatINR(sandboxBudget)}) exceeds maximum permitted budget cap of ${formatINR(policy.maxCampaignBudget)}.`
           : budgetReqApproval
           ? `Requires merchant approval as it exceeds auto threshold of ${formatINR(policy.approvalThresholdCampaign)}.`
-          : `Compliant and auto-approved.`,
+          : `Compliant and auto-approved within threshold.`,
       },
     });
   };
 
-  if (!policy) {
-    return (
-      <DashboardLayout>
-        <div className="flex items-center justify-center h-64 text-xs text-slate-500">
-          Loading policy rules...
-        </div>
-      </DashboardLayout>
-    );
-  }
-
   return (
     <DashboardLayout>
-      <div className="space-y-5 sm:space-y-6">
+      <PageShell>
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
-          <div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 uppercase tracking-wider">
-              <Sliders className="h-3.5 w-3.5" />
-              Policy Controls
-            </div>
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 mt-1">
-              Policy Controls
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              Set limits for discounts, campaign budgets, and actions that require approval.
-            </p>
-          </div>
+        <SectionHeader
+          title="Business Rules"
+          description="Set discount ceilings, margin floors, campaign budget caps, and approval requirements."
+          badge={{ text: 'Rules Enforced', variant: 'emerald' }}
+          action={
+            savedSuccess && (
+              <motion.div
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className="rounded-2xl bg-emerald-50 border border-emerald-200 px-4 py-2 text-xs text-emerald-800 font-bold flex items-center gap-2 shadow-xs"
+              >
+                <CheckCircle2 className="h-4 w-4 text-emerald-600 flex-shrink-0" />
+                <span>Business Rules Saved & Enforced</span>
+              </motion.div>
+            )
+          }
+        />
 
-          {savedSuccess && (
-            <div className="rounded-lg bg-emerald-50 border border-emerald-200 px-3 py-1.5 text-xs text-emerald-800 font-semibold flex items-center gap-1.5 animate-in fade-in self-start sm:self-auto">
-              <CheckCircle2 className="h-3.5 w-3.5 text-emerald-600 flex-shrink-0" />
-              <span>Policies Updated & Saved</span>
-            </div>
-          )}
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 sm:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left 2 Cols: Main Policy Configuration Form */}
-          <div className="lg:col-span-2 space-y-5 sm:space-y-6">
-            <form onSubmit={handleSavePolicy} className="space-y-5 sm:space-y-6">
+          <div className="lg:col-span-2 space-y-6">
+            <form onSubmit={handleSavePolicy} className="space-y-6">
               {/* Quantitative Limits */}
-              <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6 shadow-xs space-y-4 sm:space-y-5">
-                <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-                  <Lock className="h-4 w-4 text-blue-600" />
-                  <h2 className="font-bold text-slate-900 text-sm">Limits</h2>
+              <div className="rounded-3xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-xs space-y-5">
+                <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3.5">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-200/60 font-bold">
+                    <Lock className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h2 className="font-bold text-slate-900 text-sm sm:text-base">Quantitative Limits</h2>
+                    <p className="text-xs text-slate-500">Hard ceilings that cannot be breached under any circumstance</p>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
                   <div>
-                    <label className="font-semibold text-slate-700">Maximum Discount</label>
-                    <input
-                      type="number"
-                      value={policy.maxDiscountPercent}
-                      onChange={(e) =>
-                        setPolicy({ ...policy, maxDiscountPercent: Number(e.target.value) })
-                      }
-                      className="w-full mt-1.5 rounded-lg border border-slate-300 p-2 text-slate-900 font-mono focus:border-blue-500 focus:outline-none"
-                    />
+                    <label className="font-bold text-slate-700 block mb-1">Maximum Discount</label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        value={policy.maxDiscountPercent}
+                        onChange={(e) =>
+                          setPolicy({ ...policy, maxDiscountPercent: Number(e.target.value) })
+                        }
+                        className="w-full rounded-2xl border border-slate-300 p-3 text-slate-900 font-mono text-xs focus:border-blue-500 focus:outline-none"
+                      />
+                      <span className="absolute right-3.5 top-3 text-slate-400 font-bold">%</span>
+                    </div>
                     <p className="text-[10px] text-slate-400 mt-1">
                       Upper limit for bundle and product discounts.
                     </p>
                   </div>
 
                   <div>
-                    <label className="font-semibold text-slate-700">Campaign Budget Limit</label>
-                    <input
-                      type="number"
-                      value={policy.maxCampaignBudget}
-                      onChange={(e) =>
-                        setPolicy({ ...policy, maxCampaignBudget: Number(e.target.value) })
-                      }
-                      className="w-full mt-1.5 rounded-lg border border-slate-300 p-2 text-slate-900 font-mono focus:border-blue-500 focus:outline-none"
-                    />
+                    <label className="font-bold text-slate-700 block mb-1">Campaign Budget Cap</label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        value={policy.maxCampaignBudget}
+                        onChange={(e) =>
+                          setPolicy({ ...policy, maxCampaignBudget: Number(e.target.value) })
+                        }
+                        className="w-full rounded-2xl border border-slate-300 p-3 text-slate-900 font-mono text-xs focus:border-blue-500 focus:outline-none"
+                      />
+                      <span className="absolute right-3.5 top-3 text-slate-400 font-bold">₹</span>
+                    </div>
                     <p className="text-[10px] text-slate-400 mt-1">
-                      Maximum budget for promotional campaigns.
+                      Maximum budget for marketing campaigns.
                     </p>
                   </div>
 
                   <div>
-                    <label className="font-semibold text-slate-700">Transaction Limit</label>
-                    <input
-                      type="number"
-                      value={policy.maxSingleTransaction}
-                      onChange={(e) =>
-                        setPolicy({ ...policy, maxSingleTransaction: Number(e.target.value) })
-                      }
-                      className="w-full mt-1.5 rounded-lg border border-slate-300 p-2 text-slate-900 font-mono focus:border-blue-500 focus:outline-none"
-                    />
+                    <label className="font-bold text-slate-700 block mb-1">Transaction Limit</label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        value={policy.maxSingleTransaction}
+                        onChange={(e) =>
+                          setPolicy({ ...policy, maxSingleTransaction: Number(e.target.value) })
+                        }
+                        className="w-full rounded-2xl border border-slate-300 p-3 text-slate-900 font-mono text-xs focus:border-blue-500 focus:outline-none"
+                      />
+                      <span className="absolute right-3.5 top-3 text-slate-400 font-bold">₹</span>
+                    </div>
                     <p className="text-[10px] text-slate-400 mt-1">
                       Maximum value for single transactions.
                     </p>
@@ -196,38 +226,49 @@ export default function PoliciesPage() {
               </div>
 
               {/* Approval Thresholds */}
-              <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6 shadow-xs space-y-4 sm:space-y-5">
-                <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-                  <ShieldCheck className="h-4 w-4 text-emerald-600" />
-                  <h2 className="font-bold text-slate-900 text-sm">Approval Rules</h2>
+              <div className="rounded-3xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-xs space-y-5">
+                <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3.5">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-200/60 font-bold">
+                    <ShieldCheck className="h-4 w-4" />
+                  </div>
+                  <div>
+                    <h2 className="font-bold text-slate-900 text-sm sm:text-base">Approval Thresholds</h2>
+                    <p className="text-xs text-slate-500">Actions requiring explicit merchant confirmation before running</p>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                   <div>
-                    <label className="font-semibold text-slate-700">Discount Approval Threshold</label>
-                    <input
-                      type="number"
-                      value={policy.approvalThresholdDiscount}
-                      onChange={(e) =>
-                        setPolicy({ ...policy, approvalThresholdDiscount: Number(e.target.value) })
-                      }
-                      className="w-full mt-1.5 rounded-lg border border-slate-300 p-2 text-slate-900 font-mono focus:border-blue-500 focus:outline-none"
-                    />
+                    <label className="font-bold text-slate-700 block mb-1">Discount Approval Threshold</label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        value={policy.approvalThresholdDiscount}
+                        onChange={(e) =>
+                          setPolicy({ ...policy, approvalThresholdDiscount: Number(e.target.value) })
+                        }
+                        className="w-full rounded-2xl border border-slate-300 p-3 text-slate-900 font-mono text-xs focus:border-blue-500 focus:outline-none"
+                      />
+                      <span className="absolute right-3.5 top-3 text-slate-400 font-bold">%</span>
+                    </div>
                     <p className="text-[10px] text-slate-400 mt-1">
                       Discounts above this threshold require approval.
                     </p>
                   </div>
 
                   <div>
-                    <label className="font-semibold text-slate-700">Campaign Approval Threshold</label>
-                    <input
-                      type="number"
-                      value={policy.approvalThresholdCampaign}
-                      onChange={(e) =>
-                        setPolicy({ ...policy, approvalThresholdCampaign: Number(e.target.value) })
-                      }
-                      className="w-full mt-1.5 rounded-lg border border-slate-300 p-2 text-slate-900 font-mono focus:border-blue-500 focus:outline-none"
-                    />
+                    <label className="font-bold text-slate-700 block mb-1">Campaign Approval Threshold</label>
+                    <div className="relative">
+                      <input
+                        type="number"
+                        value={policy.approvalThresholdCampaign}
+                        onChange={(e) =>
+                          setPolicy({ ...policy, approvalThresholdCampaign: Number(e.target.value) })
+                        }
+                        className="w-full rounded-2xl border border-slate-300 p-3 text-slate-900 font-mono text-xs focus:border-blue-500 focus:outline-none"
+                      />
+                      <span className="absolute right-3.5 top-3 text-slate-400 font-bold">₹</span>
+                    </div>
                     <p className="text-[10px] text-slate-400 mt-1">
                       Campaigns above this amount require approval.
                     </p>
@@ -236,122 +277,155 @@ export default function PoliciesPage() {
               </div>
 
               {/* Action Permissions Matrix */}
-              <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-6 shadow-xs space-y-3 sm:space-y-4">
-                <h2 className="font-bold text-slate-900 text-sm">Action Permissions</h2>
+              <div className="rounded-3xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-xs space-y-4">
+                <h2 className="font-bold text-slate-900 text-sm sm:text-base">Action Permissions Matrix</h2>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-xs">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                   {/* Allowed Actions */}
-                  <div className="p-3.5 sm:p-4 rounded-lg bg-emerald-50/50 border border-emerald-200 space-y-2">
-                    <div className="font-bold text-emerald-900 flex items-center gap-1.5">
+                  <div className="p-4 rounded-2xl bg-emerald-50/50 border border-emerald-200 space-y-2.5">
+                    <div className="font-bold text-emerald-950 flex items-center gap-1.5">
                       <CheckCircle2 className="h-4 w-4 text-emerald-600" />
-                      Allowed Actions
+                      Permitted Actions
                     </div>
-                    <ul className="space-y-1 text-slate-700 text-[11px]">
-                      <li>✓ Recommend complementary products</li>
-                      <li>✓ Calculate bundle discounts</li>
-                      <li>✓ Create campaigns after simulation</li>
-                      <li>✓ Start Razorpay Test Mode checkout</li>
+                    <ul className="space-y-1.5 text-slate-700 text-xs">
+                      <li className="flex items-center gap-1.5">
+                        <span className="text-emerald-600 font-bold">✓</span>
+                        <span>Recommend complementary products</span>
+                      </li>
+                      <li className="flex items-center gap-1.5">
+                        <span className="text-emerald-600 font-bold">✓</span>
+                        <span>Calculate bundle discount incentives</span>
+                      </li>
+                      <li className="flex items-center gap-1.5">
+                        <span className="text-emerald-600 font-bold">✓</span>
+                        <span>Create campaigns post-simulation</span>
+                      </li>
+                      <li className="flex items-center gap-1.5">
+                        <span className="text-emerald-600 font-bold">✓</span>
+                        <span>Initiate Razorpay Test Mode checkout</span>
+                      </li>
                     </ul>
                   </div>
 
                   {/* Restricted Actions */}
-                  <div className="p-3.5 sm:p-4 rounded-lg bg-amber-50/50 border border-amber-200 space-y-2">
-                    <div className="font-bold text-amber-900 flex items-center gap-1.5">
+                  <div className="p-4 rounded-2xl bg-amber-50/50 border border-amber-200 space-y-2.5">
+                    <div className="font-bold text-amber-950 flex items-center gap-1.5">
                       <AlertTriangle className="h-4 w-4 text-amber-600" />
-                      Restricted Actions
+                      Restricted / Blocked Actions
                     </div>
-                    <ul className="space-y-1 text-slate-700 text-[11px]">
-                      <li>⚠ Customer refunds</li>
-                      <li>⚠ Product base-price changes</li>
-                      <li>⚠ Orders above ₹25,000</li>
-                      <li>⚠ Discounts above 20%</li>
+                    <ul className="space-y-1.5 text-slate-700 text-xs">
+                      <li className="flex items-center gap-1.5">
+                        <span className="text-amber-600 font-bold">⚠</span>
+                        <span>Customer refunds (Admin Only)</span>
+                      </li>
+                      <li className="flex items-center gap-1.5">
+                        <span className="text-amber-600 font-bold">⚠</span>
+                        <span>Product base-price changes</span>
+                      </li>
+                      <li className="flex items-center gap-1.5">
+                        <span className="text-amber-600 font-bold">⚠</span>
+                        <span>Orders above ₹25,000 threshold</span>
+                      </li>
+                      <li className="flex items-center gap-1.5">
+                        <span className="text-amber-600 font-bold">⚠</span>
+                        <span>Discounts exceeding 20% cap</span>
+                      </li>
                     </ul>
                   </div>
                 </div>
               </div>
 
-              <button
+              <ActionButton
                 type="submit"
-                className="w-full sm:w-auto rounded-lg bg-blue-600 px-5 py-2.5 text-xs font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                size="md"
+                isLoading={saving}
+                leftIcon={<Save className="h-4 w-4" />}
               >
-                <Save className="h-4 w-4" />
-                <span>Save Policy Settings</span>
-              </button>
+                Save Business Rules
+              </ActionButton>
             </form>
           </div>
 
           {/* Right Col: Live Policy Sandbox Testing */}
           <div className="space-y-4">
-            <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-xs space-y-4">
-              <div className="flex items-center gap-2 border-b border-slate-100 pb-3">
-                <Zap className="h-4 w-4 text-indigo-600" />
-                <h3 className="font-bold text-slate-900 text-sm">Policy Test Sandbox</h3>
-              </div>
-              <p className="text-xs text-slate-500 leading-relaxed">
-                Test how your policies evaluate potential discounts and budgets.
-              </p>
-
-              <div className="space-y-3 text-xs">
+            <div className="rounded-3xl border border-slate-200/80 bg-white p-5 sm:p-6 shadow-xs space-y-4">
+              <div className="flex items-center gap-2.5 border-b border-slate-100 pb-3">
+                <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-50 text-blue-600 border border-blue-200/60 font-bold">
+                  <Zap className="h-4 w-4" />
+                </div>
                 <div>
-                  <label className="font-semibold text-slate-700">Test Candidate Discount (%):</label>
+                  <h3 className="font-bold text-slate-900 text-sm">Business Rules Sandbox</h3>
+                  <p className="text-[11px] text-slate-400">Evaluate hypothetical offers against active business rules</p>
+                </div>
+              </div>
+
+              <div className="space-y-3.5 text-xs">
+                <div>
+                  <label className="font-bold text-slate-700 block mb-1">Candidate Discount (%):</label>
                   <input
                     type="number"
                     value={sandboxDiscount}
                     onChange={(e) => setSandboxDiscount(Number(e.target.value))}
-                    className="w-full mt-1 rounded-lg border border-slate-300 p-2 text-slate-900 font-mono"
+                    className="w-full rounded-2xl border border-slate-300 p-3 text-slate-900 font-mono text-xs focus:border-blue-500 focus:outline-none"
                   />
                 </div>
 
                 <div>
-                  <label className="font-semibold text-slate-700">Test Campaign Budget (INR):</label>
+                  <label className="font-bold text-slate-700 block mb-1">Candidate Budget (INR):</label>
                   <input
                     type="number"
                     value={sandboxBudget}
                     onChange={(e) => setSandboxBudget(Number(e.target.value))}
-                    className="w-full mt-1 rounded-lg border border-slate-300 p-2 text-slate-900 font-mono"
+                    className="w-full rounded-2xl border border-slate-300 p-3 text-slate-900 font-mono text-xs focus:border-blue-500 focus:outline-none"
                   />
                 </div>
 
-                <button
+                <SecondaryButton
                   type="button"
                   onClick={handleTestSandbox}
-                  className="w-full rounded-lg border border-indigo-200 bg-indigo-50 py-2 text-xs font-semibold text-indigo-900 hover:bg-indigo-100 transition-colors flex items-center justify-center gap-1.5"
+                  size="sm"
+                  className="w-full"
+                  leftIcon={<Play className="h-3.5 w-3.5 text-blue-600" />}
                 >
-                  <Play className="h-3.5 w-3.5 text-indigo-600" />
-                  <span>Evaluate Rules</span>
-                </button>
+                  Evaluate Rules
+                </SecondaryButton>
 
                 {sandboxResult && (
-                  <div className="p-3 rounded-lg border border-slate-200 bg-slate-50 space-y-2 text-[11px] animate-in fade-in">
-                    <div className="font-bold text-slate-900">Evaluation Verdict:</div>
-                    <div className="space-y-1.5">
+                  <motion.div
+                    initial={{ opacity: 0, y: 8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="p-4 rounded-2xl border border-slate-200 bg-slate-50 space-y-2.5 text-xs"
+                  >
+                    <div className="font-bold text-slate-900">Sandbox Verdict:</div>
+                    <div className="space-y-2">
                       <div
-                        className={`p-2 rounded border ${
+                        className={`p-3 rounded-xl border ${
                           sandboxResult.discountEvaluation.allowed
-                            ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
-                            : 'bg-red-50 border-red-200 text-red-900'
+                            ? 'bg-emerald-50 border-emerald-200 text-emerald-950'
+                            : 'bg-red-50 border-red-200 text-red-950'
                         }`}
                       >
-                        <strong>Discount Rule:</strong> {sandboxResult.discountEvaluation.reason}
+                        <strong>Discount Evaluation:</strong> {sandboxResult.discountEvaluation.reason}
                       </div>
 
                       <div
-                        className={`p-2 rounded border ${
+                        className={`p-3 rounded-xl border ${
                           sandboxResult.budgetEvaluation.allowed
-                            ? 'bg-emerald-50 border-emerald-200 text-emerald-900'
-                            : 'bg-red-50 border-red-200 text-red-900'
+                            ? 'bg-emerald-50 border-emerald-200 text-emerald-950'
+                            : 'bg-red-50 border-red-200 text-red-950'
                         }`}
                       >
-                        <strong>Budget Rule:</strong> {sandboxResult.budgetEvaluation.reason}
+                        <strong>Budget Evaluation:</strong> {sandboxResult.budgetEvaluation.reason}
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 )}
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </PageShell>
     </DashboardLayout>
   );
 }
+

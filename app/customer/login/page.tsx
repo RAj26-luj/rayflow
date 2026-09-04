@@ -13,7 +13,9 @@ import {
   AlertCircle,
   Loader2,
   ArrowLeft,
+  Lock,
 } from 'lucide-react';
+import { Badge, Button } from '@/components/ui';
 
 function CustomerLoginForm() {
   const router = useRouter();
@@ -80,34 +82,36 @@ function CustomerLoginForm() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 selection:bg-blue-600 selection:text-white">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <Link href="/" className="flex justify-center items-center gap-2.5 mb-6 group">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-bold shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-600 text-white font-bold shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
             <ShoppingBag className="h-5 w-5" />
           </div>
           <span className="font-extrabold text-2xl tracking-tight text-slate-900">RAYFLOW</span>
         </Link>
-        <h2 className="text-center text-2xl font-bold tracking-tight text-slate-900">
-          Welcome back to Shopping
-        </h2>
-        <p className="mt-1.5 text-center text-xs text-slate-500">
-          Sign in to complete checkout and view your purchase history
-        </p>
+        <div className="text-center space-y-1">
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+            Welcome back to Shopping
+          </h2>
+          <p className="text-xs text-slate-500">
+            Sign in to complete checkout and view your purchase history
+          </p>
+        </div>
       </div>
 
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0">
-        <div className="bg-white py-8 px-6 sm:px-8 shadow-sm border border-slate-200/80 rounded-2xl">
+        <div className="bg-white py-8 px-6 sm:px-8 shadow-2xs border border-slate-200 rounded-2xl space-y-5">
           {error && (
-            <div className="mb-5 flex items-center gap-2 rounded-xl bg-red-50 p-3.5 text-xs text-red-700 border border-red-200">
-              <AlertCircle className="h-4 w-4 flex-shrink-0" />
+            <div className="flex items-center gap-2 rounded-xl bg-rose-50 p-3.5 text-xs text-rose-700 border border-rose-200">
+              <AlertCircle className="h-4 w-4 flex-shrink-0 text-rose-600" />
               <span>{error}</span>
             </div>
           )}
 
           <form onSubmit={handleSignIn} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                 Email address
               </label>
               <input
@@ -115,13 +119,13 @@ function CustomerLoginForm() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="customer@example.com"
+                placeholder="priya@auraathletics.com"
                 className="w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs text-slate-900 placeholder:text-slate-400 focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                 Password
               </label>
               <input
@@ -134,57 +138,48 @@ function CustomerLoginForm() {
               />
             </div>
 
-            <button
+            <Button
               type="submit"
+              variant="primary"
+              size="md"
+              className="w-full"
+              loading={loading}
               disabled={loading || demoLoading}
-              className="w-full rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-blue-500 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+              icon={<ArrowRight className="h-4 w-4" />}
             >
-              {loading ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <span>Signing in...</span>
-                </>
-              ) : (
-                <>
-                  <span>Sign In</span>
-                  <ArrowRight className="h-4 w-4" />
-                </>
-              )}
-            </button>
+              Sign In & Continue
+            </Button>
           </form>
 
           {/* Demo Customer Section */}
-          <div className="mt-6 pt-6 border-t border-slate-100">
-            <div className="rounded-xl border border-blue-100 bg-blue-50/50 p-4">
-              <div className="flex items-center gap-2 text-xs font-semibold text-blue-900 mb-1">
-                <Sparkles className="h-4 w-4 text-blue-600" />
-                <span>Want to explore without registering?</span>
+          <div className="pt-4 border-t border-slate-100">
+            <div className="rounded-xl border border-blue-100 bg-blue-50/50 p-4 space-y-2.5">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-1.5 text-xs font-semibold text-blue-900">
+                  <Sparkles className="h-3.5 w-3.5 text-blue-600" />
+                  <span>Evaluating the Shopper Flow?</span>
+                </div>
+                <Badge variant="blue" size="sm">1-Click</Badge>
               </div>
-              <p className="text-[11px] text-slate-600 mb-3 leading-relaxed">
-                Use preloaded demo customer data with seeded order history and recommendations.
+              <p className="text-[11px] text-slate-600 leading-relaxed">
+                Sign in as <strong>Priya Sharma</strong> with preloaded purchase history and bundle preferences.
               </p>
-              <button
-                onClick={handleDemoCustomer}
-                disabled={loading || demoLoading}
+              <Button
                 type="button"
-                className="w-full rounded-lg bg-white border border-blue-200 px-3.5 py-2 text-xs font-semibold text-blue-700 hover:bg-blue-50 disabled:opacity-50 transition-colors flex items-center justify-center gap-2 shadow-sm"
+                variant="outline"
+                size="sm"
+                className="w-full bg-white"
+                onClick={handleDemoCustomer}
+                loading={demoLoading}
+                disabled={loading || demoLoading}
+                icon={<UserCheck className="h-3.5 w-3.5 text-blue-600" />}
               >
-                {demoLoading ? (
-                  <>
-                    <Loader2 className="h-3.5 w-3.5 animate-spin text-blue-600" />
-                    <span>Loading Demo Customer...</span>
-                  </>
-                ) : (
-                  <>
-                    <UserCheck className="h-3.5 w-3.5 text-blue-600" />
-                    <span>Try Demo Customer (Priya Sharma)</span>
-                  </>
-                )}
-              </button>
+                Try Demo Customer (Priya Sharma)
+              </Button>
             </div>
           </div>
 
-          <div className="mt-6 flex flex-col items-center gap-2 text-center text-xs text-slate-500">
+          <div className="flex flex-col items-center gap-2 text-center text-xs text-slate-500 pt-2 border-t border-slate-100">
             <div>
               Don&apos;t have an account?{' '}
               <Link
@@ -196,7 +191,7 @@ function CustomerLoginForm() {
             </div>
             <Link
               href="/shop"
-              className="inline-flex items-center gap-1 text-[11px] text-slate-500 hover:text-slate-800 transition-colors mt-2"
+              className="inline-flex items-center gap-1 text-[11px] text-slate-500 hover:text-slate-800 transition-colors mt-1"
             >
               <ArrowLeft className="h-3 w-3" />
               <span>Just exploring? Continue shopping</span>
@@ -231,3 +226,4 @@ export default function CustomerLoginPage() {
     </Suspense>
   );
 }
+

@@ -11,6 +11,7 @@ import {
   Loader2,
   CheckCircle2,
 } from 'lucide-react';
+import { Badge, Button } from '@/components/ui';
 
 function CustomerSignupForm() {
   const router = useRouter();
@@ -69,34 +70,36 @@ function CustomerSignupForm() {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-slate-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 selection:bg-blue-600 selection:text-white">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <Link href="/" className="flex justify-center items-center gap-2.5 mb-6 group">
-          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 text-white font-bold shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
+          <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-blue-600 text-white font-bold shadow-md shadow-blue-500/20 group-hover:scale-105 transition-transform">
             <ShoppingBag className="h-5 w-5" />
           </div>
           <span className="font-extrabold text-2xl tracking-tight text-slate-900">RAYFLOW</span>
         </Link>
-        <h2 className="text-center text-2xl font-bold tracking-tight text-slate-900">
-          Create Shopper Account
-        </h2>
-        <p className="mt-1.5 text-center text-xs text-slate-500">
-          Get exclusive AI bundle discounts and track your orders
-        </p>
+        <div className="text-center space-y-1">
+          <h2 className="text-2xl font-bold tracking-tight text-slate-900">
+            Create Shopper Account
+          </h2>
+          <p className="text-xs text-slate-500">
+            Get personalized gear bundles and track your Razorpay orders
+          </p>
+        </div>
       </div>
 
       <div className="mt-6 sm:mx-auto sm:w-full sm:max-w-md px-4 sm:px-0">
-        <div className="bg-white py-8 px-6 sm:px-8 shadow-sm border border-slate-200/80 rounded-2xl">
+        <div className="bg-white py-8 px-6 sm:px-8 shadow-2xs border border-slate-200 rounded-2xl space-y-5">
           {error && (
-            <div className="mb-5 flex items-center gap-2 rounded-xl bg-red-50 p-3.5 text-xs text-red-700 border border-red-200">
-              <AlertCircle className="h-4 w-4 flex-shrink-0" />
+            <div className="flex items-center gap-2 rounded-xl bg-rose-50 p-3.5 text-xs text-rose-700 border border-rose-200">
+              <AlertCircle className="h-4 w-4 flex-shrink-0 text-rose-600" />
               <span>{error}</span>
             </div>
           )}
 
           <form onSubmit={handleSignUp} className="space-y-4">
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                 Full Name
               </label>
               <input
@@ -110,7 +113,7 @@ function CustomerSignupForm() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                 Email address
               </label>
               <input
@@ -124,7 +127,7 @@ function CustomerSignupForm() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                 Phone Number (optional)
               </label>
               <input
@@ -137,7 +140,7 @@ function CustomerSignupForm() {
             </div>
 
             <div>
-              <label className="block text-xs font-semibold text-slate-700 mb-1">
+              <label className="block text-xs font-semibold text-slate-700 mb-1.5">
                 Password
               </label>
               <input
@@ -151,26 +154,20 @@ function CustomerSignupForm() {
               />
             </div>
 
-            <button
+            <Button
               type="submit"
+              variant="primary"
+              size="md"
+              className="w-full"
+              loading={loading}
               disabled={loading}
-              className="w-full rounded-xl bg-blue-600 px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-blue-500 disabled:opacity-50 transition-all flex items-center justify-center gap-2 mt-2"
+              icon={<ArrowRight className="h-4 w-4" />}
             >
-              {loading ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <span>Creating Account...</span>
-                </>
-              ) : (
-                <>
-                  <span>Create Account & Continue</span>
-                  <ArrowRight className="h-4 w-4" />
-                </>
-              )}
-            </button>
+              Create Account & Continue
+            </Button>
           </form>
 
-          <div className="mt-6 text-center text-xs text-slate-500 border-t border-slate-100 pt-6">
+          <div className="text-center text-xs text-slate-500 border-t border-slate-100 pt-4">
             Already have an account?{' '}
             <Link
               href={`/customer/login?callbackUrl=${encodeURIComponent(callbackUrl)}`}
@@ -198,3 +195,4 @@ export default function CustomerSignupPage() {
     </Suspense>
   );
 }
+

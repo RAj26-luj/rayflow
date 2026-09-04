@@ -15,11 +15,17 @@ import {
   Layers,
   ArrowRight,
   Info,
+  RefreshCw,
 } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { ApprovalDrawer } from '@/components/opportunities/ApprovalDrawer';
-import { RevenueOpportunity, OpportunityType } from '@/lib/types';
+import { RevenueOpportunity } from '@/lib/types';
 import { formatINR } from '@/lib/utils';
+import { PageShell, SectionHeader } from '@/components/ui/SectionHeader';
+import { ActionButton, SecondaryButton, GhostButton } from '@/components/ui/Button';
+import { StatusBadge } from '@/components/ui/Badge';
+import { EmptyState, LoadingState } from '@/components/ui/Feedback';
 
 export default function OpportunitiesPage() {
   const [opportunities, setOpportunities] = useState<RevenueOpportunity[]>([]);
@@ -87,50 +93,51 @@ export default function OpportunitiesPage() {
 
   return (
     <DashboardLayout>
-      <div className="space-y-5 sm:space-y-6">
+      <PageShell>
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
-          <div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 uppercase tracking-wider">
-              <TrendingUp className="h-3.5 w-3.5" />
-              Revenue Opportunities
+        <SectionHeader
+          title="Revenue Opportunities"
+          description="Discovered revenue opportunities based on customer cohort and catalogue affinity."
+          badge={{ text: 'Growth Pipeline', variant: 'blue' }}
+          action={
+            <div className="flex items-center gap-3">
+              <div className="rounded-2xl border border-slate-200/80 bg-white px-4 py-2 text-xs font-medium text-slate-700 shadow-2xs">
+                Total Potential: <strong className="text-emerald-600 font-extrabold font-mono ml-1">{formatINR(totalPotential)}</strong>
+              </div>
+              <SecondaryButton size="sm" onClick={() => fetchOpps()} leftIcon={<RefreshCw className="h-3.5 w-3.5" />}>
+                Refresh
+              </SecondaryButton>
             </div>
-            <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 mt-1">
-              Revenue Opportunities
-            </h1>
-            <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              Potential ways to increase sales based on customer and catalogue activity.
-            </p>
-          </div>
-
-          <div className="flex items-center gap-3 self-start sm:self-auto">
-            <div className="rounded-lg border border-slate-200 bg-white px-3 py-1.5 text-xs font-medium text-slate-700 shadow-2xs">
-              Total Potential: <strong className="text-emerald-700 font-bold ml-1">{formatINR(totalPotential)}</strong>
-            </div>
-          </div>
-        </div>
+          }
+        />
 
         {/* Contextual Guide Card */}
-        <div className="rounded-xl border border-blue-100 bg-blue-50/50 p-3.5 sm:p-4 text-xs text-blue-900 flex items-start gap-3">
-          <Info className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
+        <div className="rounded-3xl border border-blue-100 bg-blue-50/50 p-4 sm:p-5 text-xs text-blue-950 flex items-start gap-3.5">
+          <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-600 text-white flex-shrink-0 mt-0.5">
+            <Info className="h-4 w-4" />
+          </div>
           <div className="space-y-1">
-            <div className="font-bold text-blue-950">About these opportunities</div>
-            <p className="text-slate-600 text-[11px] sm:text-xs leading-relaxed">
-              These opportunities are based on product, customer, and checkout activity. Review the expected impact, simulate the result, and approve changes before they go live.
+            <div className="font-bold text-slate-900 text-sm">Opportunity Discovery & Execution</div>
+            <p className="text-slate-600 text-xs leading-relaxed">
+              Every identified opportunity is bounded by strict margin floors (≥60%) and merchant budget caps. Simulate before execution to preview projected order volume and cohort response.
             </p>
           </div>
         </div>
 
         {/* Notification Banner */}
         {notification && (
-          <div className="rounded-xl border border-blue-200 bg-blue-50 p-3 sm:p-4 text-xs text-blue-900 flex items-center gap-2 animate-in fade-in">
+          <motion.div
+            initial={{ opacity: 0, y: -6 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="rounded-2xl border border-blue-200 bg-blue-50/90 p-4 text-xs text-blue-950 flex items-center gap-2.5 shadow-xs"
+          >
             <CheckCircle2 className="h-4 w-4 text-blue-600 flex-shrink-0" />
-            <span className="font-semibold">{notification}</span>
-          </div>
+            <span className="font-bold">{notification}</span>
+          </motion.div>
         )}
 
         {/* Filter Chips with mobile horizontal scroll */}
-        <div className="flex items-center gap-2 border-b border-slate-200 pb-3 overflow-x-auto no-scrollbar">
+        <div className="flex items-center gap-2 border-b border-slate-100 pb-3 overflow-x-auto no-scrollbar">
           {[
             { id: 'ALL', label: 'All Opportunities' },
             { id: 'UPSELL', label: 'High-Intent Upsell' },
@@ -141,10 +148,10 @@ export default function OpportunitiesPage() {
             <button
               key={tab.id}
               onClick={() => setActiveFilter(tab.id)}
-              className={`flex-shrink-0 rounded-lg px-3 py-1.5 text-xs font-medium transition-all ${
+              className={`flex-shrink-0 rounded-2xl px-4 py-2 text-xs font-bold transition-all ${
                 activeFilter === tab.id
-                  ? 'bg-blue-600 text-white font-semibold shadow-xs'
-                  : 'bg-white border border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-slate-900'
+                  ? 'bg-blue-600 text-white shadow-xs'
+                  : 'bg-white border border-slate-200/80 text-slate-600 hover:bg-slate-50 hover:text-slate-900'
               }`}
             >
               {tab.label}
@@ -153,186 +160,175 @@ export default function OpportunitiesPage() {
         </div>
 
         {/* Opportunities Feed List */}
-        <div className="space-y-4">
-          {filteredOpps.length === 0 && (
-            <div className="rounded-xl border border-slate-200 bg-white p-8 text-center shadow-xs">
-              <Sparkles className="h-8 w-8 mx-auto text-slate-300 mb-2" />
-              <div className="font-semibold text-slate-800 text-sm">No Revenue Opportunities Pending</div>
-              <p className="text-xs text-slate-500 max-w-sm mx-auto mt-1 mb-4">
-                Opportunities will appear here when product affinity correlations or abandoned checkouts are detected.
-              </p>
-              <button
-                onClick={() => fetchOpps()}
-                className="rounded-lg border border-slate-200 bg-slate-50 px-3.5 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-100 transition-colors"
+        {loading && opportunities.length === 0 ? (
+          <LoadingState message="Loading opportunities..." />
+        ) : filteredOpps.length === 0 ? (
+          <EmptyState
+            title="No Opportunities Found"
+            description="Opportunities will appear here when product affinity correlations or abandoned checkouts are detected."
+            action={{
+              label: 'Refresh Feed',
+              onClick: () => fetchOpps(),
+            }}
+          />
+        ) : (
+          <div className="space-y-4">
+            {filteredOpps.map((opp) => (
+              <motion.div
+                key={opp.id}
+                whileHover={{ y: -2 }}
+                transition={{ duration: 0.2 }}
+                className={`rounded-3xl border bg-white p-5 sm:p-6 shadow-xs transition-all ${
+                  opp.status === 'EXECUTED'
+                    ? 'border-emerald-200 bg-emerald-50/20'
+                    : opp.status === 'APPROVED'
+                    ? 'border-indigo-200 bg-indigo-50/20'
+                    : opp.status === 'SIMULATED'
+                    ? 'border-purple-200 bg-purple-50/20'
+                    : opp.status === 'REJECTED'
+                    ? 'border-slate-200 opacity-60'
+                    : 'border-slate-200/80 hover:border-blue-300 hover:shadow-md'
+                }`}
               >
-                Refresh Opportunities
-              </button>
-            </div>
-          )}
-          {filteredOpps.map((opp) => (
-            <div
-              key={opp.id}
-              className={`rounded-xl border bg-white p-4 sm:p-6 shadow-xs transition-all ${
-                opp.status === 'EXECUTED'
-                  ? 'border-emerald-200 bg-emerald-50/20'
-                  : opp.status === 'APPROVED'
-                  ? 'border-indigo-200 bg-indigo-50/20'
-                  : opp.status === 'SIMULATED'
-                  ? 'border-purple-200 bg-purple-50/20'
-                  : opp.status === 'REJECTED'
-                  ? 'border-slate-200 opacity-60'
-                  : 'border-slate-200 hover:border-slate-300'
-              }`}
-            >
-              <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-4 sm:gap-6">
-                {/* Left Side: Metadata & Reasoning */}
-                <div className="space-y-3 flex-1">
-                  <div className="flex flex-wrap items-center gap-2">
-                    <span className="rounded-full bg-blue-50 border border-blue-200 px-2 sm:px-2.5 py-0.5 text-[10px] sm:text-[11px] font-bold text-blue-700 uppercase tracking-wide">
-                      {opp.type.replace('_', ' ')}
-                    </span>
-                    <span className="text-xs text-slate-500">•</span>
-                    <span className="text-xs font-semibold text-slate-700">
-                      {opp.affectedCustomerCohort}
-                    </span>
-                    {opp.status === 'EXECUTED' && (
-                      <span className="rounded-full bg-emerald-100 text-emerald-800 px-2 py-0.5 text-[10px] font-bold border border-emerald-200">
-                        ACTIVE ✓
+                <div className="flex flex-col lg:flex-row lg:items-start justify-between gap-5 sm:gap-6">
+                  {/* Left Side: Metadata & Reasoning */}
+                  <div className="space-y-3.5 flex-1">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="rounded-xl bg-blue-50 border border-blue-200/60 px-2.5 py-0.5 text-[10px] font-bold text-blue-700 uppercase tracking-wide">
+                        {opp.type.replace(/_/g, ' ')}
                       </span>
-                    )}
-                    {opp.status === 'APPROVED' && (
-                      <span className="rounded-full bg-indigo-100 text-indigo-800 px-2 py-0.5 text-[10px] font-bold border border-indigo-200">
-                        APPROVED
+                      <span className="text-xs text-slate-400">•</span>
+                      <span className="text-xs font-semibold text-slate-700">
+                        {opp.affectedCustomerCohort}
                       </span>
-                    )}
-                    {opp.status === 'SIMULATED' && (
-                      <span className="rounded-full bg-purple-100 text-purple-800 px-2 py-0.5 text-[10px] font-bold border border-purple-200">
-                        SIMULATED
-                      </span>
-                    )}
-                    {opp.status === 'REJECTED' && (
-                      <span className="rounded-full bg-slate-100 text-slate-600 px-2 py-0.5 text-[10px] font-medium border border-slate-200">
-                        DISMISSED
-                      </span>
-                    )}
-                  </div>
-
-                  <div>
-                    <h2 className="text-sm sm:text-base font-bold text-slate-900">{opp.title}</h2>
-                    <p className="text-xs text-slate-500 mt-0.5">{opp.description}</p>
-                  </div>
-
-                  {/* Recommended Action Box */}
-                  <div className="rounded-lg border border-blue-100 bg-blue-50/50 p-3 sm:p-3.5 space-y-1.5 text-xs">
-                    <div className="font-bold text-blue-900 flex items-center gap-1.5">
-                      <Zap className="h-3.5 w-3.5 text-blue-600" />
-                      Recommended action
+                      <StatusBadge status={opp.status} size="sm" />
                     </div>
-                    <p className="text-slate-700 font-medium leading-relaxed text-[11px] sm:text-xs">
-                      &quot;{opp.recommendedAction}&quot;
-                    </p>
-                  </div>
 
-                  {/* Evidence & Policy Status */}
-                  <div className="text-[11px] sm:text-xs text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-100">
-                    <span className="font-semibold text-slate-800">Why: </span>
-                    <span>{opp.reasoning}</span>
-                  </div>
-                </div>
-
-                {/* Right Side: Key Metrics & Action Panel */}
-                <div className="lg:w-72 flex-shrink-0 flex flex-col justify-between border-t lg:border-t-0 lg:border-l border-slate-100 pt-4 lg:pt-0 lg:pl-6 space-y-3 sm:space-y-4">
-                  <div className="space-y-2.5 sm:space-y-3">
                     <div>
-                      <div className="text-[10px] sm:text-[11px] font-medium text-slate-500">Estimated Additional Revenue</div>
-                      <div className="text-lg sm:text-xl font-bold text-emerald-600 mt-0.5">
-                        {formatINR(opp.expectedRevenue)}
-                      </div>
+                      <h2 className="text-base sm:text-lg font-bold text-slate-900">{opp.title}</h2>
+                      <p className="text-xs text-slate-500 mt-0.5">{opp.description}</p>
                     </div>
 
-                    <div className="grid grid-cols-2 gap-2 text-xs">
-                      <div className="p-2 rounded bg-slate-50 border border-slate-100">
-                        <div className="text-[10px] text-slate-400">Confidence</div>
-                        <div className="font-bold text-blue-700">{opp.confidence}%</div>
+                    {/* Recommended Action Box */}
+                    <div className="rounded-2xl border border-blue-100 bg-blue-50/50 p-4 space-y-1.5 text-xs">
+                      <div className="font-bold text-blue-900 flex items-center gap-1.5">
+                        <Zap className="h-3.5 w-3.5 text-blue-600" />
+                        Recommended Action
                       </div>
-                      <div className="p-2 rounded bg-slate-50 border border-slate-100">
-                        <div className="text-[10px] text-slate-400">Audience</div>
-                        <div className="font-bold text-slate-800">{opp.affectedCustomersCount} customers</div>
-                      </div>
+                      <p className="text-slate-700 font-medium leading-relaxed text-xs">
+                        &quot;{opp.recommendedAction}&quot;
+                      </p>
                     </div>
 
-                    <div className="rounded p-2 bg-emerald-50 border border-emerald-100 text-[10px] sm:text-[11px] text-emerald-800 flex items-center gap-1.5 font-medium">
-                      <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 flex-shrink-0" />
-                      <span className="truncate">{opp.policyNotes || 'Within policy limits ✓'}</span>
+                    {/* Evidence & Policy Status */}
+                    <div className="text-xs text-slate-600 leading-relaxed bg-slate-50/80 p-3.5 rounded-2xl border border-slate-100">
+                      <span className="font-bold text-slate-900">Why this matters: </span>
+                      <span>{opp.reasoning}</span>
                     </div>
                   </div>
 
-                  {/* Action Buttons */}
-                  <div className="flex flex-col gap-2 pt-1">
-                    {opp.status === 'PENDING' ? (
-                      <>
-                        <button
-                          onClick={() => handleOpenApproval(opp)}
-                          className="w-full rounded-lg bg-blue-600 py-2 text-xs font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors flex items-center justify-center gap-1.5"
-                        >
-                          <CheckCircle2 className="h-3.5 w-3.5" />
-                          <span>Review</span>
-                        </button>
+                  {/* Right Side: Key Metrics & Action Panel */}
+                  <div className="lg:w-72 flex-shrink-0 flex flex-col justify-between border-t lg:border-t-0 lg:border-l border-slate-100 pt-4 lg:pt-0 lg:pl-6 space-y-4">
+                    <div className="space-y-3">
+                      <div>
+                        <div className="text-[10px] uppercase font-semibold text-slate-400">Est. Additional Revenue</div>
+                        <div className="text-xl sm:text-2xl font-extrabold text-emerald-600 font-mono mt-0.5">
+                          {formatINR(opp.expectedRevenue)}
+                        </div>
+                      </div>
 
-                        <div className="flex items-center gap-2">
-                          <button
+                      <div className="grid grid-cols-2 gap-2 text-xs">
+                        <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                          <div className="text-[10px] uppercase font-semibold text-slate-400">Confidence</div>
+                          <div className="font-bold text-blue-600 font-mono text-sm mt-0.5">{opp.confidence}%</div>
+                        </div>
+                        <div className="p-2.5 rounded-xl bg-slate-50 border border-slate-100">
+                          <div className="text-[10px] uppercase font-semibold text-slate-400">Audience</div>
+                          <div className="font-bold text-slate-900 text-sm mt-0.5">{opp.affectedCustomersCount}</div>
+                        </div>
+                      </div>
+
+                      <div className="rounded-xl p-2.5 bg-emerald-50 border border-emerald-200/80 text-[11px] text-emerald-800 flex items-center gap-1.5 font-bold">
+                        <ShieldCheck className="h-3.5 w-3.5 text-emerald-600 flex-shrink-0" />
+                        <span className="truncate">{opp.policyNotes || 'Within policy limits ✓'}</span>
+                      </div>
+                    </div>
+
+                    {/* Action Buttons */}
+                    <div className="flex flex-col gap-2 pt-1">
+                      {opp.status === 'PENDING' ? (
+                        <>
+                          <ActionButton
                             onClick={() => handleOpenApproval(opp)}
-                            className="flex-1 rounded-lg border border-slate-200 bg-white py-1.5 text-xs font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+                            size="sm"
+                            className="w-full"
+                            leftIcon={<CheckCircle2 className="h-3.5 w-3.5" />}
                           >
-                            Simulate
-                          </button>
-                          <button
+                            Review Opportunity
+                          </ActionButton>
+
+                          <div className="flex items-center gap-2">
+                            <SecondaryButton
+                              onClick={() => handleOpenApproval(opp)}
+                              size="sm"
+                              className="flex-1"
+                            >
+                              Simulate
+                            </SecondaryButton>
+                            <GhostButton
+                              onClick={() => handleReject(opp.id)}
+                              size="sm"
+                              className="text-slate-400"
+                            >
+                              Dismiss
+                            </GhostButton>
+                          </div>
+                        </>
+                      ) : opp.status === 'SIMULATED' ? (
+                        <>
+                          <ActionButton
+                            onClick={() => handleOpenApproval(opp)}
+                            size="sm"
+                            className="w-full"
+                            leftIcon={<CheckCircle2 className="h-3.5 w-3.5" />}
+                          >
+                            Approve Opportunity
+                          </ActionButton>
+                          <SecondaryButton
                             onClick={() => handleReject(opp.id)}
-                            className="px-3 rounded-lg border border-slate-200 py-1.5 text-xs font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-colors"
+                            size="sm"
+                            className="w-full"
                           >
                             Dismiss
-                          </button>
-                        </div>
-                      </>
-                    ) : opp.status === 'SIMULATED' ? (
-                      <>
-                        <button
+                          </SecondaryButton>
+                        </>
+                      ) : opp.status === 'APPROVED' ? (
+                        <ActionButton
+                          variant="emerald"
                           onClick={() => handleOpenApproval(opp)}
-                          className="w-full rounded-lg bg-blue-600 py-2 text-xs font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors flex items-center justify-center gap-1.5"
+                          size="sm"
+                          className="w-full"
+                          leftIcon={<Zap className="h-3.5 w-3.5" />}
                         >
-                          <CheckCircle2 className="h-3.5 w-3.5" />
-                          <span>Approve Opportunity</span>
-                        </button>
-                        <button
-                          onClick={() => handleReject(opp.id)}
-                          className="w-full rounded-lg border border-slate-200 bg-white py-1.5 text-xs font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-700 transition-colors"
+                          Execute Opportunity
+                        </ActionButton>
+                      ) : (
+                        <SecondaryButton
+                          onClick={() => handleOpenApproval(opp)}
+                          size="sm"
+                          className="w-full"
                         >
-                          Dismiss
-                        </button>
-                      </>
-                    ) : opp.status === 'APPROVED' ? (
-                      <button
-                        onClick={() => handleOpenApproval(opp)}
-                        className="w-full rounded-lg bg-emerald-600 py-2 text-xs font-semibold text-white shadow-xs hover:bg-emerald-700 transition-colors flex items-center justify-center gap-1.5"
-                      >
-                        <Zap className="h-3.5 w-3.5" />
-                        <span>Execute Opportunity</span>
-                      </button>
-                    ) : (
-                      <button
-                        onClick={() => handleOpenApproval(opp)}
-                        className="w-full rounded-lg border border-slate-200 bg-white py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors"
-                      >
-                        View Details
-                      </button>
-                    )}
+                          View Details
+                        </SecondaryButton>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+              </motion.div>
+            ))}
+          </div>
+        )}
+      </PageShell>
 
       {/* Interactive Approval Drawer */}
       <ApprovalDrawer
@@ -344,3 +340,4 @@ export default function OpportunitiesPage() {
     </DashboardLayout>
   );
 }
+
