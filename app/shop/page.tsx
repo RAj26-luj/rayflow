@@ -74,11 +74,11 @@ export default function AmazonStyleShopPage() {
       id: 'msg_welcome',
       role: 'assistant',
       content:
-        '👋 Welcome to **RAYFLOW Storefront Copilot**!\n\nTell me what sports gear you are looking for, your budget, or your training goals, and I will find the best match and calculate bundle discounts for you.',
+        "Hello! I'm your **Shopping Assistant**.\n\nTell me what you're looking for (for example: *\"Running shoes for marathon training under ₹6,000\"* or *\"Hydration and activewear bundle\"*) and I'll find matching gear with bundle discounts for you.",
       suggestedReplies: [
-        'Show me marathon running gear under ₹6,000.',
-        'Find products with exclusive bundle savings.',
-        'What high-performance running socks are available?',
+        'Running shoes under ₹6,000',
+        'Hydration flask and socks bundle',
+        'Top-rated marathon gear',
       ],
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
@@ -439,18 +439,18 @@ export default function AmazonStyleShopPage() {
           </div>
         )}
 
-        {/* 2. Amazon-Style Search & AI Hero Banner */}
+        {/* 2. Amazon-Style Search & Hero Banner */}
         <div className="relative rounded-3xl bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 p-6 sm:p-10 text-white shadow-xl overflow-hidden">
           <div className="relative z-10 max-w-2xl space-y-4">
             <div className="inline-flex items-center gap-2 rounded-full bg-blue-500/20 border border-blue-400/30 px-3 py-1 text-[11px] font-bold text-blue-200 uppercase tracking-wider">
               <Sparkles className="h-3.5 w-3.5 text-blue-300" />
-              Autonomous Shopping & AI Bundles
+              Smart Shopping & Bundle Savings
             </div>
             <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight">
-              Premium Athletic Gear with AI-Negotiated Bundle Savings
+              Premium Athletic Gear with Smart Bundle Discounts
             </h1>
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed">
-              Browse top performance shoes, apparel, and recovery tech. Ask our AI Shopping Copilot to configure tailored gear bundles with verified merchant discounts.
+              Browse top performance shoes, apparel, and recovery gear. Ask our Shopping Assistant to configure tailored gear bundles with verified merchant discounts.
             </p>
 
             {/* Interactive Search Bar */}
@@ -479,14 +479,14 @@ export default function AmazonStyleShopPage() {
                 className="w-full sm:w-auto rounded-xl bg-gradient-to-r from-blue-500 to-indigo-600 px-4 py-2.5 text-xs font-bold text-white shadow-lg hover:from-blue-600 hover:to-indigo-700 transition-all flex items-center justify-center gap-2 flex-shrink-0"
               >
                 <Bot className="h-4 w-4" />
-                <span>Ask AI Copilot</span>
+                <span>Ask Assistant</span>
               </button>
             </div>
 
             {/* Quick Suggestion Chips */}
             <div className="flex flex-wrap gap-1.5 pt-1 text-[11px]">
               <span className="text-slate-400">Try searching:</span>
-              {['Running Shoes under ₹5,000', 'Hydration Bottle', 'Recovery Roller', 'Marathon Bundle'].map(
+              {['Running Shoes under ₹6,000', 'Hydration Bottle', 'Recovery Roller', 'Marathon Bundle'].map(
                 (term) => (
                   <button
                     key={term}
@@ -525,7 +525,7 @@ export default function AmazonStyleShopPage() {
           ))}
         </div>
 
-        {/* 4. AI-Negotiated Featured Bundles Spotlight */}
+        {/* 4. Featured Bundle Spotlight */}
         {selectedCategory === 'ALL' && products.length >= 2 && (
           <div className="rounded-2xl border border-indigo-100 bg-gradient-to-br from-indigo-50/60 to-blue-50/40 p-5 sm:p-6 shadow-xs space-y-4">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
@@ -535,15 +535,15 @@ export default function AmazonStyleShopPage() {
                 </div>
                 <div>
                   <h2 className="text-sm sm:text-base font-bold text-slate-900">
-                    AI Curated Bundle — Velocity Runner + Performance Socks
+                    Curated Bundle — Velocity Runner + Performance Socks
                   </h2>
                   <p className="text-xs text-slate-500">
-                    Co-purchase affinity score: 94% • 15% Instant Merchant Bundle Discount
+                    High-affinity pairing • 15% Instant Multi-Item Bundle Discount
                   </p>
                 </div>
               </div>
               <span className="self-start sm:self-auto rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200 px-2.5 py-1 text-[11px] font-bold">
-                Save ₹935 Instantly
+                Save 15% on Bundle
               </span>
             </div>
 
@@ -834,19 +834,19 @@ export default function AmazonStyleShopPage() {
         </div>
       )}
 
-      {/* 7. AI Shopping Copilot Modal / Drawer */}
+      {/* 7. Shopping Assistant Modal / Drawer */}
       {isAiCopilotOpen && (
         <div className="fixed inset-0 z-50 overflow-hidden bg-slate-900/50 backdrop-blur-xs flex justify-end animate-in fade-in duration-200">
           <div className="w-full max-w-lg bg-slate-900 text-white h-full shadow-2xl flex flex-col justify-between overflow-y-auto animate-in slide-in-from-right duration-300">
-            {/* Copilot Header */}
+            {/* Assistant Header */}
             <div className="p-4 sm:p-5 border-b border-slate-800 flex items-center justify-between sticky top-0 bg-slate-900/95 backdrop-blur z-10">
               <div className="flex items-center gap-2.5">
                 <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 text-white font-bold text-xs">
-                  <Sparkles className="h-4 w-4" />
+                  <Bot className="h-4 w-4" />
                 </div>
                 <div>
-                  <h3 className="font-bold text-white text-sm">AI Shopping Copilot</h3>
-                  <p className="text-[10px] text-slate-400">Natural-Language Gear Discovery & Bundles</p>
+                  <h3 className="font-bold text-white text-sm">Shopping Assistant</h3>
+                  <p className="text-[10px] text-slate-400">Personalized Product Discovery & Bundle Savings</p>
                 </div>
               </div>
               <button

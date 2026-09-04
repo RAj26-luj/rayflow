@@ -55,7 +55,7 @@ export default function AgentPage() {
       id: 'msg_welcome',
       role: 'assistant',
       content:
-        'Hello! I am your **Autonomous Revenue Agent**.\n\nI continuously monitor your catalogue inventory, customer intent scores, and Razorpay payment streams to formulate bounded revenue opportunities.\n\nAsk me anything about product bundles, checkout drop-offs, or test simulated policy constraints below.',
+        "Hello! I am your **Revenue Growth Assistant**.\n\nI analyze your catalogue inventory, customer purchase affinity, and Razorpay checkout trends to formulate bounded revenue recommendations.\n\nAsk me about product bundling strategies, checkout recovery campaigns, or simulate policy limits.",
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ]);
@@ -144,14 +144,14 @@ export default function AgentPage() {
             </div>
             <div>
               <div className="flex items-center gap-1.5 sm:gap-2">
-                <h1 className="font-bold text-slate-900 text-sm sm:text-base">Revenue Agent</h1>
+                <h1 className="font-bold text-slate-900 text-sm sm:text-base">Revenue Growth Assistant</h1>
                 <span className="flex items-center gap-1 rounded-full bg-emerald-50 px-2 py-0.5 text-[9px] sm:text-[10px] font-bold text-emerald-700 border border-emerald-200">
                   <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
-                  Active Policy Guard
+                  Policy Constrained
                 </span>
               </div>
               <p className="text-[10px] sm:text-xs text-slate-500 line-clamp-1">
-                Bounded by 20% discount & ₹50,000 budget policies.
+                Constrained by 20% discount cap and ₹50,000 budget policy bounds.
               </p>
             </div>
           </div>

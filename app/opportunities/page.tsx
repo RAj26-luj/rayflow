@@ -92,14 +92,14 @@ export default function OpportunitiesPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 sm:gap-4">
           <div>
             <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 uppercase tracking-wider">
-              <Sparkles className="h-3.5 w-3.5" />
-              Autonomous Revenue Feed
+              <TrendingUp className="h-3.5 w-3.5" />
+              Store Revenue Intelligence
             </div>
             <h1 className="text-xl sm:text-2xl font-bold tracking-tight text-slate-900 mt-1">
-              AI Revenue Opportunities
+              Revenue Opportunities
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              High-confidence revenue interventions generated from merchant data and policy guards.
+              Actionable revenue interventions recommended from catalogue co-purchase data and checkout trends.
             </p>
           </div>
 
@@ -114,9 +114,9 @@ export default function OpportunitiesPage() {
         <div className="rounded-xl border border-blue-100 bg-blue-50/50 p-3.5 sm:p-4 text-xs text-blue-900 flex items-start gap-3">
           <Info className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
           <div className="space-y-1">
-            <div className="font-bold text-blue-950">What are Revenue Opportunities?</div>
+            <div className="font-bold text-blue-950">How Revenue Opportunities Work</div>
             <p className="text-slate-600 text-[11px] sm:text-xs leading-relaxed">
-              These are high-probability revenue interventions autonomously detected by RAYFLOW across your catalogue and customer intent data. You can simulate their revenue uplift using Monte Carlo models, review policy constraints, and approve them with a cryptographically verifiable audit trail.
+              These are data-backed revenue interventions identified across your catalogue and customer checkout behavior. You can simulate their revenue uplift, verify discount policy bounds, and approve them with an immutable audit trail.
             </p>
           </div>
         </div>

@@ -120,14 +120,14 @@ export default function OverviewPage() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 uppercase tracking-wider">
-              <Sparkles className="h-3.5 w-3.5" />
-              Autonomous Revenue Copilot
+              <TrendingUp className="h-3.5 w-3.5" />
+              Merchant Performance Dashboard
             </div>
             <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight text-slate-900 mt-1">
-              Good evening, {session?.user?.name ? session.user.name.split(' ')[0] : 'Merchant'}
+              Welcome back, {session?.user?.name ? session.user.name.split(' ')[0] : 'Merchant'}
             </h1>
             <p className="text-xs sm:text-sm text-slate-500 mt-1">
-              Your revenue agent found <strong className="text-slate-800 font-semibold">{opportunities.filter(o => o.status === 'PENDING').length} opportunities</strong> today across catalogue and checkout sessions.
+              You have <strong className="text-slate-800 font-semibold">{opportunities.filter(o => o.status === 'PENDING').length} revenue opportunities</strong> ready for review across catalogue and checkout sessions.
             </p>
           </div>
 
@@ -137,14 +137,14 @@ export default function OverviewPage() {
               className="flex-1 sm:flex-none justify-center rounded-lg border border-slate-200 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-2xs flex items-center gap-1.5"
             >
               <Zap className="h-3.5 w-3.5 text-blue-600" />
-              <span>Ask Growth Agent</span>
+              <span>Revenue Assistant</span>
             </Link>
             <Link
               href="/opportunities"
               className="flex-1 sm:flex-none justify-center rounded-lg bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-blue-700 transition-colors flex items-center gap-1.5"
             >
               <Sparkles className="h-3.5 w-3.5" />
-              <span>Explore Opportunities</span>
+              <span>Review Opportunities</span>
             </Link>
           </div>
         </div>
@@ -153,40 +153,40 @@ export default function OverviewPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
           {/* Card 1: Revenue Influenced */}
           <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-xs relative overflow-hidden">
-            <div className="text-xs font-medium text-slate-500">Revenue Influenced</div>
+            <div className="text-xs font-medium text-slate-500">Gross Revenue Influenced</div>
             <div className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
               {formatINR(metrics?.revenueInfluenced ?? 0)}
             </div>
             <div className="mt-2 flex items-center gap-1.5 text-xs text-emerald-600 font-medium">
               <TrendingUp className="h-3.5 w-3.5" />
-              <span>Real-time settled gross</span>
+              <span>Settled orders via Razorpay</span>
             </div>
-            <div className="text-[10px] text-slate-400 mt-1">From AI bundles & upsells</div>
+            <div className="text-[10px] text-slate-400 mt-1">From smart bundles & upsell actions</div>
           </div>
 
           {/* Card 2: Revenue Recovered */}
           <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-xs relative overflow-hidden">
-            <div className="text-xs font-medium text-slate-500">Revenue Recovered</div>
+            <div className="text-xs font-medium text-slate-500">Recovered Revenue</div>
             <div className="text-xl sm:text-2xl font-bold text-slate-900 mt-1">
               {formatINR(metrics?.revenueRecovered ?? 0)}
             </div>
             <div className="mt-2 flex items-center gap-1.5 text-xs text-blue-600 font-medium">
               <CheckCircle2 className="h-3.5 w-3.5" />
-              <span>Saved checkouts</span>
+              <span>Recovered drop-offs</span>
             </div>
-            <div className="text-[10px] text-slate-400 mt-1">Bounded instant incentives</div>
+            <div className="text-[10px] text-slate-400 mt-1">Bounded checkout incentives</div>
           </div>
 
-          {/* Card 3: AI Conversion Uplift */}
+          {/* Card 3: Conversion Uplift */}
           <div className="rounded-xl border border-slate-200 bg-white p-4 sm:p-5 shadow-xs relative overflow-hidden">
-            <div className="text-xs font-medium text-slate-500">AI Conversion Uplift</div>
+            <div className="text-xs font-medium text-slate-500">Conversion Uplift</div>
             <div className="text-xl sm:text-2xl font-bold text-emerald-600 mt-1">
               +{metrics?.aiConversionUplift ?? 0}%
             </div>
             <div className="mt-2 flex items-center gap-1.5 text-xs text-slate-600 font-medium">
-              <span>Bundle order ratio</span>
+              <span>Multi-item order ratio</span>
             </div>
-            <div className="text-[10px] text-slate-400 mt-1">Calculated from settled transactions</div>
+            <div className="text-[10px] text-slate-400 mt-1">Calculated from verified transactions</div>
           </div>
 
           {/* Card 4: Active Opportunities */}
@@ -197,17 +197,17 @@ export default function OverviewPage() {
             </div>
             <div className="mt-2 flex items-center gap-1.5 text-xs text-amber-600 font-medium">
               <ShieldCheck className="h-3.5 w-3.5 text-emerald-600" />
-              <span>Bounded policy guardrails</span>
+              <span>Policy constrained</span>
             </div>
             <div className="text-[10px] text-slate-400 mt-1">Pending approval & deployment</div>
           </div>
         </div>
 
-        {/* Section: AI Revenue Opportunities Spotlight */}
+        {/* Section: Revenue Opportunities Spotlight */}
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <div>
-              <h2 className="text-sm sm:text-base font-bold text-slate-900">AI Revenue Opportunities</h2>
+              <h2 className="text-sm sm:text-base font-bold text-slate-900">Revenue Opportunities</h2>
               <p className="text-xs text-slate-500">
                 Actionable interventions computed from catalogue affinity graphs and checkout intent.
               </p>

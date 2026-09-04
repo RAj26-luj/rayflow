@@ -33,7 +33,7 @@ export const NAV_ITEMS = [
     badge: null,
   },
   {
-    label: 'AI Revenue Agent',
+    label: 'Revenue Assistant',
     href: '/agent',
     icon: Bot,
     badge: 'Active',
@@ -71,7 +71,7 @@ export const NAV_ITEMS = [
     badgeColor: 'bg-slate-100 text-slate-700 border-slate-200',
   },
   {
-    label: 'Agent Policies',
+    label: 'Policies & Governance',
     href: '/policies',
     icon: Sliders,
     badge: null,
@@ -108,7 +108,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                   v1.0
                 </span>
               </div>
-              <div className="text-[11px] text-slate-400 font-medium">AI Revenue Agent</div>
+              <div className="text-[11px] text-slate-400 font-medium">Merchant Dashboard</div>
             </div>
           </div>
 
@@ -126,7 +126,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         {/* Navigation List */}
         <nav className="p-3 space-y-1 overflow-y-auto max-h-[calc(100vh-14rem)]">
           <div className="px-3 py-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">
-            Commerce Intelligence
+            Merchant Operations
           </div>
 
           {NAV_ITEMS.map((item) => {
@@ -170,10 +170,10 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
       <div className="p-4 border-t border-slate-100 bg-slate-50/60 m-3 rounded-lg border">
         <div className="flex items-center gap-2 text-xs font-semibold text-slate-800 mb-1">
           <ShieldCheck className="h-4 w-4 text-emerald-600" />
-          <span>Bounded AI Policy</span>
+          <span>Policy Governance</span>
         </div>
         <p className="text-[11px] text-slate-500 leading-relaxed">
-          Autonomous decisions bounded by 20% max discount and ₹50k budget ceiling.
+          Discounts and campaigns bounded by 20% max discount & ₹50,000 budget caps.
         </p>
         <div className="mt-2.5 flex items-center justify-between text-[11px]">
           <span className="text-slate-400 font-mono">RZP Test API</span>

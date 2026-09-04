@@ -22,26 +22,26 @@ test.describe('RAYFLOW E2E Production Workflows', () => {
     await expect(page.getByRole('heading', { name: 'Sign in to RAYFLOW' })).toBeVisible();
 
     await loginAsMerchant(page);
-    await expect(page.getByText('Autonomous Revenue Copilot')).toBeVisible();
-    await expect(page.getByText('Revenue Influenced')).toBeVisible();
+    await expect(page.getByText('Merchant Performance Dashboard')).toBeVisible();
+    await expect(page.getByText('Gross Revenue Influenced')).toBeVisible();
   });
 
-  test('3. Opportunities Feed renders AI revenue opportunities', async ({ page }) => {
+  test('3. Opportunities Feed renders revenue opportunities', async ({ page }) => {
     await loginAsMerchant(page);
     await page.goto('/opportunities');
-    await expect(page.getByRole('heading', { name: 'AI Revenue Opportunities' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Revenue Opportunities' })).toBeVisible();
   });
 
   test('4. AI Agent interface loads chat workspace and guard state', async ({ page }) => {
     await loginAsMerchant(page);
     await page.goto('/agent');
-    await expect(page.getByRole('heading', { name: 'Revenue Agent' })).toBeVisible();
-    await expect(page.getByText('Active Policy Guard')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Revenue Growth Assistant' })).toBeVisible();
+    await expect(page.getByText('Policy Constrained')).toBeVisible();
   });
 
   test('5. Shop AI Buyer Storefront renders catalog and conversational shopping', async ({ page }) => {
     await page.goto('/shop');
-    await expect(page.getByText('Shop Performance Activewear')).toBeVisible();
+    await expect(page.getByText('Smart Shopping & Bundle Savings')).toBeVisible();
   });
 
   test('6. Policy Engine evaluates governance and discount bounds', async ({ page }) => {
