@@ -173,7 +173,7 @@ export default function SettingsPage() {
                 <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-3.5 space-y-1">
                   <div className="text-slate-500 font-medium text-[11px]">Razorpay Key ID</div>
                   <div className="font-mono text-slate-800 font-semibold text-xs truncate">
-                    {keyId || 'rzp_test_keyId123456'}
+                    {'rzp_test_XXXXXXXXXXXXXXXX'}
                   </div>
                   <div className="text-[10px] text-slate-400">Public key for client-side Razorpay test modal</div>
                 </div>
