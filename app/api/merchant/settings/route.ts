@@ -60,7 +60,7 @@ export async function GET() {
         },
         users: merchant.users,
         razorpay: {
-          keyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID || 'rzp_test_rayflow_active',
+          keyId: '12345demo',
           mode: 'TEST_MODE',
           secretConfigured: Boolean(process.env.RAZORPAY_KEY_SECRET),
         },

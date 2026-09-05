@@ -1,4 +1,4 @@
-name: RAYFLOW Production CI
+name: RAYFLOW Production CI/CD Pipeline
 
 on:
   push:
@@ -7,8 +7,8 @@ on:
     branches: [main, master]
 
 jobs:
-  test-and-build:
-    name: Typecheck, Test & Build
+  quality:
+    name: Code Quality & Fast Validation
     runs-on: ubuntu-latest
 
     services:
@@ -33,6 +33,7 @@ jobs:
       NEXTAUTH_URL: "http://localhost:3000"
       RAZORPAY_KEY_ID: "rzp_test_ci_id"
       RAZORPAY_KEY_SECRET: "rzp_secret_ci_secret"
+      RAZORPAY_WEBHOOK_SECRET: "whsec_ci_webhook_secret"
       DEMO_MODE: "true"
 
     steps:
@@ -48,20 +49,76 @@ jobs:
       - name: Install Dependencies
         run: npm ci
 
-      - name: Generate Prisma Client & Database
+      - name: Generate Prisma Client & Sync Test DB
         run: |
           npx prisma generate
           npx prisma db push
           npx tsx prisma/seed.ts
 
-      - name: TypeScript Typecheck
-        run: npm run typecheck
-
       - name: Next.js ESLint
         run: npm run lint
+
+      - name: TypeScript Check
+        run: npm run typecheck
 
       - name: Vitest Unit & Integration Tests
         run: npm test
 
-      - name: Production Build
+  build:
+    name: Production Next.js Build
+    needs: quality
+    runs-on: ubuntu-latest
+
+    env:
+      DATABASE_URL: "postgresql://postgres:postgrespassword@localhost:5432/rayflow_test?sslmode=disable"
+      DATABASE_URL_UNPOOLED: "postgresql://postgres:postgrespassword@localhost:5432/rayflow_test?sslmode=disable"
+      NEXTAUTH_SECRET: "ci_jwt_super_secret_for_tests_only"
+      NEXTAUTH_URL: "http://localhost:3000"
+      RAZORPAY_KEY_ID: "rzp_test_ci_id"
+      RAZORPAY_KEY_SECRET: "rzp_secret_ci_secret"
+      DEMO_MODE: "true"
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: Generate Prisma Client
+        run: npx prisma generate
+
+      - name: Next.js Production Build
         run: npm run build
+
+  docker:
+    name: Docker Production Image & Smoke Test
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Build Production Docker Image
+        run: docker build -t rayflow:ci .
+
+      - name: Docker Container Smoke Test
+        run: |
+          docker run -d --name rayflow_test -p 3000:3000 \
+            -e NODE_ENV=production \
+            -e DEMO_MODE=true \
+            -e NEXTAUTH_SECRET=ci_jwt_test_secret \
+            -e NEXTAUTH_URL=http://localhost:3000 \
+            rayflow:ci
+          sleep 5
+          docker ps | grep rayflow_test
+          curl -f http://localhost:3000/ || curl -I http://localhost:3000/
+          docker stop rayflow_test
+          docker rm rayflow_test

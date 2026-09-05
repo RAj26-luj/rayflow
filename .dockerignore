@@ -1,10 +1,10 @@
 node_modules
 .next
 .git
+.github
 .gitignore
 .env
-.env*.local
-.env.production
+.env.*
 .husky
 coverage
 playwright-report
