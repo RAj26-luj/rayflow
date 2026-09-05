@@ -4,8 +4,8 @@ import Script from 'next/script';
 import { SessionProvider } from '@/components/providers/SessionProvider';
 
 export const metadata: Metadata = {
-  title: 'RAYFLOW — Revenue Operations',
-  description: 'Intelligent Revenue Operations and Commerce powered by Razorpay test payments.',
+  title: 'RAYFLOW — Digital Commerce Platform',
+  description: 'Modern commerce platform featuring customer product discovery, merchant growth controls, and Razorpay checkout integration.',
 };
 
 export default function RootLayout({
@@ -15,7 +15,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className="min-h-screen bg-slate-50 font-sans text-slate-900 antialiased selection:bg-blue-100 selection:text-blue-900">
+      <body className="min-h-screen bg-stone-50 font-sans text-stone-900 antialiased selection:bg-amber-100 selection:text-amber-900">
         <SessionProvider>
           {children}
         </SessionProvider>

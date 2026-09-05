@@ -65,7 +65,7 @@ export class AgentOrchestrator {
 
       return {
         message:
-          '🚨 **Safety Block**: Actions must adhere to your configured store policies. System overrides, raw DB access, and policy bypass attempts are strictly prevented. The requested discount or action exceeds allowed policy thresholds (20% max discount or campaign budget caps).',
+          '**Safety Block**: Actions must adhere to your configured store policies. System overrides, raw DB access, and policy bypass attempts are strictly prevented. The requested discount or action exceeds allowed policy thresholds (20% max discount or campaign budget caps).',
         decisionSummary: {
           intent: 'Adversarial Safety Guard',
           evidence: 'Prompt contained instructions attempting to bypass security or store policy boundaries.',
@@ -99,7 +99,7 @@ export class AgentOrchestrator {
       });
 
       return {
-        message: `🚫 **Policy Block**: Proposed discount of **${requestedDiscount}%** exceeds your configured maximum discount limit of **20%**.\n\nDiscounts must stay within store policy limits before actions or campaigns can be created.`,
+        message: `**Policy Block**: Proposed discount of **${requestedDiscount}%** exceeds your configured maximum discount limit of **20%**.\n\nDiscounts must stay within store policy limits before actions or campaigns can be created.`,
         decisionSummary: {
           intent: 'Discount Policy Check',
           evidence: `Requested discount ${requestedDiscount}% vs merchant cap 20%.`,

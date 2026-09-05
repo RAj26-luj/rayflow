@@ -3,20 +3,11 @@
 import React, { useState, useEffect } from 'react';
 import {
   ShieldCheck,
-  Filter,
   Search,
-  CheckCircle2,
-  AlertTriangle,
-  XCircle,
-  Clock,
   RefreshCw,
-  Lock,
-  Bot,
-  User,
-  Zap,
 } from 'lucide-react';
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
-import { PageShell, SectionHeader, Badge, Button, EmptyState } from '@/components/ui';
+import { PageShell, SectionHeader, Badge, Button } from '@/components/ui';
 import { AuditLog } from '@/lib/types';
 import { formatINR, formatDate } from '@/lib/utils';
 
@@ -36,7 +27,7 @@ export default function AuditPage() {
         setLogs(data.data);
       }
     } catch (err) {
-      console.error('Failed to fetch audit logs:', err);
+      console.error(err);
     } finally {
       setLoading(false);
     }
@@ -79,7 +70,7 @@ export default function AuditPage() {
         header={
           <SectionHeader
             badge={
-              <Badge variant="blue" dot>
+              <Badge variant="brand" dot>
                 Activity & Audit Trail
               </Badge>
             }
@@ -103,212 +94,85 @@ export default function AuditPage() {
           />
         }
       >
-        {/* Filter and Search Bar */}
-        <div className="rounded-xl border border-slate-200 bg-white p-3.5 shadow-2xs space-y-3">
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-            {/* Search */}
-            <div className="relative flex-1 max-w-md">
-              <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-3 bg-white p-3 rounded border border-stone-200 shadow-2xs">
+            <div className="relative w-full sm:w-80">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-400" />
               <input
                 type="text"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search by action, reason, target customer, or actor..."
-                className="w-full rounded-lg border border-slate-200 bg-slate-50/70 pl-9 pr-3 py-1.5 text-xs text-slate-800 placeholder:text-slate-400 focus:border-blue-500 focus:bg-white focus:outline-none transition-colors"
+                placeholder="Search action, reason, or customer..."
+                className="w-full rounded border border-stone-300 pl-9 pr-3 py-1.5 text-xs text-stone-900 focus:outline-none focus:border-brand-500"
               />
-              {search && (
-                <button
-                  onClick={() => setSearch('')}
-                  className="absolute right-2.5 top-2 text-slate-400 hover:text-slate-600 text-xs font-medium"
-                >
-                  ✕
-                </button>
-              )}
             </div>
 
-            {/* Results Counter */}
-            <div className="text-[11px] text-slate-500 flex items-center gap-1.5 self-end sm:self-auto">
-              <span>Showing <strong className="text-slate-800 font-semibold">{filteredLogs.length}</strong> of {logs.length} events</span>
-            </div>
-          </div>
-
-          {/* Filter Chips */}
-          <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-slate-100">
-            {/* Agent / Actor Filter */}
-            <div className="flex flex-wrap items-center gap-1">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mr-1">
-                Source:
-              </span>
-              {agentFilters.map((f) => (
-                <button
-                  key={f.id}
-                  onClick={() => setAgentFilter(f.id)}
-                  className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-all ${
-                    agentFilter === f.id
-                      ? 'bg-blue-600 text-white shadow-2xs font-semibold'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
-                  }`}
-                >
-                  {f.label}
-                </button>
-              ))}
-            </div>
-
-            {/* Result Filter */}
-            <div className="flex flex-wrap items-center gap-1">
-              <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-400 mr-1">
-                Outcome:
-              </span>
-              {resultFilters.map((f) => (
-                <button
-                  key={f.id}
-                  onClick={() => setResultFilter(f.id)}
-                  className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition-all ${
-                    resultFilter === f.id
-                      ? 'bg-slate-900 text-white shadow-2xs font-semibold'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200 hover:text-slate-900'
-                  }`}
-                >
-                  {f.label}
-                </button>
-              ))}
+            <div className="flex items-center gap-2 overflow-x-auto w-full sm:w-auto scrollbar-none">
+              <div className="flex items-center gap-1">
+                {agentFilters.map((f) => (
+                  <button
+                    key={f.id}
+                    onClick={() => setAgentFilter(f.id)}
+                    className={`rounded px-2.5 py-1 text-xs font-semibold whitespace-nowrap transition-colors ${
+                      agentFilter === f.id
+                        ? 'bg-brand-700 text-white'
+                        : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                    }`}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Content View: Desktop Table + Mobile Stacked Cards */}
-        {loading ? (
-          <div className="rounded-xl border border-slate-200 bg-white p-12 text-center shadow-2xs">
-            <RefreshCw className="h-6 w-6 animate-spin text-blue-600 mx-auto mb-2" />
-            <p className="text-xs text-slate-500">Loading audit history...</p>
-          </div>
-        ) : filteredLogs.length === 0 ? (
-          <EmptyState
-            icon={<ShieldCheck className="h-6 w-6 text-slate-400" />}
-            title="No audit events found"
-            description="No log records matched your search query or filter selection."
-            action={
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => {
-                  setSearch('');
-                  setAgentFilter('ALL');
-                  setResultFilter('ALL');
-                }}
-              >
-                Reset Filters
-              </Button>
-            }
-          />
-        ) : (
-          <>
-            {/* Desktop Table View */}
-            <div className="hidden md:block rounded-xl border border-slate-200 bg-white shadow-2xs overflow-hidden">
+          {loading ? (
+            <div className="py-12 text-center text-xs text-stone-500">Loading audit log...</div>
+          ) : filteredLogs.length === 0 ? (
+            <div className="text-center py-12 bg-white rounded border border-stone-200 p-6 text-xs text-stone-600">
+              No audit log entries match your filter.
+            </div>
+          ) : (
+            <div className="rounded border border-stone-200 bg-white shadow-2xs overflow-hidden">
               <div className="overflow-x-auto">
-                <table className="w-full text-left text-xs">
-                  <thead className="border-b border-slate-200 bg-slate-50/80 text-slate-500 uppercase tracking-wider font-semibold text-[10px]">
+                <table className="w-full text-left text-xs text-stone-700">
+                  <thead className="bg-stone-50 text-stone-500 font-semibold border-b border-stone-200 uppercase tracking-wider text-[10px]">
                     <tr>
-                      <th className="px-4 py-3">Timestamp</th>
-                      <th className="px-4 py-3">Source / Actor</th>
-                      <th className="px-4 py-3">Action & Reason</th>
-                      <th className="px-4 py-3">Impact / Value</th>
-                      <th className="px-4 py-3">Policy Check</th>
-                      <th className="px-4 py-3">Authorization</th>
-                      <th className="px-4 py-3">Outcome</th>
+                      <th className="p-3.5">Timestamp</th>
+                      <th className="p-3.5">Actor / Source</th>
+                      <th className="p-3.5">Action & Rationale</th>
+                      <th className="p-3.5">Value</th>
+                      <th className="p-3.5">Result</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-slate-100 text-slate-700">
+                  <tbody className="divide-y divide-stone-100">
                     {filteredLogs.map((log) => (
-                      <tr key={log.id} className="hover:bg-slate-50/70 transition-colors">
-                        {/* Timestamp */}
-                        <td className="px-4 py-3.5 whitespace-nowrap text-slate-400 font-mono text-[11px]">
+                      <tr key={log.id} className="hover:bg-stone-50 transition-colors">
+                        <td className="p-3.5 text-stone-500 font-mono text-[11px]">
                           {formatDate(log.timestamp)}
                         </td>
-
-                        {/* Actor */}
-                        <td className="px-4 py-3.5 whitespace-nowrap">
-                          <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 border border-blue-200/70 px-2.5 py-0.5 text-[11px] font-semibold text-blue-700">
-                            <Bot className="h-3 w-3 text-blue-600" />
+                        <td className="p-3.5">
+                          <span className="rounded bg-brand-50 border border-brand-200 px-2 py-0.5 text-[10px] font-bold text-brand-800">
                             {log.agentName}
                           </span>
                         </td>
-
-                        {/* Action & Reason */}
-                        <td className="px-4 py-3.5 max-w-sm">
-                          <div className="font-bold text-slate-900">{log.actionType}</div>
-                          <div className="text-slate-600 text-[11px] mt-0.5 leading-relaxed">
-                            {log.reason}
-                          </div>
-                          {log.customerName && (
-                            <div className="text-[10px] text-slate-400 mt-1 flex items-center gap-1">
-                              <User className="h-2.5 w-2.5 text-slate-400" />
-                              Target: <strong className="text-slate-700">{log.customerName}</strong>
-                            </div>
-                          )}
+                        <td className="p-3.5 max-w-md">
+                          <div className="font-bold text-stone-900">{log.actionType}</div>
+                          <div className="text-stone-500 text-[11px] leading-relaxed">{log.reason}</div>
                         </td>
-
-                        {/* Value */}
-                        <td className="px-4 py-3.5 whitespace-nowrap">
-                          {log.amount ? (
-                            <span className="font-bold text-slate-900 text-xs">
-                              {formatINR(log.amount)}
-                            </span>
-                          ) : (
-                            <span className="text-slate-400 text-xs">—</span>
-                          )}
+                        <td className="p-3.5 font-bold text-stone-900">
+                          {log.amount ? formatINR(log.amount) : '—'}
                         </td>
-
-                        {/* Policy Check */}
-                        <td className="px-4 py-3.5 whitespace-nowrap">
-                          {log.policyCheck === 'PASSED' && (
-                            <Badge variant="emerald" size="sm" icon={<CheckCircle2 className="h-3 w-3" />}>
-                              Passed
-                            </Badge>
-                          )}
-                          {log.policyCheck === 'FAILED' && (
-                            <Badge variant="rose" size="sm" icon={<XCircle className="h-3 w-3" />}>
-                              Failed Guard
-                            </Badge>
-                          )}
-                          {!log.policyCheck && (
-                            <Badge variant="slate" size="sm">
-                              N/A
-                            </Badge>
-                          )}
-                        </td>
-
-                        {/* Approval */}
-                        <td className="px-4 py-3.5 whitespace-nowrap">
-                          <span className="text-[11px] text-slate-600 font-medium">
-                            {log.approval ? log.approval.replace(/_/g, ' ') : 'System Auto'}
+                        <td className="p-3.5">
+                          <span className={`rounded px-2 py-0.5 text-[10px] font-bold ${
+                            log.result === 'SUCCESS'
+                              ? 'bg-emerald-50 text-emerald-800 border border-emerald-200'
+                              : log.result === 'BLOCKED'
+                              ? 'bg-amber-50 text-amber-900 border border-amber-200'
+                              : 'bg-red-50 text-red-800 border border-red-200'
+                          }`}>
+                            {log.result}
                           </span>
-                        </td>
-
-                        {/* Outcome */}
-                        <td className="px-4 py-3.5 max-w-xs">
-                          <div className="space-y-1">
-                            {log.result === 'SUCCESS' && (
-                              <Badge variant="emerald" size="sm">
-                                Success
-                              </Badge>
-                            )}
-                            {log.result === 'BLOCKED' && (
-                              <Badge variant="rose" size="sm">
-                                Blocked by Policy
-                              </Badge>
-                            )}
-                            {log.result === 'FAILED' && (
-                              <Badge variant="amber" size="sm">
-                                Graceful Failure
-                              </Badge>
-                            )}
-                            {log.recoveryNote && (
-                              <div className="text-[10px] text-slate-500 bg-slate-50 p-1.5 rounded border border-slate-100 mt-1 leading-snug">
-                                {log.recoveryNote}
-                              </div>
-                            )}
-                          </div>
                         </td>
                       </tr>
                     ))}
@@ -316,66 +180,9 @@ export default function AuditPage() {
                 </table>
               </div>
             </div>
-
-            {/* Mobile Stacked Card View */}
-            <div className="md:hidden space-y-3">
-              {filteredLogs.map((log) => (
-                <div
-                  key={log.id}
-                  className="rounded-xl border border-slate-200 bg-white p-4 shadow-2xs space-y-3"
-                >
-                  <div className="flex items-start justify-between gap-2 border-b border-slate-100 pb-2.5">
-                    <div>
-                      <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 border border-blue-200/70 px-2 py-0.5 text-[10px] font-bold text-blue-700">
-                        <Bot className="h-2.5 w-2.5 text-blue-600" />
-                        {log.agentName}
-                      </span>
-                      <div className="font-bold text-slate-900 text-xs mt-1">{log.actionType}</div>
-                    </div>
-                    {log.result === 'SUCCESS' && <Badge variant="emerald" size="sm">Success</Badge>}
-                    {log.result === 'BLOCKED' && <Badge variant="rose" size="sm">Blocked</Badge>}
-                    {log.result === 'FAILED' && <Badge variant="amber" size="sm">Failed</Badge>}
-                  </div>
-
-                  <p className="text-[11px] text-slate-600 leading-relaxed">{log.reason}</p>
-
-                  <div className="grid grid-cols-2 gap-2 text-[10px] pt-1 text-slate-500">
-                    <div>
-                      <span className="text-slate-400 block">Timestamp:</span>
-                      <span className="font-mono text-slate-700">{formatDate(log.timestamp)}</span>
-                    </div>
-                    <div>
-                      <span className="text-slate-400 block">Amount / Value:</span>
-                      <span className="font-semibold text-slate-800">
-                        {log.amount ? formatINR(log.amount) : '—'}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-slate-400 block">Policy Status:</span>
-                      <span className="font-medium text-slate-700">
-                        {log.policyCheck || 'N/A'}
-                      </span>
-                    </div>
-                    <div>
-                      <span className="text-slate-400 block">Authorization:</span>
-                      <span className="font-medium text-slate-700">
-                        {log.approval ? log.approval.replace(/_/g, ' ') : 'Auto'}
-                      </span>
-                    </div>
-                  </div>
-
-                  {log.recoveryNote && (
-                    <div className="text-[10px] text-slate-500 bg-slate-50 p-2 rounded border border-slate-100">
-                      <strong>Trace Note:</strong> {log.recoveryNote}
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </>
-        )}
+          )}
+        </div>
       </PageShell>
     </DashboardLayout>
   );
 }
-

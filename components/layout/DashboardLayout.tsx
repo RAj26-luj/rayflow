@@ -30,24 +30,20 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const pathname = usePathname();
 
   return (
-    <div className="flex min-h-screen bg-slate-50 overflow-x-hidden w-full">
-      {/* Sidebar (Desktop fixed + Mobile slide-over drawer) */}
+    <div className="flex min-h-screen bg-stone-50 overflow-x-hidden w-full">
       <Sidebar
         isOpen={isMobileSidebarOpen}
         onClose={() => setIsMobileSidebarOpen(false)}
       />
 
       <div className="flex-1 flex flex-col min-w-0 overflow-x-hidden">
-        {/* Navbar with mobile drawer toggle */}
         <Navbar onToggleMobileSidebar={() => setIsMobileSidebarOpen(true)} />
 
-        {/* Main Content Area */}
-        <main className="flex-1 p-4 sm:p-6 md:p-8 max-w-7xl w-full mx-auto animate-in fade-in duration-300 pb-20 lg:pb-8">
+        <main className="flex-1 p-4 sm:p-6 max-w-7xl w-full mx-auto animate-in fade-in duration-200 pb-20 lg:pb-8">
           {children}
         </main>
 
-        {/* Mobile Bottom Quick-Navigation Bar */}
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur border-t border-slate-200 px-2 py-1.5 flex items-center justify-around shadow-lg">
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur border-t border-stone-200 px-2 py-1.5 flex items-center justify-around shadow-md">
           {MOBILE_BOTTOM_NAV.map((item) => {
             const Icon = item.icon;
             const isActive =
@@ -57,14 +53,14 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex flex-col items-center justify-center py-1 px-2.5 rounded-lg text-[10px] font-medium transition-colors relative ${
+                className={`flex flex-col items-center justify-center py-1 px-2.5 rounded text-[10px] font-medium transition-colors relative ${
                   isActive
-                    ? 'text-blue-600 font-semibold'
-                    : 'text-slate-500 hover:text-slate-900'
+                    ? 'text-brand-700 font-semibold'
+                    : 'text-stone-500 hover:text-stone-900'
                 }`}
               >
                 <div className="relative">
-                  <Icon className={`h-4 w-4 ${isActive ? 'text-blue-600' : 'text-slate-400'}`} />
+                  <Icon className={`h-4 w-4 ${isActive ? 'text-brand-700' : 'text-stone-400'}`} />
                 </div>
                 <span className="mt-0.5">{item.label}</span>
               </Link>

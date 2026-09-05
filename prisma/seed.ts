@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 const prisma = new PrismaClient();
 
 export async function seedDatabase() {
-  console.log('🌱 Starting RAYFLOW Database Seed...');
+  console.log('Starting RAYFLOW Database Seed...');
 
   // 0. Ensure schema columns exist in PostgreSQL by executing single statements
   try {
@@ -570,7 +570,7 @@ export async function seedDatabase() {
     },
   });
 
-  console.log('✅ RAYFLOW Database successfully seeded with merchants, products, opportunities, orders & audit logs!');
+  console.log('RAYFLOW Database successfully seeded with merchants, products, opportunities, orders & audit logs!');
 }
 
 if (process.argv[1]?.includes('seed')) {

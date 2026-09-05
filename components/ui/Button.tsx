@@ -20,27 +20,27 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 const variantStyles: Record<NonNullable<ButtonProps['variant']>, string> = {
   primary:
-    'bg-blue-600 text-white hover:bg-blue-500 shadow-md shadow-blue-600/20 active:bg-blue-700 border border-blue-500/30 font-semibold',
+    'bg-brand-700 text-white hover:bg-brand-800 shadow-sm active:bg-brand-900 border border-brand-800/40 font-semibold',
   secondary:
-    'bg-white text-slate-800 hover:bg-slate-50 border border-slate-200 active:bg-slate-100 shadow-2xs font-semibold',
+    'bg-white text-stone-800 hover:bg-stone-100 border border-stone-300 active:bg-stone-200 shadow-2xs font-semibold',
   outline:
-    'bg-transparent text-slate-200 hover:bg-slate-800 hover:text-white border border-slate-700 active:bg-slate-800/80 shadow-2xs font-semibold',
+    'bg-transparent text-stone-700 hover:bg-stone-100 hover:text-stone-900 border border-stone-300 active:bg-stone-200 shadow-2xs font-semibold',
   cancel:
-    'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200 active:bg-slate-300 font-medium',
+    'bg-stone-100 text-stone-700 hover:bg-stone-200 border border-stone-200 active:bg-stone-300 font-medium',
   ghost:
-    'bg-transparent text-slate-600 hover:bg-slate-100 hover:text-slate-900 border border-transparent active:bg-slate-200 font-medium',
+    'bg-transparent text-stone-600 hover:bg-stone-100 hover:text-stone-900 border border-transparent active:bg-stone-200 font-medium',
   danger:
-    'bg-red-600 text-white hover:bg-red-500 shadow-md shadow-red-600/20 active:bg-red-700 border border-red-500/30 font-semibold',
+    'bg-red-700 text-white hover:bg-red-800 shadow-sm active:bg-red-900 border border-red-800/40 font-semibold',
   success:
-    'bg-emerald-600 text-white hover:bg-emerald-500 shadow-md shadow-emerald-600/20 active:bg-emerald-700 border border-emerald-500/30 font-semibold',
+    'bg-emerald-700 text-white hover:bg-emerald-800 shadow-sm active:bg-emerald-900 border border-emerald-800/40 font-semibold',
   emerald:
-    'bg-emerald-600 text-white hover:bg-emerald-500 shadow-md shadow-emerald-600/20 active:bg-emerald-700 border border-emerald-500/30 font-semibold',
+    'bg-emerald-700 text-white hover:bg-emerald-800 shadow-sm active:bg-emerald-900 border border-emerald-800/40 font-semibold',
 };
 
 const sizeStyles: Record<NonNullable<ButtonProps['size']>, string> = {
-  sm: 'px-3 py-1.5 text-xs rounded-lg min-h-[36px] gap-1.5',
-  md: 'px-4 py-2.5 text-xs sm:text-sm rounded-xl min-h-[44px] gap-2',
-  lg: 'px-6 py-3.5 text-sm sm:text-base rounded-2xl min-h-[48px] gap-2.5',
+  sm: 'px-3 py-1.5 text-xs rounded-md min-h-[34px] gap-1.5',
+  md: 'px-4 py-2 text-xs sm:text-sm rounded-md min-h-[40px] gap-2',
+  lg: 'px-5 py-2.5 text-sm sm:text-base rounded-md min-h-[44px] gap-2.5',
 };
 
 export function Button({
@@ -66,14 +66,14 @@ export function Button({
   return (
     <motion.button
       type={type}
-      whileTap={isDisabled ? undefined : { scale: 0.97 }}
-      whileHover={isDisabled ? undefined : { y: -1 }}
-      transition={{ duration: 0.15, ease: 'easeOut' }}
+      whileTap={isDisabled ? undefined : { scale: 0.98 }}
+      whileHover={isDisabled ? undefined : { y: -0.5 }}
+      transition={{ duration: 0.12, ease: 'easeOut' }}
       disabled={isDisabled}
       onClick={onClick}
       className={twMerge(
         clsx(
-          'inline-flex items-center justify-center select-none transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2',
+          'inline-flex items-center justify-center select-none transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2',
           variantStyles[variant],
           sizeStyles[size],
           fullWidth && 'w-full',
@@ -91,7 +91,7 @@ export function Button({
       ) : (
         <>
           {effectiveLeftIcon && <span className="flex-shrink-0">{effectiveLeftIcon}</span>}
-          <span>{children}</span>
+          {children && <span>{children}</span>}
           {rightIcon && <span className="flex-shrink-0">{rightIcon}</span>}
         </>
       )}
@@ -114,4 +114,3 @@ export function CancelButton(props: ButtonProps) {
 export function GhostButton(props: ButtonProps) {
   return <Button variant="ghost" {...props} />;
 }
-

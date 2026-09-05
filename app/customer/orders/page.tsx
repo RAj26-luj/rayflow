@@ -6,19 +6,12 @@ import { useSession } from 'next-auth/react';
 import {
   Package,
   ShoppingBag,
-  Sparkles,
-  ArrowRight,
   CheckCircle2,
   Calendar,
-  CreditCard,
-  Tag,
-  Loader2,
-  ExternalLink,
-  ShieldCheck,
 } from 'lucide-react';
 import { CustomerNavbar } from '@/components/layout/CustomerNavbar';
-import { Badge, Button, EmptyState } from '@/components/ui';
-import { formatINR } from '@/lib/utils';
+import { Button } from '@/components/ui';
+import { formatINR, formatDate } from '@/lib/utils';
 
 interface OrderItem {
   id: string;
@@ -62,7 +55,7 @@ export default function CustomerOrdersPage() {
           setOrders(data.orders);
         }
       } catch (err) {
-        console.error('Failed to fetch orders:', err);
+        console.error(err);
       } finally {
         setLoading(false);
       }
@@ -72,21 +65,21 @@ export default function CustomerOrdersPage() {
   }, [session, authStatus]);
 
   return (
-    <div className="min-h-screen bg-slate-50 text-slate-900 selection:bg-blue-600 selection:text-white">
+    <div className="min-h-screen bg-stone-50 text-stone-900 selection:bg-amber-100 selection:text-amber-900">
       <CustomerNavbar />
 
       <main className="mx-auto max-w-4xl px-4 sm:px-6 py-8 sm:py-12 space-y-6">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-blue-600 mb-1">
+            <div className="flex items-center gap-2 text-xs font-semibold text-brand-700 mb-1">
               <Package className="h-4 w-4" />
               <span>Shopper Account</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
+            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-stone-900">
               My Purchase History
             </h1>
-            <p className="mt-1 text-xs sm:text-sm text-slate-500">
-              Track your orders, review bundle savings, and view Razorpay payment receipts.
+            <p className="mt-1 text-xs sm:text-sm text-stone-500">
+              Track your orders, review bundle savings, and view Razorpay receipts.
             </p>
           </div>
 
@@ -98,156 +91,58 @@ export default function CustomerOrdersPage() {
         </div>
 
         {loading ? (
-          <div className="flex h-64 items-center justify-center rounded-2xl border border-slate-200 bg-white shadow-2xs">
-            <div className="flex flex-col items-center gap-3">
-              <Loader2 className="h-6 w-6 animate-spin text-blue-600" />
-              <p className="text-xs text-slate-500">Loading your purchase history...</p>
-            </div>
-          </div>
+          <div className="py-12 text-center text-xs text-stone-500">Loading purchase history...</div>
         ) : !session ? (
-          <div className="rounded-2xl border border-slate-200 bg-white p-8 text-center shadow-2xs space-y-4">
-            <Package className="mx-auto h-12 w-12 text-slate-300" />
-            <div>
-              <h2 className="text-base font-bold text-slate-900">Sign in to view your orders</h2>
-              <p className="mt-1 text-xs text-slate-500 max-w-sm mx-auto">
-                Please sign in with your customer account to view your past orders, receipts, and bundle discounts.
-              </p>
-            </div>
-            <div className="flex justify-center gap-3 pt-2">
-              <Link href="/customer/login">
-                <Button variant="primary" size="sm">
-                  Sign In
-                </Button>
-              </Link>
-              <Link href="/shop">
-                <Button variant="outline" size="sm">
-                  Browse Catalogue
-                </Button>
-              </Link>
-            </div>
+          <div className="text-center py-12 bg-white rounded border border-stone-200 p-6 space-y-3">
+            <p className="text-stone-700 text-sm font-semibold">Please sign in to view your orders.</p>
+            <Link href="/customer/login">
+              <Button variant="primary" size="sm">Sign In</Button>
+            </Link>
           </div>
         ) : orders.length === 0 ? (
-          /* New Customer / Empty State Onboarding Experience */
-          <div className="rounded-3xl border border-blue-100 bg-gradient-to-b from-white to-blue-50/40 p-8 sm:p-12 text-center shadow-2xs space-y-6">
-            <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-600 text-white shadow-lg shadow-blue-500/20">
-              <Sparkles className="h-8 w-8" />
-            </div>
-            <div>
-              <h2 className="text-xl sm:text-2xl font-bold text-slate-900">
-                Welcome to RAYFLOW
-              </h2>
-              <p className="mt-1.5 text-sm text-slate-600 max-w-md mx-auto">
-                Get started with conversational product discovery and verified bundle discounts.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-left max-w-2xl mx-auto pt-2">
-              <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs space-y-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-blue-50 text-blue-600 font-bold text-xs">
-                  1
-                </div>
-                <h3 className="text-xs font-bold text-slate-900">Explore Gear</h3>
-                <p className="text-[11px] text-slate-500 leading-snug">
-                  Browse high-performance sports and fitness equipment.
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs space-y-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-indigo-50 text-indigo-600 font-bold text-xs">
-                  2
-                </div>
-                <h3 className="text-xs font-bold text-slate-900">Ask Shopping Assistant</h3>
-                <p className="text-[11px] text-slate-500 leading-snug">
-                  Get personalized gear recommendations and custom bundle savings.
-                </p>
-              </div>
-
-              <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-2xs space-y-2">
-                <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-emerald-50 text-emerald-600 font-bold text-xs">
-                  3
-                </div>
-                <h3 className="text-xs font-bold text-slate-900">Instant Razorpay Checkout</h3>
-                <p className="text-[11px] text-slate-500 leading-snug">
-                  Pay securely with Razorpay Test Mode and receive instant verified receipts.
-                </p>
-              </div>
-            </div>
-
-            <div className="pt-2">
-              <Link href="/shop">
-                <Button variant="primary" size="lg" icon={<ShoppingBag className="h-4 w-4" />}>
-                  Explore Products Now
-                </Button>
-              </Link>
-            </div>
+          <div className="text-center py-12 bg-white rounded border border-stone-200 p-6 space-y-3">
+            <p className="text-stone-700 text-sm font-semibold">No previous orders found.</p>
+            <Link href="/shop">
+              <Button variant="primary" size="sm">Shop Performance Gear</Button>
+            </Link>
           </div>
         ) : (
           <div className="space-y-4">
-            {orders.map((order) => (
-              <div
-                key={order.id}
-                className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6 shadow-2xs hover:border-slate-300 transition-all space-y-4"
-              >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-3">
+            {orders.map((ord) => (
+              <div key={ord.id} className="rounded border border-stone-200 bg-white p-4 sm:p-5 shadow-2xs space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-stone-100 gap-2">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="font-bold text-sm text-slate-900 font-mono">
-                        #{order.orderNumber}
+                      <span className="font-bold text-stone-900 text-sm">{ord.orderNumber}</span>
+                      <span className="rounded bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 text-[10px] font-bold">
+                        {ord.status}
                       </span>
-                      <Badge variant="emerald" size="sm" icon={<CheckCircle2 className="h-3 w-3" />}>
-                        {order.status}
-                      </Badge>
-                      {order.isBundle && (
-                        <Badge variant="indigo" size="sm" icon={<Tag className="h-3 w-3" />}>
-                          Curated Bundle
-                        </Badge>
+                      {ord.isBundle && (
+                        <span className="rounded bg-brand-50 text-brand-800 border border-brand-200 px-2 py-0.5 text-[10px] font-bold">
+                          Bundle Discount
+                        </span>
                       )}
                     </div>
-                    <div className="flex flex-wrap items-center gap-2 mt-1.5 text-[11px] text-slate-400 font-mono">
-                      <span className="flex items-center gap-1">
-                        <Calendar className="h-3 w-3 text-slate-400" />
-                        {new Date(order.createdAt).toLocaleDateString(undefined, {
-                          year: 'numeric',
-                          month: 'short',
-                          day: 'numeric',
-                        })}
-                      </span>
-                      <span>•</span>
-                      <span>Razorpay: {order.razorpayOrderId}</span>
+                    <div className="text-xs text-stone-500 mt-1 flex items-center gap-1">
+                      <Calendar className="h-3 w-3" />
+                      <span>{formatDate(ord.createdAt)}</span>
+                      <span className="ml-2">Razorpay: {ord.razorpayOrderId}</span>
                     </div>
                   </div>
 
-                  <div className="text-left sm:text-right">
-                    <div className="text-base font-extrabold text-slate-900">
-                      {formatINR(order.totalAmount)}
-                    </div>
-                    {order.discountAmount > 0 && (
-                      <div className="text-[11px] font-semibold text-emerald-600">
-                        Saved {formatINR(order.discountAmount)} (Bundle Deal)
-                      </div>
+                  <div className="text-right">
+                    <div className="text-base font-extrabold text-stone-900">{formatINR(ord.totalAmount)}</div>
+                    {ord.discountAmount > 0 && (
+                      <div className="text-xs text-emerald-800 font-semibold">Saved {formatINR(ord.discountAmount)}</div>
                     )}
                   </div>
                 </div>
 
-                {/* Items List */}
-                <div className="space-y-2">
-                  <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">
-                    Ordered Items:
-                  </div>
-                  {order.items.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex items-center justify-between text-xs py-1.5 px-3 rounded-lg bg-slate-50 border border-slate-100"
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="font-semibold text-slate-800">
-                          {item.productName}
-                        </span>
-                        <span className="text-slate-400">× {item.quantity}</span>
-                      </div>
-                      <span className="font-bold text-slate-700">
-                        {formatINR(item.totalAmount)}
-                      </span>
+                <div className="space-y-1.5 text-xs">
+                  {ord.items.map((item, idx) => (
+                    <div key={idx} className="flex justify-between text-stone-700">
+                      <span>{item.productName} (×{item.quantity})</span>
+                      <span className="font-semibold text-stone-900">{formatINR(item.unitPrice * item.quantity)}</span>
                     </div>
                   ))}
                 </div>
@@ -259,4 +154,3 @@ export default function CustomerOrdersPage() {
     </div>
   );
 }
-
