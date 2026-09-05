@@ -26,6 +26,34 @@
 
 ---
 
+## 📸 Application Screenshots
+
+### 🛒 3D AI Buyer Storefront & Landing Experience
+| 3D Hero Landing (`/`) | Smart AI Buyer Storefront (`/shop`) |
+| :---: | :---: |
+| ![Landing Page](screenshots/desktop_01_home.png) | ![Shop Storefront](screenshots/desktop_02_shop.png) |
+
+### 📊 Merchant Operations & AI Growth Agent
+| Merchant Performance Dashboard (`/overview`) | Revenue Opportunities Feed (`/opportunities`) |
+| :---: | :---: |
+| ![Overview Dashboard](screenshots/desktop_03_overview.png) | ![Opportunities Feed](screenshots/desktop_04_opportunities.png) |
+
+| AI Revenue Growth Assistant (`/agent`) | Product Catalogue (`/catalogue`) |
+| :---: | :---: |
+| ![AI Assistant](screenshots/desktop_05_agent.png) | ![Catalogue Management](screenshots/desktop_06_catalogue.png) |
+
+### 🛡 Policy Governance & Verifiable Audit Trail
+| Deterministic Policy Engine (`/policies`) | Autonomous Audit Ledger (`/audit`) |
+| :---: | :---: |
+| ![Policy Engine](screenshots/desktop_10_policies.png) | ![Audit Trail](screenshots/desktop_11_audit.png) |
+
+### 📱 Responsive Mobile Experience
+| Mobile Storefront (`/shop`) | Mobile Performance (`/overview`) | Mobile AI Assistant (`/agent`) |
+| :---: | :---: | :---: |
+| ![Mobile Shop](screenshots/mobile_01_shop.png) | ![Mobile Overview](screenshots/mobile_02_overview.png) | ![Mobile AI](screenshots/mobile_03_agent.png) |
+
+---
+
 ## 🏗 System Architecture
 
 ```mermaid
