@@ -13,12 +13,18 @@ export class AgentTools {
   /**
    * Tool 1: search_catalogue (READ_ONLY)
    */
-  static async searchCatalogue(merchantId: string, query: string, category?: string) {
+  static async searchCatalogue(
+    merchantId: string,
+    query: string = '',
+    category?: string,
+    maxPrice?: number
+  ) {
     const products = await prisma.product.findMany({
       where: {
         merchantId,
         ...(category && category !== 'ALL' ? { category } : {}),
-        ...(query
+        ...(maxPrice !== undefined && maxPrice > 0 ? { price: { lte: maxPrice } } : {}),
+        ...(query && query.trim().length > 0
           ? {
               OR: [
                 { name: { contains: query } },
@@ -35,6 +41,8 @@ export class AgentTools {
       products: products.map((p) => ({
         id: p.id,
         name: p.name,
+        sku: p.sku,
+        description: p.description,
         price: p.price,
         compareAtPrice: p.compareAtPrice,
         category: p.category,
@@ -77,7 +85,7 @@ export class AgentTools {
     }
 
     const subtotal = primary.price + addon.price;
-    // Calculate discount only on the addon product or entire bundle based on policy
+    // Calculate discount on the addon product or entire bundle based on policy
     const savingsAmount = Math.round((addon.price * discountPercent) / 100);
     const bundlePrice = subtotal - savingsAmount;
 
@@ -157,6 +165,55 @@ export class AgentTools {
     return {
       discountEvaluation,
       budgetEvaluation,
+    };
+  }
+
+  /**
+   * Tool 5: get_revenue_opportunities (READ_ONLY)
+   */
+  static async getRevenueOpportunities(merchantId: string) {
+    const opportunities = await prisma.revenueOpportunity.findMany({
+      where: { merchantId },
+      orderBy: { confidence: 'desc' },
+      take: 5,
+    });
+
+    return {
+      count: opportunities.length,
+      opportunities: opportunities.map((op) => ({
+        id: op.id,
+        type: op.type,
+        title: op.title,
+        description: op.description,
+        estimatedRevenue: op.expectedRevenue,
+        confidenceScore: op.confidence,
+        riskLevel: op.riskLevel,
+        status: op.status,
+      })),
+    };
+  }
+
+  /**
+   * Tool 6: get_customer_cohorts (READ_ONLY)
+   */
+  static async getCustomerCohorts(merchantId: string) {
+    const customers = await prisma.customer.findMany({
+      where: { merchantId },
+      select: {
+        id: true,
+        name: true,
+        cohort: true,
+        intentScore: true,
+        cartStatus: true,
+        orderCount: true,
+        lifetimeValue: true,
+      },
+      take: 20,
+    });
+
+    return {
+      count: customers.length,
+      customers,
     };
   }
 }
