@@ -144,7 +144,7 @@ export default function SettingsPage() {
             <div className="space-y-2.5 text-xs">
               <div className="p-3.5 rounded-2xl bg-zinc-950/80 border border-zinc-800 space-y-1">
                 <div className="font-semibold text-zinc-400">Key ID</div>
-                <div className="font-mono text-white">{keyId || '12345demo'}</div>
+                <div className="font-mono text-white">{ '12345demo'}</div>
               </div>
 
               <div className="p-3.5 rounded-2xl bg-zinc-950/80 border border-zinc-800 space-y-1">
