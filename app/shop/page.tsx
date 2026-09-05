@@ -95,6 +95,7 @@ export default function ShopPage() {
 
   const [buyerName, setBuyerName] = useState('');
   const [buyerEmail, setBuyerEmail] = useState('');
+  const [buyerPhone, setBuyerPhone] = useState('');
   const [activeOrder, setActiveOrder] = useState<Order | null>(null);
   const [isPayModalOpen, setIsPayModalOpen] = useState(false);
   const [orderSubmitting, setOrderSubmitting] = useState(false);
@@ -256,7 +257,7 @@ export default function ShopPage() {
 
   const handleProceedToCheckout = async (
     directProduct?: Product,
-    overrideCustomer?: { name?: string; email?: string }
+    overrideCustomer?: { name?: string; email?: string; phone?: string }
   ) => {
     const itemsToOrder = directProduct
       ? [{ product: directProduct, quantity: 1 }]
@@ -266,6 +267,7 @@ export default function ShopPage() {
 
     const email = (overrideCustomer?.email || buyerEmail || session?.user?.email || 'customer@example.com').trim();
     const name = (overrideCustomer?.name || buyerName || session?.user?.name || 'Valued Customer').trim();
+    const phone = (overrideCustomer?.phone || buyerPhone || (session?.user as any)?.phone || '+919811234567').trim();
 
     if (!session?.user && !email) {
       setIsAuthModalOpen(true);
@@ -292,6 +294,7 @@ export default function ShopPage() {
           customerDetails: {
             name,
             email,
+            phone,
           },
         }),
       });
@@ -303,7 +306,7 @@ export default function ShopPage() {
         setIsAuthModalOpen(false);
         setIsPayModalOpen(true);
       } else {
-        setPaymentFailError(data.error || 'Could not create order.');
+        setPaymentFailError(typeof data.error === 'string' ? data.error : data.error?.message || 'Could not create order.');
       }
     } catch (err) {
       console.error(err);
@@ -365,7 +368,7 @@ export default function ShopPage() {
     setAuthError(null);
 
     try {
-      const demoEmail = 'priya@example.com';
+      const demoEmail = 'priya@auraathletics.com';
       const demoPass = 'demo123';
       const result = await signIn('credentials', {
         redirect: false,
@@ -388,9 +391,9 @@ export default function ShopPage() {
     } catch (err) {
       console.error(err);
       setBuyerName('Priya Sharma');
-      setBuyerEmail('priya@example.com');
+      setBuyerEmail('priya@auraathletics.com');
       setIsAuthModalOpen(false);
-      handleProceedToCheckout(undefined, { name: 'Priya Sharma', email: 'priya@example.com' });
+      handleProceedToCheckout(undefined, { name: 'Priya Sharma', email: 'priya@auraathletics.com' });
     } finally {
       setAuthLoading(false);
     }

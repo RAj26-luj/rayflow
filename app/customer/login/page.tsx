@@ -49,7 +49,7 @@ function CustomerLoginForm() {
     try {
       const res = await signIn('credentials', {
         redirect: false,
-        email: 'priya@example.com',
+        email: 'priya@auraathletics.com',
         password: 'demo123',
         userType: 'customer',
       });
@@ -103,7 +103,7 @@ function CustomerLoginForm() {
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="priya@example.com"
+            placeholder="priya@auraathletics.com"
             className="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3.5 py-2.5 text-white placeholder:text-zinc-500 focus:outline-none focus:border-violet-500"
           />
         </div>
