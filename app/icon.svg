@@ -1,20 +1,22 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
   <defs>
     <linearGradient id="rayflow-grad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#3B82F6"/>
-      <stop offset="50%" stop-color="#2563EB"/>
-      <stop offset="100%" stop-color="#1D4ED8"/>
+      <stop offset="0%" stop-color="#7C3AED"/>
+      <stop offset="50%" stop-color="#9333EA"/>
+      <stop offset="100%" stop-color="#EC4899"/>
     </linearGradient>
     <linearGradient id="rayflow-accent" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#60A5FA"/>
-      <stop offset="100%" stop-color="#38BDF8"/>
+      <stop offset="0%" stop-color="#EC4899"/>
+      <stop offset="100%" stop-color="#F43F5E"/>
     </linearGradient>
   </defs>
-  <!-- Rounded container background -->
-  <rect width="32" height="32" rx="8" fill="#0B0F19"/>
+  <!-- Rounded container background in deep graphite with subtle border -->
+  <rect width="32" height="32" rx="8" fill="#09090B"/>
+  <rect x="0.5" y="0.5" width="31" height="31" rx="7.5" fill="none" stroke="#27272A" stroke-width="1"/>
   <!-- RayFlow Flow Lines / Dynamic Chevron Ray -->
   <path d="M7 21L14 7L18 7L11 21H7Z" fill="url(#rayflow-grad)"/>
   <path d="M14 21L21 7L25 7L18 21H14Z" fill="url(#rayflow-accent)"/>
   <!-- Energy Spark -->
-  <circle cx="23" cy="9" r="2" fill="#38BDF8"/>
+  <circle cx="23" cy="9" r="2" fill="#F472B6"/>
 </svg>
+
