@@ -30,7 +30,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
   const pathname = usePathname();
 
   return (
-    <div className="flex min-h-screen bg-stone-50 overflow-x-hidden w-full">
+    <div className="flex min-h-screen bg-zinc-950 text-white overflow-x-hidden w-full">
       <Sidebar
         isOpen={isMobileSidebarOpen}
         onClose={() => setIsMobileSidebarOpen(false)}
@@ -43,7 +43,7 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
           {children}
         </main>
 
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 backdrop-blur border-t border-stone-200 px-2 py-1.5 flex items-center justify-around shadow-md">
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-zinc-900/95 backdrop-blur-2xl border-t border-zinc-800 px-2 py-1.5 flex items-center justify-around shadow-2xl">
           {MOBILE_BOTTOM_NAV.map((item) => {
             const Icon = item.icon;
             const isActive =
@@ -53,14 +53,14 @@ export function DashboardLayout({ children }: DashboardLayoutProps) {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`flex flex-col items-center justify-center py-1 px-2.5 rounded text-[10px] font-medium transition-colors relative ${
+                className={`flex flex-col items-center justify-center py-1 px-3 rounded-xl text-[10px] font-bold transition-all relative ${
                   isActive
-                    ? 'text-brand-700 font-semibold'
-                    : 'text-stone-500 hover:text-stone-900'
+                    ? 'text-violet-300 font-bold bg-violet-950/80 border border-violet-800/60'
+                    : 'text-zinc-400 hover:text-white'
                 }`}
               >
                 <div className="relative">
-                  <Icon className={`h-4 w-4 ${isActive ? 'text-brand-700' : 'text-stone-400'}`} />
+                  <Icon className={`h-4 w-4 ${isActive ? 'text-violet-400' : 'text-zinc-500'}`} />
                 </div>
                 <span className="mt-0.5">{item.label}</span>
               </Link>

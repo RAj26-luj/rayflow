@@ -63,15 +63,16 @@ export default function PaymentsPage() {
           badge="Payment Ledger"
           badgeIcon={<CreditCard className="h-3.5 w-3.5" />}
           actions={
-            <div className="flex items-center gap-2">
-              <div className="rounded border border-stone-200 bg-white px-3 py-1.5 text-xs text-stone-700">
-                Gross Captured: <strong className="text-emerald-800">{formatINR(totalCaptured)}</strong>
+            <div className="flex items-center gap-2.5">
+              <div className="rounded-full border border-zinc-800 bg-zinc-900/90 px-3.5 py-1.5 text-xs text-zinc-300 backdrop-blur-md">
+                Gross Captured: <strong className="text-emerald-400 font-mono">{formatINR(totalCaptured)}</strong>
               </div>
               <SecondaryButton
                 size="sm"
                 onClick={fetchOrders}
                 isLoading={loading}
-                leftIcon={<RefreshCw className="h-3.5 w-3.5 text-stone-500" />}
+                leftIcon={<RefreshCw className="h-3.5 w-3.5 text-zinc-400" />}
+                className="bg-zinc-900 border-zinc-800 text-zinc-300 hover:text-white"
               >
                 Refresh
               </SecondaryButton>
@@ -81,21 +82,21 @@ export default function PaymentsPage() {
 
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
           <div className="relative flex-1 max-w-md w-full">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-400" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search Order #, Customer, or RZP ID..."
-              className="w-full rounded border border-stone-300 bg-white pl-9 pr-3 py-1.5 text-xs text-stone-900 focus:outline-none focus:border-brand-500"
+              className="w-full rounded-2xl border border-zinc-800 bg-zinc-900/90 pl-10 pr-4 py-2 text-xs text-white placeholder:text-zinc-500 focus:outline-none focus:border-violet-500 shadow-inner"
             />
           </div>
 
-          <div className="flex items-center gap-1.5">
+          <div className="flex items-center gap-2">
             <select
               value={statusFilter}
               onChange={(e) => setStatusFilter(e.target.value)}
-              className="rounded border border-stone-300 bg-white px-3 py-1.5 text-xs font-medium text-stone-800 focus:outline-none focus:border-brand-500"
+              className="rounded-full border border-zinc-800 bg-zinc-900/90 px-4 py-2 text-xs font-semibold text-white focus:outline-none focus:border-violet-500"
             >
               <option value="ALL">All Statuses</option>
               <option value="PAID">Captured (Paid)</option>
@@ -108,48 +109,48 @@ export default function PaymentsPage() {
         {loading ? (
           <LoadingState message="Loading payment transactions..." />
         ) : filteredOrders.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded border border-stone-200 p-6 space-y-2">
-            <p className="text-stone-600 text-sm font-semibold">No payments match your search.</p>
-            <SecondaryButton size="sm" onClick={() => { setSearch(''); setStatusFilter('ALL'); }}>
+          <div className="text-center py-16 bg-zinc-900/80 rounded-3xl border border-zinc-800 p-8 space-y-3 shadow-xl backdrop-blur-xl text-white">
+            <p className="text-zinc-300 text-sm font-semibold">No payments match your search.</p>
+            <SecondaryButton size="sm" onClick={() => { setSearch(''); setStatusFilter('ALL'); }} className="bg-zinc-800 border-zinc-700 text-zinc-300">
               Reset Filters
             </SecondaryButton>
           </div>
         ) : (
-          <div className="rounded border border-stone-200 bg-white shadow-2xs overflow-hidden">
+          <div className="rounded-3xl border border-zinc-800/80 bg-zinc-900/80 shadow-xl backdrop-blur-xl overflow-hidden text-white">
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs text-stone-700">
-                <thead className="bg-stone-50 text-stone-500 font-semibold border-b border-stone-200 uppercase tracking-wider text-[10px]">
+              <table className="w-full text-left text-xs text-zinc-300">
+                <thead className="bg-zinc-950/80 text-zinc-400 font-semibold border-b border-zinc-800/80 uppercase tracking-wider text-[10px]">
                   <tr>
-                    <th className="p-3.5">Order & Date</th>
-                    <th className="p-3.5">Customer</th>
-                    <th className="p-3.5">Items</th>
-                    <th className="p-3.5">Amount</th>
-                    <th className="p-3.5">Razorpay Order ID</th>
-                    <th className="p-3.5">Status</th>
+                    <th className="p-4">Order & Date</th>
+                    <th className="p-4">Customer</th>
+                    <th className="p-4">Items</th>
+                    <th className="p-4">Amount</th>
+                    <th className="p-4">Razorpay Order ID</th>
+                    <th className="p-4">Status</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-stone-100">
+                <tbody className="divide-y divide-zinc-800/60">
                   {filteredOrders.map((ord) => (
-                    <tr key={ord.id} className="hover:bg-stone-50 transition-colors">
-                      <td className="p-3.5">
-                        <div className="font-bold text-stone-900">{ord.orderNumber}</div>
-                        <div className="text-[10px] text-stone-400">{formatDate(ord.createdAt)}</div>
+                    <tr key={ord.id} className="hover:bg-zinc-800/50 transition-colors">
+                      <td className="p-4">
+                        <div className="font-bold text-white">{ord.orderNumber}</div>
+                        <div className="text-[10px] text-zinc-400 font-mono">{formatDate(ord.createdAt)}</div>
                       </td>
-                      <td className="p-3.5">
-                        <div className="font-medium text-stone-900">{ord.customerName}</div>
-                        <div className="text-[11px] text-stone-400">{ord.customerEmail}</div>
+                      <td className="p-4">
+                        <div className="font-medium text-white">{ord.customerName}</div>
+                        <div className="text-[11px] text-zinc-400">{ord.customerEmail}</div>
                       </td>
-                      <td className="p-3.5 text-stone-600">
+                      <td className="p-4 text-zinc-300">
                         {ord.items.map((i) => i.productName).join(', ')}
                         {ord.isBundle && (
-                          <span className="ml-1 rounded bg-brand-50 text-brand-800 text-[10px] font-bold px-1.5 py-0.5">
+                          <span className="ml-1.5 rounded-full bg-violet-950/80 text-violet-300 border border-violet-800/60 text-[10px] font-bold px-2 py-0.5">
                             Bundle
                           </span>
                         )}
                       </td>
-                      <td className="p-3.5 font-bold text-stone-900">{formatINR(ord.totalAmount)}</td>
-                      <td className="p-3.5 text-stone-500">{ord.razorpayOrderId}</td>
-                      <td className="p-3.5">
+                      <td className="p-4 font-bold text-white font-mono">{formatINR(ord.totalAmount)}</td>
+                      <td className="p-4 text-zinc-400 font-mono">{ord.razorpayOrderId}</td>
+                      <td className="p-4">
                         <StatusBadge status={ord.status} size="sm" />
                       </td>
                     </tr>

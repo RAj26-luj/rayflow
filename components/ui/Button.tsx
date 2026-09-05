@@ -20,27 +20,27 @@ export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElemen
 
 const variantStyles: Record<NonNullable<ButtonProps['variant']>, string> = {
   primary:
-    'bg-brand-700 text-white hover:bg-brand-800 shadow-sm active:bg-brand-900 border border-brand-800/40 font-semibold',
+    'bg-gradient-to-r from-purple-600 via-violet-600 to-pink-600 text-white hover:opacity-95 shadow-lg shadow-purple-600/25 border border-purple-500/30 font-bold',
   secondary:
-    'bg-white text-stone-800 hover:bg-stone-100 border border-stone-300 active:bg-stone-200 shadow-2xs font-semibold',
+    'bg-zinc-900 text-zinc-100 hover:bg-zinc-800 border border-zinc-800 active:bg-zinc-800/80 shadow-2xs font-semibold',
   outline:
-    'bg-transparent text-stone-700 hover:bg-stone-100 hover:text-stone-900 border border-stone-300 active:bg-stone-200 shadow-2xs font-semibold',
+    'bg-transparent text-zinc-200 hover:bg-zinc-900 hover:text-white border border-zinc-700 active:bg-zinc-800 font-semibold',
   cancel:
-    'bg-stone-100 text-stone-700 hover:bg-stone-200 border border-stone-200 active:bg-stone-300 font-medium',
+    'bg-zinc-900 text-zinc-400 hover:bg-zinc-800 hover:text-zinc-200 border border-zinc-800 font-medium',
   ghost:
-    'bg-transparent text-stone-600 hover:bg-stone-100 hover:text-stone-900 border border-transparent active:bg-stone-200 font-medium',
+    'bg-transparent text-zinc-400 hover:bg-zinc-900 hover:text-zinc-100 border border-transparent font-medium',
   danger:
-    'bg-red-700 text-white hover:bg-red-800 shadow-sm active:bg-red-900 border border-red-800/40 font-semibold',
+    'bg-gradient-to-r from-rose-600 to-red-600 text-white hover:opacity-95 shadow-md border border-rose-500/30 font-bold',
   success:
-    'bg-emerald-700 text-white hover:bg-emerald-800 shadow-sm active:bg-emerald-900 border border-emerald-800/40 font-semibold',
+    'bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:opacity-95 shadow-md border border-emerald-500/30 font-bold',
   emerald:
-    'bg-emerald-700 text-white hover:bg-emerald-800 shadow-sm active:bg-emerald-900 border border-emerald-800/40 font-semibold',
+    'bg-gradient-to-r from-emerald-600 to-teal-600 text-white hover:opacity-95 shadow-md border border-emerald-500/30 font-bold',
 };
 
 const sizeStyles: Record<NonNullable<ButtonProps['size']>, string> = {
-  sm: 'px-3 py-1.5 text-xs rounded-md min-h-[34px] gap-1.5',
-  md: 'px-4 py-2 text-xs sm:text-sm rounded-md min-h-[40px] gap-2',
-  lg: 'px-5 py-2.5 text-sm sm:text-base rounded-md min-h-[44px] gap-2.5',
+  sm: 'px-3 py-1.5 text-xs rounded-xl min-h-[34px] gap-1.5',
+  md: 'px-4 py-2 text-xs sm:text-sm rounded-xl min-h-[40px] gap-2',
+  lg: 'px-5 py-2.5 text-sm sm:text-base rounded-2xl min-h-[44px] gap-2.5',
 };
 
 export function Button({
@@ -66,14 +66,14 @@ export function Button({
   return (
     <motion.button
       type={type}
-      whileTap={isDisabled ? undefined : { scale: 0.98 }}
+      whileTap={isDisabled ? undefined : { scale: 0.97 }}
       whileHover={isDisabled ? undefined : { y: -0.5 }}
       transition={{ duration: 0.12, ease: 'easeOut' }}
       disabled={isDisabled}
       onClick={onClick}
       className={twMerge(
         clsx(
-          'inline-flex items-center justify-center select-none transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-500 focus-visible:ring-offset-2',
+          'inline-flex items-center justify-center select-none transition-all focus:outline-none focus-visible:ring-2 focus-visible:ring-purple-500 focus-visible:ring-offset-2 focus-visible:ring-offset-zinc-950',
           variantStyles[variant],
           sizeStyles[size],
           fullWidth && 'w-full',
@@ -86,7 +86,7 @@ export function Button({
       {isButtonLoading ? (
         <>
           <Loader2 className="h-4 w-4 animate-spin text-current" />
-          <span>{children}</span>
+          {children && <span>{children}</span>}
         </>
       ) : (
         <>

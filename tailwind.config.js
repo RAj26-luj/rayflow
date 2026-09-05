@@ -10,7 +10,7 @@ module.exports = {
   theme: {
     container: {
       center: true,
-      padding: "1.5rem",
+      padding: "1.25rem",
       screens: {
         "2xl": "1400px",
       },
@@ -23,33 +23,37 @@ module.exports = {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         brand: {
-          50: '#fff7ed',
-          100: '#ffedd5',
-          200: '#fed7aa',
-          300: '#fdba74',
-          400: '#fb923c',
-          500: '#f97316',
-          600: '#ea580c',
-          700: '#c2410c', // Primary Warm Copper/Amber
-          800: '#9a3412',
-          900: '#7c2d12',
-          950: '#431407',
+          50: '#f5f3ff',
+          100: '#ede9fe',
+          200: '#ddd6fe',
+          300: '#c4b5fd',
+          400: '#a78bfa',
+          500: '#8b5cf6',
+          600: '#7c3aed',
+          700: '#6d28d9', // Electric Purple Base
+          800: '#5b21b6',
+          900: '#4c1d95',
+          950: '#2e1065',
+        },
+        pinkAccent: {
+          400: '#f472b6',
+          500: '#ec4899',
+          600: '#db2777',
         },
         commerce: {
-          bg: '#fafaf9',
-          surface: '#ffffff',
-          elevated: '#f5f5f4',
-          border: '#e7e5e4',
-          text: '#1c1917',
-          muted: '#78716c',
-          subtle: '#a8a29e',
-          accent: '#c2410c',
-          accentHover: '#9a3412',
-          accentSoft: '#fff7ed',
-          badge: '#ffedd5',
-          price: '#0f172a',
-          discount: '#b91c1c',
-          seller: '#431407',
+          bg: '#09090b', // Deep Dark Graphite
+          surface: '#18181b', // Elevated Card Surface
+          elevated: '#27272a',
+          border: '#27272a',
+          borderHover: '#3f3f46',
+          text: '#f4f4f5',
+          muted: '#a1a1aa',
+          subtle: '#71717a',
+          accent: '#7c3aed',
+          accentPink: '#ec4899',
+          price: '#ffffff',
+          discount: '#f43f5e',
+          seller: '#a78bfa',
         },
         primary: {
           DEFAULT: "hsl(var(--primary))",
@@ -81,9 +85,12 @@ module.exports = {
         },
       },
       borderRadius: {
-        lg: "0.5rem",
-        md: "0.375rem",
-        sm: "0.25rem",
+        '3xl': '1.5rem',
+        '2xl': '1.25rem',
+        xl: '0.875rem',
+        lg: '0.625rem',
+        md: '0.5rem',
+        sm: '0.375rem',
       },
       keyframes: {
         "accordion-down": {
@@ -94,15 +101,15 @@ module.exports = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
-        "slide-in-right": {
-          '0%': { transform: 'translateX(100%)', opacity: 0 },
-          '100%': { transform: 'translateX(0)', opacity: 1 },
-        }
+        "pulse-glow": {
+          '0%, 100%': { opacity: 0.6, transform: 'scale(1)' },
+          '50%': { opacity: 1, transform: 'scale(1.03)' },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-        "slide-in-right": "slide-in-right 0.3s ease-out forwards",
+        "pulse-glow": "pulse-glow 4s ease-in-out infinite",
       },
     },
   },

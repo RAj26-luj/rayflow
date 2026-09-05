@@ -134,81 +134,81 @@ export default function PoliciesPage() {
         />
 
         {savedSuccess && (
-          <div className="rounded border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-900 font-semibold flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-emerald-700" />
+          <div className="rounded-2xl border border-emerald-800/60 bg-emerald-950/80 p-3.5 text-xs text-emerald-200 font-semibold flex items-center gap-2 shadow-xl backdrop-blur-xl">
+            <CheckCircle2 className="h-4 w-4 text-emerald-400" />
             <span>Store rules updated successfully!</span>
           </div>
         )}
 
         <form onSubmit={handleSavePolicy} className="grid grid-cols-1 lg:grid-cols-3 gap-5">
           <div className="lg:col-span-2 space-y-5">
-            <div className="rounded border border-stone-200 bg-white p-5 space-y-4">
-              <h3 className="font-bold text-stone-900 text-sm sm:text-base border-b border-stone-100 pb-2">
+            <div className="rounded-3xl border border-zinc-800/80 bg-zinc-900/80 p-6 space-y-5 shadow-xl backdrop-blur-xl text-white">
+              <h3 className="font-bold text-white text-sm sm:text-base border-b border-zinc-800/80 pb-3">
                 Discount & Budget Ceilings
               </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs">
                 <div>
-                  <label className="font-semibold text-stone-700 block mb-1">Max Discount (%)</label>
+                  <label className="font-semibold text-zinc-300 block mb-1">Max Discount (%)</label>
                   <input
                     type="number"
                     value={policy.maxDiscountPercent}
                     onChange={(e) => setPolicy({ ...policy, maxDiscountPercent: Number(e.target.value) })}
-                    className="w-full rounded border border-stone-300 p-2 text-stone-900 focus:outline-none focus:border-brand-500 font-bold"
+                    className="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-white font-mono font-bold focus:outline-none focus:border-violet-500"
                   />
-                  <span className="text-[10px] text-stone-400">Hard limit on discounts</span>
+                  <span className="text-[10px] text-zinc-500 mt-1 block">Hard limit on discounts</span>
                 </div>
 
                 <div>
-                  <label className="font-semibold text-stone-700 block mb-1">Max Campaign Budget (INR)</label>
+                  <label className="font-semibold text-zinc-300 block mb-1">Max Campaign Budget (INR)</label>
                   <input
                     type="number"
                     value={policy.maxCampaignBudget}
                     onChange={(e) => setPolicy({ ...policy, maxCampaignBudget: Number(e.target.value) })}
-                    className="w-full rounded border border-stone-300 p-2 text-stone-900 focus:outline-none focus:border-brand-500 font-bold"
+                    className="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-white font-mono font-bold focus:outline-none focus:border-violet-500"
                   />
-                  <span className="text-[10px] text-stone-400">Campaign spend limit</span>
+                  <span className="text-[10px] text-zinc-500 mt-1 block">Campaign spend limit</span>
                 </div>
 
                 <div>
-                  <label className="font-semibold text-stone-700 block mb-1">Max Transaction (INR)</label>
+                  <label className="font-semibold text-zinc-300 block mb-1">Max Transaction (INR)</label>
                   <input
                     type="number"
                     value={policy.maxSingleTransaction}
                     onChange={(e) => setPolicy({ ...policy, maxSingleTransaction: Number(e.target.value) })}
-                    className="w-full rounded border border-stone-300 p-2 text-stone-900 focus:outline-none focus:border-brand-500 font-bold"
+                    className="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-white font-mono font-bold focus:outline-none focus:border-violet-500"
                   />
-                  <span className="text-[10px] text-stone-400">Single order cap</span>
+                  <span className="text-[10px] text-zinc-500 mt-1 block">Single order cap</span>
                 </div>
               </div>
             </div>
 
-            <div className="rounded border border-stone-200 bg-white p-5 space-y-4">
-              <h3 className="font-bold text-stone-900 text-sm sm:text-base border-b border-stone-100 pb-2">
+            <div className="rounded-3xl border border-zinc-800/80 bg-zinc-900/80 p-6 space-y-5 shadow-xl backdrop-blur-xl text-white">
+              <h3 className="font-bold text-white text-sm sm:text-base border-b border-zinc-800/80 pb-3">
                 Approval Thresholds
               </h3>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
                 <div>
-                  <label className="font-semibold text-stone-700 block mb-1">Discount Approval Threshold (%)</label>
+                  <label className="font-semibold text-zinc-300 block mb-1">Discount Approval Threshold (%)</label>
                   <input
                     type="number"
                     value={policy.approvalThresholdDiscount}
                     onChange={(e) => setPolicy({ ...policy, approvalThresholdDiscount: Number(e.target.value) })}
-                    className="w-full rounded border border-stone-300 p-2 text-stone-900 focus:outline-none focus:border-brand-500 font-bold"
+                    className="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-white font-mono font-bold focus:outline-none focus:border-violet-500"
                   />
-                  <span className="text-[10px] text-stone-400">Discounts above this require review</span>
+                  <span className="text-[10px] text-zinc-500 mt-1 block">Discounts above this require review</span>
                 </div>
 
                 <div>
-                  <label className="font-semibold text-stone-700 block mb-1">Campaign Approval Threshold (INR)</label>
+                  <label className="font-semibold text-zinc-300 block mb-1">Campaign Approval Threshold (INR)</label>
                   <input
                     type="number"
                     value={policy.approvalThresholdCampaign}
                     onChange={(e) => setPolicy({ ...policy, approvalThresholdCampaign: Number(e.target.value) })}
-                    className="w-full rounded border border-stone-300 p-2 text-stone-900 focus:outline-none focus:border-brand-500 font-bold"
+                    className="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-white font-mono font-bold focus:outline-none focus:border-violet-500"
                   />
-                  <span className="text-[10px] text-stone-400">Budgets above this require review</span>
+                  <span className="text-[10px] text-zinc-500 mt-1 block">Budgets above this require review</span>
                 </div>
               </div>
             </div>
@@ -221,57 +221,57 @@ export default function PoliciesPage() {
           </div>
 
           <div className="space-y-4">
-            <div className="rounded border border-stone-200 bg-white p-5 space-y-3">
-              <h3 className="font-bold text-stone-900 text-sm border-b border-stone-100 pb-2 flex items-center gap-1.5">
-                <ShieldCheck className="h-4 w-4 text-brand-700" />
+            <div className="rounded-3xl border border-zinc-800/80 bg-zinc-900/80 p-6 space-y-4 shadow-xl backdrop-blur-xl text-white">
+              <h3 className="font-bold text-white text-sm border-b border-zinc-800/80 pb-3 flex items-center gap-2">
+                <ShieldCheck className="h-4 w-4 text-violet-400" />
                 <span>Rules Evaluator Sandbox</span>
               </h3>
-              <p className="text-xs text-stone-500">Test candidate discount or budget inputs against configured store limits.</p>
+              <p className="text-xs text-zinc-400 leading-relaxed">Test candidate discount or budget inputs against configured store limits.</p>
 
-              <div className="space-y-2 text-xs">
+              <div className="space-y-3 text-xs">
                 <div>
-                  <label className="font-semibold text-stone-700 block mb-1">Test Discount (%)</label>
+                  <label className="font-semibold text-zinc-300 block mb-1">Test Discount (%)</label>
                   <input
                     type="number"
                     value={sandboxDiscount}
                     onChange={(e) => setSandboxDiscount(Number(e.target.value))}
-                    className="w-full rounded border border-stone-300 p-2 text-stone-900 focus:outline-none focus:border-brand-500"
+                    className="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-white font-mono focus:outline-none focus:border-violet-500"
                   />
                 </div>
 
                 <div>
-                  <label className="font-semibold text-stone-700 block mb-1">Test Campaign Budget (INR)</label>
+                  <label className="font-semibold text-zinc-300 block mb-1">Test Campaign Budget (INR)</label>
                   <input
                     type="number"
                     value={sandboxBudget}
                     onChange={(e) => setSandboxBudget(Number(e.target.value))}
-                    className="w-full rounded border border-stone-300 p-2 text-stone-900 focus:outline-none focus:border-brand-500"
+                    className="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-white font-mono focus:outline-none focus:border-violet-500"
                   />
                 </div>
 
-                <SecondaryButton size="sm" fullWidth onClick={handleRunSandbox}>
+                <SecondaryButton size="sm" fullWidth onClick={handleRunSandbox} className="bg-zinc-800 border-zinc-700 text-zinc-300">
                   Evaluate Rules
                 </SecondaryButton>
               </div>
 
               {sandboxResult && (
-                <div className="mt-3 space-y-2 pt-2 border-t border-stone-100 text-xs">
-                  <div className={`p-2.5 rounded border text-[11px] ${
+                <div className="mt-3 space-y-2 pt-3 border-t border-zinc-800/80 text-xs">
+                  <div className={`p-3 rounded-2xl border text-[11px] backdrop-blur-md ${
                     sandboxResult.discountEvaluation.status === 'BLOCKED'
-                      ? 'bg-red-50 border-red-200 text-red-900 font-semibold'
+                      ? 'bg-rose-950/60 border-rose-800 text-rose-300 font-semibold'
                       : sandboxResult.discountEvaluation.status === 'NEEDS_APPROVAL'
-                      ? 'bg-amber-50 border-amber-200 text-amber-900 font-semibold'
-                      : 'bg-emerald-50 border-emerald-200 text-emerald-900 font-semibold'
+                      ? 'bg-amber-950/60 border-amber-800 text-amber-300 font-semibold'
+                      : 'bg-emerald-950/60 border-emerald-800 text-emerald-300 font-semibold'
                   }`}>
                     <strong>Discount:</strong> {sandboxResult.discountEvaluation.reason}
                   </div>
 
-                  <div className={`p-2.5 rounded border text-[11px] ${
+                  <div className={`p-3 rounded-2xl border text-[11px] backdrop-blur-md ${
                     sandboxResult.budgetEvaluation.status === 'BLOCKED'
-                      ? 'bg-red-50 border-red-200 text-red-900 font-semibold'
+                      ? 'bg-rose-950/60 border-rose-800 text-rose-300 font-semibold'
                       : sandboxResult.budgetEvaluation.status === 'NEEDS_APPROVAL'
-                      ? 'bg-amber-50 border-amber-200 text-amber-900 font-semibold'
-                      : 'bg-emerald-50 border-emerald-200 text-emerald-900 font-semibold'
+                      ? 'bg-amber-950/60 border-amber-800 text-amber-300 font-semibold'
+                      : 'bg-emerald-950/60 border-emerald-800 text-emerald-300 font-semibold'
                   }`}>
                     <strong>Budget:</strong> {sandboxResult.budgetEvaluation.reason}
                   </div>

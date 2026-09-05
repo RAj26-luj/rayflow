@@ -10,3 +10,5 @@ export * from './DataTable';
 export * from './Timeline';
 export * from './Ticker';
 export * from './AssistantPanel';
+export * from './CategoryRail';
+export * from './PromoBanner';

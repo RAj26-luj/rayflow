@@ -92,30 +92,30 @@ export default function OpportunitiesPage() {
           badge="Growth Pipeline"
           badgeIcon={<TrendingUp className="h-3.5 w-3.5" />}
           actions={
-            <div className="flex items-center gap-2">
-              <div className="rounded border border-stone-200 bg-white px-3 py-1.5 text-xs text-stone-700">
-                Total Potential: <strong className="text-emerald-800">{formatINR(totalPotential)}</strong>
+            <div className="flex items-center gap-2.5">
+              <div className="rounded-full border border-zinc-800 bg-zinc-900/90 px-3.5 py-1.5 text-xs text-zinc-300 backdrop-blur-md">
+                Total Potential: <strong className="text-emerald-400 font-mono">{formatINR(totalPotential)}</strong>
               </div>
-              <SecondaryButton size="sm" onClick={fetchOpps} leftIcon={<RefreshCw className="h-3.5 w-3.5 text-stone-500" />}>
+              <SecondaryButton size="sm" onClick={fetchOpps} leftIcon={<RefreshCw className="h-3.5 w-3.5 text-zinc-400" />} className="bg-zinc-900 border-zinc-800 text-zinc-300 hover:text-white">
                 Refresh
               </SecondaryButton>
             </div>
           }
         />
 
-        <div className="rounded border border-brand-200 bg-brand-50 p-4 text-xs text-stone-900 space-y-1">
-          <div className="font-bold flex items-center gap-1.5 text-brand-900">
-            <ShieldCheck className="h-4 w-4 text-brand-700" />
+        <div className="rounded-2xl border border-violet-800/60 bg-violet-950/40 p-4 text-xs text-white space-y-1 backdrop-blur-md">
+          <div className="font-bold flex items-center gap-1.5 text-violet-300">
+            <ShieldCheck className="h-4 w-4 text-violet-400" />
             <span>Active Business Rules</span>
           </div>
-          <p className="text-stone-600 leading-relaxed">
+          <p className="text-zinc-300 leading-relaxed">
             All opportunities adhere to store policy limits (max discount 20%, budget cap ₹50,000, margin floor ≥60%).
           </p>
         </div>
 
         {notification && (
-          <div className="rounded border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-900 font-semibold flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-emerald-700" />
+          <div className="rounded-2xl border border-emerald-800/60 bg-emerald-950/80 p-3.5 text-xs text-emerald-200 font-semibold flex items-center gap-2 shadow-xl backdrop-blur-xl">
+            <CheckCircle2 className="h-4 w-4 text-emerald-400" />
             <span>{notification}</span>
           </div>
         )}
@@ -125,10 +125,10 @@ export default function OpportunitiesPage() {
             <button
               key={f}
               onClick={() => setActiveFilter(f)}
-              className={`rounded px-3 py-1 text-xs font-semibold whitespace-nowrap transition-colors ${
+              className={`rounded-full px-4 py-1.5 text-xs font-semibold whitespace-nowrap transition-all ${
                 activeFilter === f
-                  ? 'bg-brand-700 text-white'
-                  : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                  ? 'bg-gradient-to-r from-violet-600 to-pink-600 text-white shadow-lg shadow-violet-950/50'
+                  : 'bg-zinc-900/80 text-zinc-400 hover:bg-zinc-800 hover:text-white border border-zinc-800'
               }`}
             >
               {f === 'ALL' ? 'All Opportunities' : f.replace(/_/g, ' ')}
@@ -139,9 +139,9 @@ export default function OpportunitiesPage() {
         {loading ? (
           <LoadingState message="Loading opportunities..." />
         ) : filteredOpps.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded border border-stone-200 p-6 space-y-2">
-            <p className="text-stone-600 text-sm font-semibold">No opportunities match this filter.</p>
-            <SecondaryButton size="sm" onClick={() => setActiveFilter('ALL')}>
+          <div className="text-center py-16 bg-zinc-900/80 rounded-3xl border border-zinc-800 p-8 space-y-3 shadow-xl backdrop-blur-xl">
+            <p className="text-zinc-300 text-sm font-semibold">No opportunities match this filter.</p>
+            <SecondaryButton size="sm" onClick={() => setActiveFilter('ALL')} className="bg-zinc-800 border-zinc-700 text-zinc-300">
               Reset Filter
             </SecondaryButton>
           </div>
@@ -150,42 +150,42 @@ export default function OpportunitiesPage() {
             {filteredOpps.map((opp) => (
               <motion.div
                 key={opp.id}
-                whileHover={{ y: -1 }}
+                whileHover={{ y: -2 }}
                 transition={{ duration: 0.15 }}
-                className="rounded border border-stone-200 bg-white p-4 sm:p-5 shadow-2xs hover:border-stone-300 transition-all flex flex-col md:flex-row md:items-center justify-between gap-4"
+                className="rounded-3xl border border-zinc-800/80 bg-zinc-900/80 p-5 sm:p-6 shadow-xl backdrop-blur-xl hover:border-violet-500/40 transition-all flex flex-col md:flex-row md:items-center justify-between gap-5"
               >
-                <div className="space-y-2 flex-1">
+                <div className="space-y-3 flex-1">
                   <div className="flex items-center gap-2">
-                    <span className="rounded bg-brand-50 border border-brand-200 px-2 py-0.5 text-[10px] font-bold text-brand-800 uppercase">
+                    <span className="rounded-full bg-violet-950/80 border border-violet-800/60 px-2.5 py-0.5 text-[10px] font-bold text-violet-300 uppercase">
                       {opp.type.replace(/_/g, ' ')}
                     </span>
                     <StatusBadge status={opp.status} size="sm" />
                   </div>
 
                   <div>
-                    <h3 className="font-bold text-stone-900 text-base">{opp.title}</h3>
-                    <p className="text-xs text-stone-500 mt-0.5">{opp.subtitle}</p>
+                    <h3 className="font-bold text-white text-base sm:text-lg">{opp.title}</h3>
+                    <p className="text-xs text-zinc-400 mt-0.5">{opp.subtitle}</p>
                   </div>
 
-                  <div className="rounded border border-stone-200 bg-stone-50 p-3 text-xs space-y-1.5">
-                    <div className="text-[10px] font-bold text-stone-700 uppercase tracking-wider flex items-center gap-1.5">
-                      <Sparkles className="h-3 w-3 text-brand-700" />
+                  <div className="rounded-2xl border border-zinc-800 bg-zinc-950/70 p-3.5 text-xs space-y-1.5 text-zinc-300">
+                    <div className="text-[10px] font-bold text-violet-300 uppercase tracking-wider flex items-center gap-1.5">
+                      <Sparkles className="h-3 w-3 text-violet-400" />
                       WHY THIS MATTERS
                     </div>
-                    <p className="text-stone-600 text-[11px] leading-relaxed">
+                    <p className="text-zinc-300 text-[11px] leading-relaxed">
                       &quot;{opp.reasoning}&quot;
                     </p>
-                    <div className="pt-1.5 border-t border-stone-200 flex items-center justify-between text-[10px] text-stone-500">
-                      <span>Target: <strong className="text-stone-900">{opp.affectedCustomersCount} shoppers</strong></span>
-                      <span>Confidence: <strong className="text-brand-700 font-bold">{opp.confidence}%</strong></span>
+                    <div className="pt-2 border-t border-zinc-800/80 flex items-center justify-between text-[10px] text-zinc-400">
+                      <span>Target: <strong className="text-white">{opp.affectedCustomersCount} shoppers</strong></span>
+                      <span>Confidence: <strong className="text-violet-300 font-bold">{opp.confidence}%</strong></span>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex flex-col items-end justify-between gap-3 border-t md:border-t-0 md:border-l border-stone-100 pt-3 md:pt-0 md:pl-4 min-w-[200px]">
+                <div className="flex flex-col items-end justify-between gap-4 border-t md:border-t-0 md:border-l border-zinc-800/80 pt-4 md:pt-0 md:pl-6 min-w-[210px]">
                   <div className="text-right">
-                    <div className="text-[10px] uppercase text-stone-400 font-semibold">Est. Additional Revenue</div>
-                    <div className="text-lg font-extrabold text-emerald-800">{formatINR(opp.expectedRevenue)}</div>
+                    <div className="text-[10px] uppercase text-zinc-400 font-semibold tracking-wider">Est. Additional Revenue</div>
+                    <div className="text-xl font-black text-emerald-400 font-mono mt-0.5">{formatINR(opp.expectedRevenue)}</div>
                   </div>
 
                   <div className="flex items-center gap-2">
@@ -193,11 +193,11 @@ export default function OpportunitiesPage() {
                       <>
                         <button
                           onClick={() => handleReject(opp.id)}
-                          className="px-2 py-1 text-xs text-stone-500 hover:text-stone-800"
+                          className="px-2 py-1 text-xs text-zinc-400 hover:text-white"
                         >
                           Dismiss
                         </button>
-                        <SecondaryButton size="sm" onClick={() => handleOpenApproval(opp)}>
+                        <SecondaryButton size="sm" onClick={() => handleOpenApproval(opp)} className="bg-zinc-800 border-zinc-700 text-zinc-300">
                           Review
                         </SecondaryButton>
                         <ActionButton size="sm" onClick={() => handleOpenApproval(opp)} leftIcon={<CheckCircle2 className="h-3.5 w-3.5" />}>
@@ -205,7 +205,7 @@ export default function OpportunitiesPage() {
                         </ActionButton>
                       </>
                     ) : (
-                      <SecondaryButton size="sm" onClick={() => handleOpenApproval(opp)}>
+                      <SecondaryButton size="sm" onClick={() => handleOpenApproval(opp)} className="bg-zinc-800 border-zinc-700 text-zinc-300">
                         View Details
                       </SecondaryButton>
                     )}

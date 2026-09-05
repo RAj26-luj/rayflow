@@ -14,36 +14,43 @@ import {
   Package,
 } from 'lucide-react';
 import { Button } from '@/components/ui';
+import { CategoryRail } from '@/components/ui/CategoryRail';
+import { PromoBanner } from '@/components/ui/PromoBanner';
 
 const ProductScene = dynamic(() => import('@/components/three/ProductScene'), {
   ssr: false,
   loading: () => (
-    <div className="w-full h-[320px] sm:h-[420px] rounded-xl bg-stone-900 flex items-center justify-center text-stone-400 text-xs">
-      Loading scene...
+    <div className="w-full h-[340px] sm:h-[450px] rounded-3xl bg-zinc-900/60 border border-zinc-800 flex items-center justify-center text-zinc-400 text-xs backdrop-blur-xl animate-pulse">
+      Loading 3D Product Canvas...
     </div>
   ),
 });
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-stone-50 text-stone-900 selection:bg-amber-100 selection:text-amber-900">
-      <nav className="border-b border-stone-200 bg-white/90 backdrop-blur sticky top-0 z-40 px-4 sm:px-6 py-3.5">
+    <div className="min-h-screen bg-zinc-950 text-white selection:bg-violet-900 selection:text-white relative overflow-hidden">
+      {/* Background Glow Atmospheric Gradients */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-gradient-to-b from-purple-900/25 via-violet-900/10 to-transparent blur-3xl pointer-events-none" />
+      <div className="absolute top-[400px] right-0 w-[500px] h-[400px] bg-pink-900/15 blur-3xl pointer-events-none" />
+
+      {/* Header Navigation */}
+      <nav className="border-b border-zinc-800/80 bg-zinc-950/80 backdrop-blur-2xl sticky top-0 z-40 px-4 sm:px-6 py-4 shadow-xl">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-md bg-brand-700 text-white font-bold shadow-xs">
-              <TrendingUp className="h-4 w-4" />
+          <div className="flex items-center gap-3">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-violet-600 via-purple-600 to-pink-600 text-white font-bold shadow-lg shadow-violet-950/60">
+              <TrendingUp className="h-5 w-5" />
             </div>
-            <span className="font-extrabold text-lg tracking-tight text-stone-900">RAYFLOW</span>
+            <span className="font-black text-xl tracking-tight text-white">RAYFLOW</span>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-3">
             <Link href="/shop">
-              <Button variant="primary" size="sm" icon={<ShoppingBag className="h-3.5 w-3.5" />}>
-                Shop Store
+              <Button variant="primary" size="sm" icon={<ShoppingBag className="h-4 w-4" />}>
+                Explore Store
               </Button>
             </Link>
             <Link href="/merchant/login">
-              <Button variant="secondary" size="sm" icon={<Store className="h-3.5 w-3.5 text-stone-600" />}>
+              <Button variant="secondary" size="sm" icon={<Store className="h-4 w-4 text-zinc-300" />} className="bg-zinc-900 border-zinc-800 text-zinc-200 hover:text-white">
                 Merchant Portal
               </Button>
             </Link>
@@ -51,34 +58,35 @@ export default function LandingPage() {
         </div>
       </nav>
 
-      <section className="relative px-4 sm:px-6 pt-12 sm:pt-20 pb-16 max-w-7xl mx-auto">
+      {/* Hero Section */}
+      <section className="relative px-4 sm:px-6 pt-10 sm:pt-16 pb-16 max-w-7xl mx-auto">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
           <div className="space-y-6 text-left">
-            <div className="inline-flex items-center gap-2 rounded-md border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-800">
-              <Sparkles className="h-3.5 w-3.5 text-brand-700" />
-              <span>Modern Commerce Platform</span>
+            <div className="inline-flex items-center gap-2 rounded-full border border-violet-800/60 bg-violet-950/80 px-3.5 py-1 text-xs font-bold text-violet-300 backdrop-blur-md shadow-xs">
+              <Sparkles className="h-3.5 w-3.5 text-violet-400" />
+              <span>Next-Gen Commerce Experience</span>
             </div>
 
-            <h1 className="text-3xl sm:text-5xl font-extrabold tracking-tight text-stone-900 leading-tight">
-              One place to shop.{' '}
-              <span className="text-brand-700">
-                A smarter way to grow.
+            <h1 className="text-4xl sm:text-6xl font-black tracking-tight text-white leading-[1.1]">
+              Next-Level Shopping.{' '}
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-violet-400 via-purple-300 to-pink-400">
+                Precision Growth.
               </span>
             </h1>
 
-            <p className="text-sm sm:text-base text-stone-600 leading-relaxed max-w-xl">
-              RAYFLOW connects customer intent with merchant growth: tailored gear discovery and instant bundle savings for buyers, paired with margin rules and Razorpay checkout for store owners.
+            <p className="text-sm sm:text-base text-zinc-300 leading-relaxed max-w-xl">
+              RAYFLOW brings luxury 3D presentation and effortless checkout to modern commerce. Tailored product discovery and automated savings for shoppers, backed by smart policy rules and Razorpay integration.
             </p>
 
-            <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
+            <div className="flex flex-col sm:flex-row items-center gap-3.5 pt-2">
               <Link href="/shop" className="w-full sm:w-auto">
-                <Button variant="primary" size="lg" icon={<ShoppingBag className="h-4 w-4" />} className="w-full sm:w-auto">
+                <Button variant="primary" size="lg" icon={<ShoppingBag className="h-4.5 w-4.5" />} className="w-full sm:w-auto text-sm">
                   Explore Buyer Store
                 </Button>
               </Link>
 
               <Link href="/merchant/login" className="w-full sm:w-auto">
-                <Button variant="secondary" size="lg" icon={<Store className="h-4 w-4 text-stone-600" />} className="w-full sm:w-auto">
+                <Button variant="secondary" size="lg" icon={<Store className="h-4.5 w-4.5 text-zinc-300" />} className="w-full sm:w-auto text-sm bg-zinc-900 border-zinc-800 text-zinc-200 hover:text-white">
                   Open Merchant Portal
                 </Button>
               </Link>
@@ -91,38 +99,50 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="px-4 sm:px-6 py-12 max-w-5xl mx-auto">
-        <div className="text-center mb-8">
-          <h2 className="text-2xl font-bold text-stone-900 tracking-tight">
-            Two Purpose-Built Experiences
+      {/* Category Rail Preview */}
+      <section className="px-4 sm:px-6 py-6 max-w-7xl mx-auto border-t border-zinc-900">
+        <CategoryRail selectedCategory="all" onSelectCategory={() => {}} />
+      </section>
+
+      {/* Promo Banner Preview */}
+      <section className="px-4 sm:px-6 py-8 max-w-7xl mx-auto">
+        <PromoBanner />
+      </section>
+
+      {/* Two Purpose-Built Experiences Section */}
+      <section className="px-4 sm:px-6 py-16 max-w-6xl mx-auto">
+        <div className="text-center mb-12">
+          <h2 className="text-2xl sm:text-4xl font-black text-white tracking-tight">
+            Two Unified Commerce Portals
           </h2>
-          <p className="mt-1 text-xs sm:text-sm text-stone-500">
-            Designed for buyers and store owners on a unified commerce platform.
+          <p className="mt-2 text-xs sm:text-sm text-zinc-400 max-w-md mx-auto">
+            Tailored experiences for shoppers and store managers on one unified platform.
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="rounded-xl border border-stone-200 bg-white p-6 flex flex-col justify-between shadow-2xs hover:border-brand-500/50 transition-all">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {/* Customer Card */}
+          <div className="rounded-3xl border border-zinc-800/80 bg-zinc-900/80 p-6 sm:p-8 flex flex-col justify-between shadow-2xl backdrop-blur-xl hover:border-violet-500/50 transition-all duration-300">
             <div>
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-brand-50 text-brand-700 border border-brand-200 mb-4">
-                <ShoppingBag className="h-5 w-5" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-950/80 text-violet-300 border border-violet-800/60 mb-5 shadow-inner">
+                <ShoppingBag className="h-6 w-6" />
               </div>
-              <h3 className="text-lg font-bold text-stone-900 mb-2">Customer Storefront</h3>
-              <p className="text-xs sm:text-sm text-stone-600 leading-relaxed mb-4">
-                Discover performance gear, receive tailored product recommendations, enjoy automatic multi-item savings, and complete payments via Razorpay.
+              <h3 className="text-xl font-bold text-white mb-2">Customer Storefront</h3>
+              <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed mb-6">
+                Discover performance gear in 3D, receive tailored product recommendations, enjoy automatic bundle savings, and complete seamless payments via Razorpay.
               </p>
-              <ul className="space-y-2 text-xs text-stone-600 mb-6">
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-brand-700 flex-shrink-0" />
-                  <span>Interactive product discovery & gear bundles</span>
+              <ul className="space-y-2.5 text-xs text-zinc-300 mb-8">
+                <li className="flex items-center gap-2.5">
+                  <CheckCircle2 className="h-4 w-4 text-violet-400 flex-shrink-0" />
+                  <span>3D floating canvas & interactive product discovery</span>
                 </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-brand-700 flex-shrink-0" />
-                  <span>Automatic bundle savings calculation</span>
+                <li className="flex items-center gap-2.5">
+                  <CheckCircle2 className="h-4 w-4 text-violet-400 flex-shrink-0" />
+                  <span>Automatic bundle savings & wishlist tracking</span>
                 </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-brand-700 flex-shrink-0" />
-                  <span>Razorpay test mode payments</span>
+                <li className="flex items-center gap-2.5">
+                  <CheckCircle2 className="h-4 w-4 text-violet-400 flex-shrink-0" />
+                  <span>Instant Razorpay Test Mode checkout</span>
                 </li>
               </ul>
             </div>
@@ -133,32 +153,33 @@ export default function LandingPage() {
             </Link>
           </div>
 
-          <div className="rounded-xl border border-stone-200 bg-white p-6 flex flex-col justify-between shadow-2xs hover:border-stone-300 transition-all">
+          {/* Merchant Card */}
+          <div className="rounded-3xl border border-zinc-800/80 bg-zinc-900/80 p-6 sm:p-8 flex flex-col justify-between shadow-2xl backdrop-blur-xl hover:border-violet-500/50 transition-all duration-300">
             <div>
-              <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-stone-100 text-stone-700 border border-stone-200 mb-4">
-                <Store className="h-5 w-5" />
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-zinc-800/90 text-zinc-300 border border-zinc-700/60 mb-5 shadow-inner">
+                <Store className="h-6 w-6" />
               </div>
-              <h3 className="text-lg font-bold text-stone-900 mb-2">Merchant Revenue Center</h3>
-              <p className="text-xs sm:text-sm text-stone-600 leading-relaxed mb-4">
-                Review store opportunities, run promotion simulations, set discount policy rules, and track Razorpay transactions.
+              <h3 className="text-xl font-bold text-white mb-2">Merchant Revenue Center</h3>
+              <p className="text-xs sm:text-sm text-zinc-300 leading-relaxed mb-6">
+                Review store revenue opportunities, run campaign simulations, set discount policy limits, and track verified Razorpay settlements.
               </p>
-              <ul className="space-y-2 text-xs text-stone-600 mb-6">
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-stone-500 flex-shrink-0" />
-                  <span>Revenue opportunities & growth insights</span>
+              <ul className="space-y-2.5 text-xs text-zinc-300 mb-8">
+                <li className="flex items-center gap-2.5">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400 flex-shrink-0" />
+                  <span>Revenue opportunities & growth analytics</span>
                 </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-stone-500 flex-shrink-0" />
-                  <span>Configurable discount caps and approval rules</span>
+                <li className="flex items-center gap-2.5">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400 flex-shrink-0" />
+                  <span>Configurable discount caps and policy enforcement</span>
                 </li>
-                <li className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-stone-500 flex-shrink-0" />
-                  <span>Complete activity log & settlement ledger</span>
+                <li className="flex items-center gap-2.5">
+                  <CheckCircle2 className="h-4 w-4 text-emerald-400 flex-shrink-0" />
+                  <span>Complete audit log & transaction ledger</span>
                 </li>
               </ul>
             </div>
             <Link href="/merchant/login">
-              <Button variant="secondary" size="md" className="w-full" icon={<ArrowRight className="h-4 w-4 text-stone-600" />}>
+              <Button variant="secondary" size="md" className="w-full bg-zinc-800 border-zinc-700 text-zinc-200 hover:text-white" icon={<ArrowRight className="h-4 w-4 text-zinc-300" />}>
                 Open Merchant Portal
               </Button>
             </Link>
@@ -166,8 +187,9 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <footer className="border-t border-stone-200 bg-white px-4 sm:px-6 py-8 text-center text-xs text-stone-500">
-        <p>RAYFLOW — Commerce Platform with Razorpay Payments</p>
+      {/* Footer */}
+      <footer className="border-t border-zinc-900 bg-zinc-950 px-4 sm:px-6 py-8 text-center text-xs text-zinc-500">
+        <p>RAYFLOW — Premium 3D Dark Commerce Platform with Razorpay Payments</p>
       </footer>
     </div>
   );

@@ -121,8 +121,8 @@ export default function CampaignsPage() {
         />
 
         {notification && (
-          <div className="rounded border border-emerald-200 bg-emerald-50 p-3 text-xs text-emerald-900 font-semibold flex items-center gap-2">
-            <CheckCircle2 className="h-4 w-4 text-emerald-700" />
+          <div className="rounded-2xl border border-emerald-800/60 bg-emerald-950/80 p-3.5 text-xs text-emerald-200 font-semibold flex items-center gap-2 shadow-xl backdrop-blur-xl">
+            <CheckCircle2 className="h-4 w-4 text-emerald-400" />
             <span>{notification}</span>
           </div>
         )}
@@ -130,8 +130,8 @@ export default function CampaignsPage() {
         {loading ? (
           <LoadingState message="Loading campaigns..." />
         ) : campaigns.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded border border-stone-200 p-6 space-y-2">
-            <p className="text-stone-600 text-sm font-semibold">No active campaigns.</p>
+          <div className="text-center py-16 bg-zinc-900/80 rounded-3xl border border-zinc-800 p-8 space-y-3 shadow-xl backdrop-blur-xl text-white">
+            <p className="text-zinc-300 text-sm font-semibold">No active campaigns.</p>
             <ActionButton size="sm" onClick={() => setIsCreateModalOpen(true)}>
               Launch First Campaign
             </ActionButton>
@@ -148,69 +148,69 @@ export default function CampaignsPage() {
       <Modal isOpen={isCreateModalOpen} onClose={() => setIsCreateModalOpen(false)} title="Create Bounded Campaign">
         <div className="space-y-4 text-xs">
           <div>
-            <label className="font-semibold text-stone-700 block mb-1">Campaign Name</label>
+            <label className="font-semibold text-zinc-300 block mb-1">Campaign Name</label>
             <input
               type="text"
               value={campaignName}
               onChange={(e) => setCampaignName(e.target.value)}
-              className="w-full rounded border border-stone-300 p-2 text-stone-900 focus:outline-none focus:border-brand-500"
+              className="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-white placeholder:text-zinc-500 focus:outline-none focus:border-violet-500"
             />
           </div>
 
           <div>
-            <label className="font-semibold text-stone-700 block mb-1">Target Cohort Description</label>
+            <label className="font-semibold text-zinc-300 block mb-1">Target Cohort Description</label>
             <input
               type="text"
               value={targetCohort}
               onChange={(e) => setTargetCohort(e.target.value)}
-              className="w-full rounded border border-stone-300 p-2 text-stone-900 focus:outline-none focus:border-brand-500"
+              className="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-white placeholder:text-zinc-500 focus:outline-none focus:border-violet-500"
             />
           </div>
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="font-semibold text-stone-700 block mb-1">Offer Discount (%)</label>
+              <label className="font-semibold text-zinc-300 block mb-1">Offer Discount (%)</label>
               <input
                 type="number"
                 max={20}
                 value={discountPercent}
                 onChange={(e) => setDiscountPercent(Number(e.target.value))}
-                className="w-full rounded border border-stone-300 p-2 text-stone-900 focus:outline-none focus:border-brand-500"
+                className="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-white placeholder:text-zinc-500 focus:outline-none focus:border-violet-500 font-mono"
               />
-              <span className="text-[10px] text-stone-400">Max allowed: 20%</span>
+              <span className="text-[10px] text-zinc-500">Max allowed: 20%</span>
             </div>
 
             <div>
-              <label className="font-semibold text-stone-700 block mb-1">Max Budget (INR)</label>
+              <label className="font-semibold text-zinc-300 block mb-1">Max Budget (INR)</label>
               <input
                 type="number"
                 max={50000}
                 value={maxBudget}
                 onChange={(e) => setMaxBudget(Number(e.target.value))}
-                className="w-full rounded border border-stone-300 p-2 text-stone-900 focus:outline-none focus:border-brand-500"
+                className="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-white placeholder:text-zinc-500 focus:outline-none focus:border-violet-500 font-mono"
               />
-              <span className="text-[10px] text-stone-400">Policy cap: ₹50,000</span>
+              <span className="text-[10px] text-zinc-500">Policy cap: ₹50,000</span>
             </div>
           </div>
 
           {simResult && (
-            <div className="rounded bg-brand-50 border border-brand-200 p-3 space-y-1">
-              <div className="font-bold text-brand-900">Simulation Summary</div>
-              <p className="text-stone-600 text-[11px]">
-                Projected Orders: <strong>{simResult.projectedOrders}</strong> | Expected Revenue: <strong>{formatINR(simResult.projectedRevenue)}</strong>
+            <div className="rounded-2xl bg-violet-950/60 border border-violet-800/60 p-3.5 space-y-1 text-white">
+              <div className="font-bold text-violet-300">Simulation Summary</div>
+              <p className="text-zinc-300 text-[11px]">
+                Projected Orders: <strong>{simResult.projectedOrders}</strong> | Expected Revenue: <strong className="font-mono">{formatINR(simResult.projectedRevenue)}</strong>
               </p>
-              <div className="text-emerald-800 text-[11px] font-semibold">
+              <div className="text-emerald-400 text-[11px] font-semibold">
                 Policy Check: All rules compliant ✓
               </div>
             </div>
           )}
 
           <div className="pt-2 flex justify-between gap-2">
-            <SecondaryButton size="sm" onClick={handleSimulate} isLoading={simulating}>
+            <SecondaryButton size="sm" onClick={handleSimulate} isLoading={simulating} className="bg-zinc-800 border-zinc-700 text-zinc-300">
               Simulate Impact
             </SecondaryButton>
             <div className="flex items-center gap-2">
-              <SecondaryButton size="sm" onClick={() => setIsCreateModalOpen(false)}>
+              <SecondaryButton size="sm" onClick={() => setIsCreateModalOpen(false)} className="bg-zinc-800 border-zinc-700 text-zinc-300">
                 Cancel
               </SecondaryButton>
               <ActionButton size="sm" onClick={handleLaunchCampaign}>

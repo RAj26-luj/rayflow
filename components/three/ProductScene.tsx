@@ -2,45 +2,62 @@
 
 import React, { useRef } from 'react';
 import { Canvas, useFrame } from '@react-three/fiber';
-import { Float, OrbitControls } from '@react-three/drei';
+import { Float, OrbitControls, MeshWobbleMaterial } from '@react-three/drei';
 import * as THREE from 'three';
 
-function FloatingGeometry() {
+function FloatingCommerceGeometry() {
   const meshRef = useRef<THREE.Mesh>(null);
-  const ringRef = useRef<THREE.Mesh>(null);
+  const ring1Ref = useRef<THREE.Mesh>(null);
+  const ring2Ref = useRef<THREE.Mesh>(null);
 
   useFrame((state, delta) => {
     if (meshRef.current) {
-      meshRef.current.rotation.x += delta * 0.2;
-      meshRef.current.rotation.y += delta * 0.3;
+      meshRef.current.rotation.x += delta * 0.25;
+      meshRef.current.rotation.y += delta * 0.35;
     }
-    if (ringRef.current) {
-      ringRef.current.rotation.z -= delta * 0.15;
-      ringRef.current.rotation.x += delta * 0.1;
+    if (ring1Ref.current) {
+      ring1Ref.current.rotation.z -= delta * 0.2;
+      ring1Ref.current.rotation.x += delta * 0.15;
+    }
+    if (ring2Ref.current) {
+      ring2Ref.current.rotation.y += delta * 0.25;
+      ring2Ref.current.rotation.z += delta * 0.1;
     }
   });
 
   return (
-    <Float speed={2} rotationIntensity={0.5} floatIntensity={0.8}>
+    <Float speed={2.5} rotationIntensity={0.6} floatIntensity={1}>
       <group>
-        {/* Main 3D Gem Shape */}
+        {/* Core 3D Diamond / Octahedron Geometry */}
         <mesh ref={meshRef}>
-          <octahedronGeometry args={[1.6, 0]} />
+          <octahedronGeometry args={[1.5, 0]} />
+          <MeshWobbleMaterial
+            color="#8b5cf6"
+            factor={0.15}
+            speed={1.5}
+            roughness={0.15}
+            metalness={0.85}
+          />
+        </mesh>
+
+        {/* Primary Outer Orbit Ring (Electric Violet) */}
+        <mesh ref={ring1Ref} rotation={[Math.PI / 3, 0, 0]}>
+          <torusGeometry args={[2.5, 0.04, 16, 100]} />
           <meshStandardMaterial
-            color="#ea580c"
-            roughness={0.2}
-            metalness={0.8}
+            color="#a78bfa"
+            roughness={0.1}
+            metalness={0.9}
             wireframe={false}
           />
         </mesh>
 
-        {/* Orbit Ring */}
-        <mesh ref={ringRef} rotation={[Math.PI / 3, 0, 0]}>
-          <torusGeometry args={[2.4, 0.04, 16, 100]} />
+        {/* Secondary Cross Ring (Magenta/Pink Accent) */}
+        <mesh ref={ring2Ref} rotation={[-Math.PI / 4, Math.PI / 6, 0]}>
+          <torusGeometry args={[3.0, 0.03, 16, 100]} />
           <meshStandardMaterial
-            color="#fdba74"
+            color="#ec4899"
             roughness={0.1}
-            metalness={0.9}
+            metalness={0.95}
           />
         </mesh>
       </group>
@@ -50,17 +67,19 @@ function FloatingGeometry() {
 
 export default function ProductScene() {
   return (
-    <div className="w-full h-[320px] sm:h-[420px] relative rounded-2xl overflow-hidden bg-stone-900 border border-stone-800 shadow-xl">
+    <div className="w-full h-[320px] sm:h-[420px] relative rounded-3xl overflow-hidden bg-gradient-to-b from-zinc-900/90 to-zinc-950/90 border border-zinc-800/80 shadow-2xl backdrop-blur">
+      <div className="absolute inset-0 bg-glow-purple pointer-events-none" />
       <Canvas
-        camera={{ position: [0, 0, 6], fov: 45 }}
+        camera={{ position: [0, 0, 6.5], fov: 45 }}
         style={{ background: 'transparent' }}
         gl={{ antialias: true, alpha: true }}
       >
-        <ambientLight intensity={0.7} />
-        <directionalLight position={[10, 10, 5]} intensity={1.5} color="#ffedd5" />
-        <pointLight position={[-10, -10, -5]} intensity={0.5} color="#ea580c" />
-        <FloatingGeometry />
-        <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.5} />
+        <ambientLight intensity={0.8} />
+        <directionalLight position={[10, 10, 5]} intensity={1.8} color="#ede9fe" />
+        <pointLight position={[-10, -10, -5]} intensity={1.2} color="#ec4899" />
+        <pointLight position={[0, 5, 0]} intensity={1.0} color="#7c3aed" />
+        <FloatingCommerceGeometry />
+        <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.8} />
       </Canvas>
     </div>
   );

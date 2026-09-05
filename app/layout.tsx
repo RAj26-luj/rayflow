@@ -4,8 +4,8 @@ import Script from 'next/script';
 import { SessionProvider } from '@/components/providers/SessionProvider';
 
 export const metadata: Metadata = {
-  title: 'RAYFLOW — Digital Commerce Platform',
-  description: 'Modern commerce platform featuring customer product discovery, merchant growth controls, and Razorpay checkout integration.',
+  title: 'RAYFLOW — Commerce Platform',
+  description: 'Premium commerce experience featuring customer discovery, merchant growth controls, and Razorpay checkout.',
 };
 
 export default function RootLayout({
@@ -14,8 +14,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body className="min-h-screen bg-stone-50 font-sans text-stone-900 antialiased selection:bg-amber-100 selection:text-amber-900">
+    <html lang="en" className="dark">
+      <body className="min-h-screen bg-zinc-950 font-sans text-zinc-100 antialiased selection:bg-purple-900 selection:text-pink-200">
         <SessionProvider>
           {children}
         </SessionProvider>

@@ -15,25 +15,25 @@ export interface BadgeProps {
 }
 
 const variantStyles: Record<NonNullable<BadgeProps['variant']>, string> = {
-  brand: 'bg-brand-50 text-brand-800 border-brand-200',
-  blue: 'bg-amber-50 text-amber-900 border-amber-200',
-  indigo: 'bg-stone-100 text-stone-800 border-stone-300',
-  emerald: 'bg-emerald-50 text-emerald-800 border-emerald-200',
-  rose: 'bg-rose-50 text-rose-800 border-rose-200',
-  amber: 'bg-amber-50 text-amber-900 border-amber-200',
-  slate: 'bg-stone-100 text-stone-700 border-stone-200',
-  purple: 'bg-stone-100 text-stone-800 border-stone-200',
+  brand: 'bg-violet-950/80 text-violet-300 border-violet-800/60 shadow-sm shadow-violet-950/50',
+  blue: 'bg-amber-950/80 text-amber-300 border-amber-800/60',
+  indigo: 'bg-zinc-800/80 text-zinc-300 border-zinc-700/60',
+  emerald: 'bg-emerald-950/80 text-emerald-300 border-emerald-800/60',
+  rose: 'bg-rose-950/80 text-rose-300 border-rose-800/60',
+  amber: 'bg-amber-950/80 text-amber-300 border-amber-800/60',
+  slate: 'bg-zinc-900/80 text-zinc-400 border-zinc-800',
+  purple: 'bg-purple-950/80 text-purple-300 border-purple-800/60',
 };
 
 const dotColors: Record<NonNullable<BadgeProps['variant']>, string> = {
-  brand: 'bg-brand-600',
-  blue: 'bg-amber-600',
-  indigo: 'bg-stone-600',
-  emerald: 'bg-emerald-600',
-  rose: 'bg-rose-600',
-  amber: 'bg-amber-600',
-  slate: 'bg-stone-400',
-  purple: 'bg-stone-600',
+  brand: 'bg-violet-400 shadow-sm shadow-violet-400',
+  blue: 'bg-amber-400',
+  indigo: 'bg-zinc-400',
+  emerald: 'bg-emerald-400 shadow-sm shadow-emerald-400',
+  rose: 'bg-rose-400',
+  amber: 'bg-amber-400',
+  slate: 'bg-zinc-500',
+  purple: 'bg-purple-400 shadow-sm shadow-purple-400',
 };
 
 const sizeStyles: Record<NonNullable<BadgeProps['size']>, string> = {
@@ -55,7 +55,7 @@ export function Badge({
     <span
       className={twMerge(
         clsx(
-          'inline-flex items-center gap-1.5 rounded-md border font-semibold transition-colors select-none',
+          'inline-flex items-center gap-1.5 rounded-full border font-medium transition-all select-none backdrop-blur-md',
           variantStyles[variant],
           sizeStyles[size],
           className
@@ -111,19 +111,19 @@ export function StatusBadge({
 }: StatusBadgeProps) {
   const norm = status?.toUpperCase() || '';
 
-  let style = 'bg-stone-100 text-stone-700 border-stone-200';
+  let style = 'bg-zinc-800/80 text-zinc-300 border-zinc-700/60';
   let defaultPulse = false;
 
   if (['PAID', 'CAPTURED', 'SUCCESS', 'ACTIVE', 'VERIFIED'].includes(norm)) {
-    style = 'bg-emerald-50 text-emerald-800 border-emerald-200 font-semibold';
+    style = 'bg-emerald-950/80 text-emerald-300 border-emerald-800/60 font-medium shadow-xs shadow-emerald-950/40';
     defaultPulse = norm === 'ACTIVE';
   } else if (['PENDING', 'NEEDS_APPROVAL', 'ATTEMPTED', 'RECOMMENDED'].includes(norm)) {
-    style = 'bg-amber-50 text-amber-900 border-amber-200 font-semibold';
+    style = 'bg-amber-950/80 text-amber-300 border-amber-800/60 font-medium shadow-xs shadow-amber-950/40';
     defaultPulse = norm === 'PENDING';
   } else if (['FAILED', 'DECLINED', 'BLOCKED'].includes(norm)) {
-    style = 'bg-red-50 text-red-800 border-red-200 font-semibold';
+    style = 'bg-rose-950/80 text-rose-300 border-rose-800/60 font-medium shadow-xs shadow-rose-950/40';
   } else if (['DEMO', 'TEST_MODE', 'TEST'].includes(norm)) {
-    style = 'bg-brand-50 text-brand-800 border-brand-200 font-semibold';
+    style = 'bg-violet-950/80 text-violet-300 border-violet-800/60 font-medium shadow-xs shadow-violet-950/40';
   }
 
   const shouldPulse = pulse !== undefined ? pulse : defaultPulse;
@@ -133,7 +133,7 @@ export function StatusBadge({
     <span
       className={twMerge(
         clsx(
-          'inline-flex items-center gap-1.5 rounded-md border transition-colors select-none font-medium',
+          'inline-flex items-center gap-1.5 rounded-full border transition-all select-none font-medium backdrop-blur-md',
           size === 'sm' ? 'px-2 py-0.5 text-[10px]' : 'px-2.5 py-1 text-xs',
           style,
           className
@@ -146,10 +146,10 @@ export function StatusBadge({
             'rounded-full animate-pulse flex-shrink-0',
             size === 'sm' ? 'h-1.5 w-1.5' : 'h-2 w-2',
             norm.includes('SUCCESS') || norm.includes('ACTIVE') || norm.includes('PAID')
-              ? 'bg-emerald-600'
+              ? 'bg-emerald-400 shadow-sm shadow-emerald-400'
               : norm.includes('PENDING') || norm.includes('NEEDS')
-              ? 'bg-amber-600'
-              : 'bg-brand-600'
+              ? 'bg-amber-400 shadow-sm shadow-amber-400'
+              : 'bg-violet-400 shadow-sm shadow-violet-400'
           )}
         />
       )}
@@ -170,7 +170,7 @@ export function CategoryBadge({
     <span
       className={twMerge(
         clsx(
-          'inline-flex items-center rounded-sm bg-stone-900 px-2 py-0.5 text-[10px] font-semibold text-white uppercase tracking-wider',
+          'inline-flex items-center rounded-full bg-zinc-900/90 border border-zinc-700/80 px-2.5 py-0.5 text-[10px] font-semibold text-zinc-300 uppercase tracking-wider backdrop-blur-md',
           className
         )
       )}

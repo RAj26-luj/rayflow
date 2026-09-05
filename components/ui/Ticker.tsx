@@ -25,19 +25,19 @@ export function ActivityTicker({
     <div
       className={twMerge(
         clsx(
-          'relative overflow-hidden w-full bg-slate-900 text-white rounded-2xl py-2.5 px-4 shadow-sm border border-slate-800 select-none',
+          'relative overflow-hidden w-full bg-zinc-900/90 backdrop-blur-xl text-white rounded-2xl py-2.5 px-4 shadow-xl border border-zinc-800 select-none',
           className
         )
       )}
     >
       <div className="flex items-center gap-3">
-        <div className="flex items-center gap-1.5 flex-shrink-0 text-[10px] font-bold uppercase tracking-wider text-blue-400 bg-blue-950/80 px-2 py-0.5 rounded border border-blue-800/60">
-          <span className="h-1.5 w-1.5 rounded-full bg-blue-400 animate-ping" />
-          <span>Live Store Stream</span>
+        <div className="flex items-center gap-1.5 flex-shrink-0 text-[10px] font-bold uppercase tracking-wider text-violet-300 bg-violet-950/80 px-2.5 py-0.5 rounded-full border border-violet-800/60 shadow-xs">
+          <span className="h-1.5 w-1.5 rounded-full bg-violet-400 animate-ping" />
+          <span>Live Stream</span>
         </div>
 
         <div className="overflow-hidden flex-1">
-          <div className="animate-marquee flex items-center gap-8 text-xs font-medium text-slate-300">
+          <div className="animate-marquee flex items-center gap-8 text-xs font-medium text-zinc-300">
             {/* Render items duplicated twice for seamless loop */}
             {[...items, ...items].map((item, idx) => {
               const badgeLabel = item.badge || item.tag;
@@ -45,13 +45,13 @@ export function ActivityTicker({
               return (
                 <div key={`${itemId}-${idx}`} className="flex items-center gap-2 flex-shrink-0">
                   {badgeLabel && (
-                    <span className="rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 px-2 py-0.5 text-[10px] font-bold">
+                    <span className="rounded-full bg-emerald-950/80 text-emerald-300 border border-emerald-800/60 px-2.5 py-0.5 text-[10px] font-bold">
                       {badgeLabel}
                     </span>
                   )}
                   <span>{item.text}</span>
-                  {item.time && <span className="text-[10px] text-slate-500 font-mono">({item.time})</span>}
-                  <span className="text-slate-600 ml-4">•</span>
+                  {item.time && <span className="text-[10px] text-zinc-500 font-mono">({item.time})</span>}
+                  <span className="text-zinc-700 ml-4">•</span>
                 </div>
               );
             })}
@@ -61,4 +61,3 @@ export function ActivityTicker({
     </div>
   );
 }
-

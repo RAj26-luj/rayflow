@@ -98,25 +98,25 @@ export default function CataloguePage() {
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="relative flex-1 max-w-md">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-400" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
             <input
               type="text"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Search products by title or description..."
-              className="w-full rounded border border-stone-300 bg-white pl-9 pr-3 py-1.5 text-xs text-stone-900 focus:outline-none focus:border-brand-500"
+              className="w-full rounded-2xl border border-zinc-800 bg-zinc-900/90 pl-10 pr-4 py-2 text-xs text-white placeholder:text-zinc-500 focus:outline-none focus:border-violet-500 shadow-inner"
             />
           </div>
 
-          <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+          <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
             {['ALL', 'Footwear', 'Apparel', 'Hydration', 'Recovery', 'Tech', 'Accessories'].map((cat) => (
               <button
                 key={cat}
                 onClick={() => setCategory(cat)}
-                className={`rounded px-3 py-1 text-xs font-semibold whitespace-nowrap transition-colors ${
+                className={`rounded-full px-3.5 py-1 text-xs font-semibold whitespace-nowrap transition-all ${
                   category === cat
-                    ? 'bg-brand-700 text-white'
-                    : 'bg-stone-100 text-stone-700 hover:bg-stone-200'
+                    ? 'bg-gradient-to-r from-violet-600 to-pink-600 text-white shadow-md shadow-violet-950/50'
+                    : 'bg-zinc-900/80 text-zinc-400 hover:bg-zinc-800 hover:text-white border border-zinc-800'
                 }`}
               >
                 {cat}
@@ -128,48 +128,48 @@ export default function CataloguePage() {
         {loading ? (
           <LoadingState message="Loading catalogue..." />
         ) : filteredProducts.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded border border-stone-200 p-6 space-y-2">
-            <p className="text-stone-600 text-sm font-semibold">No products match your criteria.</p>
-            <SecondaryButton size="sm" onClick={() => { setSearch(''); setCategory('ALL'); }}>
+          <div className="text-center py-16 bg-zinc-900/80 rounded-3xl border border-zinc-800 p-8 space-y-3 shadow-xl backdrop-blur-xl">
+            <p className="text-zinc-300 text-sm font-semibold">No products match your criteria.</p>
+            <SecondaryButton size="sm" onClick={() => { setSearch(''); setCategory('ALL'); }} className="bg-zinc-800 border-zinc-700 text-zinc-300">
               Reset Filters
             </SecondaryButton>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
             {filteredProducts.map((p) => (
-              <div key={p.id} className="rounded border border-stone-200 bg-white p-4 shadow-2xs space-y-3 flex flex-col justify-between">
+              <div key={p.id} className="rounded-3xl border border-zinc-800/80 bg-zinc-900/80 p-4 sm:p-5 shadow-xl backdrop-blur-xl hover:border-violet-500/40 transition-all space-y-3.5 flex flex-col justify-between">
                 <div>
-                  <div className="relative aspect-video w-full rounded overflow-hidden bg-stone-100 mb-3">
+                  <div className="relative aspect-video w-full rounded-2xl overflow-hidden bg-zinc-950 border border-zinc-800/60 mb-3">
                     {/* eslint-disable-next-line @next/next/no-img-element */}
                     <img src={p.image} alt={p.name} className="h-full w-full object-cover" />
-                    <CategoryBadge category={p.category} className="absolute top-2 left-2" />
+                    <CategoryBadge category={p.category} className="absolute top-2.5 left-2.5" />
                   </div>
 
                   <div className="space-y-1">
-                    <h3 className="font-bold text-stone-900 text-sm">{p.name}</h3>
-                    <p className="text-xs text-stone-500 line-clamp-2">{p.description}</p>
+                    <h3 className="font-bold text-white text-sm sm:text-base">{p.name}</h3>
+                    <p className="text-xs text-zinc-400 line-clamp-2 leading-relaxed">{p.description}</p>
                   </div>
                 </div>
 
-                <div className="pt-3 border-t border-stone-100 space-y-2">
+                <div className="pt-3 border-t border-zinc-800/80 space-y-3">
                   <div className="grid grid-cols-3 gap-2 text-xs text-center">
-                    <div className="p-1.5 rounded bg-stone-50 border border-stone-100">
-                      <div className="text-[10px] text-stone-400">Price</div>
-                      <div className="font-bold text-stone-900">{formatINR(p.price)}</div>
+                    <div className="p-2 rounded-xl bg-zinc-950/60 border border-zinc-800/60">
+                      <div className="text-[10px] text-zinc-400 uppercase tracking-wider">Price</div>
+                      <div className="font-bold text-white font-mono mt-0.5">{formatINR(p.price)}</div>
                     </div>
-                    <div className="p-1.5 rounded bg-stone-50 border border-stone-100">
-                      <div className="text-[10px] text-stone-400">Margin</div>
-                      <div className="font-bold text-emerald-800">{p.marginPercent}%</div>
+                    <div className="p-2 rounded-xl bg-zinc-950/60 border border-zinc-800/60">
+                      <div className="text-[10px] text-zinc-400 uppercase tracking-wider">Margin</div>
+                      <div className="font-bold text-emerald-400 mt-0.5">{p.marginPercent}%</div>
                     </div>
-                    <div className="p-1.5 rounded bg-stone-50 border border-stone-100">
-                      <div className="text-[10px] text-stone-400">Stock</div>
-                      <div className="font-bold text-stone-900">{p.inventory}</div>
+                    <div className="p-2 rounded-xl bg-zinc-950/60 border border-zinc-800/60">
+                      <div className="text-[10px] text-zinc-400 uppercase tracking-wider">Stock</div>
+                      <div className="font-bold text-white mt-0.5">{p.inventory}</div>
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between text-[11px] text-stone-500 pt-1">
-                    <span>SKU: {p.sku}</span>
-                    <span className="flex items-center gap-1 text-emerald-800 font-semibold">
+                  <div className="flex items-center justify-between text-[11px] text-zinc-400 pt-1">
+                    <span className="font-mono">SKU: {p.sku}</span>
+                    <span className="flex items-center gap-1 text-emerald-400 font-semibold">
                       <CheckCircle2 className="h-3 w-3" />
                       Active
                     </span>
@@ -182,36 +182,36 @@ export default function CataloguePage() {
       </PageShell>
 
       <Modal isOpen={isAddModalOpen} onClose={() => setIsAddModalOpen(false)} title="Add Product to Catalogue">
-        <form onSubmit={handleAddProduct} className="space-y-3 text-xs">
+        <form onSubmit={handleAddProduct} className="space-y-3.5 text-xs">
           <div>
-            <label className="font-semibold text-stone-700 block mb-1">Product Title</label>
+            <label className="font-semibold text-zinc-300 block mb-1">Product Title</label>
             <input
               type="text"
               required
               value={newProdName}
               onChange={(e) => setNewProdName(e.target.value)}
               placeholder="e.g. SpeedPro Carbon Racing Shoes"
-              className="w-full rounded border border-stone-300 p-2 text-stone-900 focus:outline-none focus:border-brand-500"
+              className="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-white placeholder:text-zinc-500 focus:outline-none focus:border-violet-500"
             />
           </div>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="font-semibold text-stone-700 block mb-1">Price (INR)</label>
+              <label className="font-semibold text-zinc-300 block mb-1">Price (INR)</label>
               <input
                 type="number"
                 required
                 value={newProdPrice}
                 onChange={(e) => setNewProdPrice(e.target.value)}
                 placeholder="4999"
-                className="w-full rounded border border-stone-300 p-2 text-stone-900 focus:outline-none focus:border-brand-500"
+                className="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-white placeholder:text-zinc-500 focus:outline-none focus:border-violet-500 font-mono"
               />
             </div>
             <div>
-              <label className="font-semibold text-stone-700 block mb-1">Category</label>
+              <label className="font-semibold text-zinc-300 block mb-1">Category</label>
               <select
                 value={newProdCategory}
                 onChange={(e) => setNewProdCategory(e.target.value as any)}
-                className="w-full rounded border border-stone-300 p-2 text-stone-900 focus:outline-none focus:border-brand-500"
+                className="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-white focus:outline-none focus:border-violet-500"
               >
                 <option value="Footwear">Footwear</option>
                 <option value="Apparel">Apparel</option>
@@ -222,7 +222,7 @@ export default function CataloguePage() {
             </div>
           </div>
           <div className="pt-2 flex justify-end gap-2">
-            <SecondaryButton size="sm" onClick={() => setIsAddModalOpen(false)}>
+            <SecondaryButton size="sm" onClick={() => setIsAddModalOpen(false)} className="bg-zinc-800 border-zinc-700 text-zinc-300">
               Cancel
             </SecondaryButton>
             <ActionButton type="submit" size="sm">

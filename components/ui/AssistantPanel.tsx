@@ -52,47 +52,47 @@ export function AssistantMessageBubble({
       )}
     >
       {!isUser && (
-        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-blue-600 text-white font-bold flex-shrink-0 mt-0.5 shadow-sm">
+        <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-br from-violet-600 to-pink-600 text-white font-bold flex-shrink-0 mt-0.5 shadow-md shadow-violet-950/50 border border-violet-400/30">
           <Bot className="h-4 w-4" />
         </div>
       )}
 
       <div
         className={clsx(
-          'max-w-[85%] rounded-3xl p-4 leading-relaxed shadow-xs',
+          'max-w-[85%] rounded-3xl p-4 leading-relaxed shadow-lg backdrop-blur-xl',
           isUser
-            ? 'bg-blue-600 text-white rounded-br-xs'
-            : 'bg-white border border-slate-200/80 text-slate-800 rounded-bl-xs'
+            ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-br-xs font-medium shadow-violet-950/40'
+            : 'bg-zinc-900/90 border border-zinc-800 text-zinc-100 rounded-bl-xs'
         )}
       >
         <div className="whitespace-pre-line space-y-2">{message.content}</div>
 
-        {/* Structured Decision Summary (for Merchant Agent) */}
+        {/* Structured Decision Summary */}
         {message.decisionSummary && (
-          <div className="mt-3 rounded-2xl border border-slate-200 bg-slate-50 p-3 text-[11px] space-y-2 text-slate-700">
-            <div className="flex items-center justify-between border-b border-slate-200/80 pb-1.5">
-              <span className="font-bold text-slate-900 uppercase tracking-wider text-[10px]">
+          <div className="mt-3 rounded-2xl border border-zinc-800 bg-zinc-950/80 p-3 text-[11px] space-y-2 text-zinc-300">
+            <div className="flex items-center justify-between border-b border-zinc-800/80 pb-1.5">
+              <span className="font-bold text-white uppercase tracking-wider text-[10px]">
                 Policy & Action Summary
               </span>
               <span
                 className={clsx(
                   'font-bold flex items-center gap-1',
-                  message.decisionSummary.policyCheck.passed ? 'text-emerald-700' : 'text-red-700'
+                  message.decisionSummary.policyCheck.passed ? 'text-emerald-400' : 'text-rose-400'
                 )}
               >
                 {message.decisionSummary.policyCheck.passed ? 'Within Policy ✓' : 'Blocked By Policy ✗'}
               </span>
             </div>
             <div>
-              <span className="text-slate-500">Why: </span>
+              <span className="text-zinc-400">Why: </span>
               <span>{message.decisionSummary.evidence}</span>
             </div>
             <div>
-              <span className="text-slate-500">Action: </span>
-              <strong className="text-slate-900">{message.decisionSummary.recommendedAction}</strong>
+              <span className="text-zinc-400">Action: </span>
+              <strong className="text-white">{message.decisionSummary.recommendedAction}</strong>
             </div>
             {message.decisionSummary.expectedUplift && (
-              <div className="text-emerald-700 font-semibold font-mono">
+              <div className="text-emerald-400 font-semibold font-mono">
                 {message.decisionSummary.expectedUplift}
               </div>
             )}
@@ -105,15 +105,15 @@ export function AssistantMessageBubble({
             {message.products.slice(0, 3).map((prod) => (
               <div
                 key={prod.id}
-                className="flex items-center justify-between gap-2 p-2 rounded-xl bg-slate-50 border border-slate-200"
+                className="flex items-center justify-between gap-2 p-2.5 rounded-xl bg-zinc-950/80 border border-zinc-800/80"
               >
                 <div className="min-w-0">
-                  <div className="font-bold text-slate-900 text-xs truncate">{prod.name}</div>
-                  <div className="text-[11px] text-slate-500 font-mono">₹{prod.price?.toLocaleString('en-IN')}</div>
+                  <div className="font-bold text-white text-xs truncate">{prod.name}</div>
+                  <div className="text-[11px] text-violet-300 font-mono">₹{prod.price?.toLocaleString('en-IN')}</div>
                 </div>
                 <button
                   onClick={() => onAddProduct(prod)}
-                  className="rounded-lg bg-blue-600 px-2.5 py-1 text-[11px] font-bold text-white hover:bg-blue-500 transition-colors flex-shrink-0"
+                  className="rounded-lg bg-gradient-to-r from-violet-600 to-pink-600 px-3 py-1 text-[11px] font-bold text-white hover:opacity-90 transition-opacity flex-shrink-0 shadow-xs"
                 >
                   Add to Cart
                 </button>
@@ -124,17 +124,17 @@ export function AssistantMessageBubble({
 
         {/* Curated Bundle Recommendation */}
         {message.recommendedBundle && onAddBundle && (
-          <div className="mt-3 rounded-2xl bg-indigo-50 border border-indigo-200 p-3 space-y-2">
-            <div className="flex items-center justify-between text-[11px] font-bold text-indigo-900">
+          <div className="mt-3 rounded-2xl bg-violet-950/60 border border-violet-800/60 p-3 space-y-2 text-white">
+            <div className="flex items-center justify-between text-[11px] font-bold text-violet-300">
               <span>Curated Bundle Offer</span>
-              <span className="text-emerald-700">Save ₹{message.recommendedBundle.savingsAmount?.toLocaleString('en-IN')}</span>
+              <span className="text-emerald-400">Save ₹{message.recommendedBundle.savingsAmount?.toLocaleString('en-IN')}</span>
             </div>
-            <div className="text-xs font-bold text-slate-900">
+            <div className="text-xs font-bold text-white">
               Bundle Total: ₹{message.recommendedBundle.bundlePrice?.toLocaleString('en-IN')}
             </div>
             <button
               onClick={() => onAddBundle(message.recommendedBundle)}
-              className="w-full rounded-xl bg-indigo-600 py-2 text-xs font-bold text-white hover:bg-indigo-500 transition-colors shadow-xs"
+              className="w-full rounded-xl bg-gradient-to-r from-violet-600 to-pink-600 py-2 text-xs font-bold text-white hover:opacity-90 transition-opacity shadow-md"
             >
               Add Full Bundle to Cart
             </button>
@@ -143,13 +143,13 @@ export function AssistantMessageBubble({
 
         {/* Suggested Replies */}
         {message.suggestedReplies && message.suggestedReplies.length > 0 && onReplyClick && (
-          <div className="mt-3 pt-2 border-t border-slate-100 flex flex-wrap gap-1.5">
+          <div className="mt-3 pt-2.5 border-t border-zinc-800/80 flex flex-wrap gap-1.5">
             {message.suggestedReplies.map((reply, i) => (
               <button
                 key={i}
                 type="button"
                 onClick={() => onReplyClick(reply)}
-                className="rounded-full bg-slate-100 hover:bg-blue-50 hover:text-blue-700 hover:border-blue-200 border border-slate-200 px-3 py-1 text-[11px] text-slate-700 transition-all"
+                className="rounded-full bg-zinc-800/90 hover:bg-violet-950 hover:text-violet-300 hover:border-violet-700/80 border border-zinc-700/80 px-3 py-1 text-[11px] text-zinc-200 transition-all backdrop-blur-md"
               >
                 {reply}
               </button>

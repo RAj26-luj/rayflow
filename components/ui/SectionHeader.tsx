@@ -36,7 +36,7 @@ export function SectionHeader({
         )
       )}
     >
-      <div className="space-y-1">
+      <div className="space-y-1.5">
         {badge && (
           typeof badge === 'string' ? (
             <Badge variant="brand" icon={badgeIcon}>
@@ -50,11 +50,11 @@ export function SectionHeader({
             <div>{badge as React.ReactNode}</div>
           )
         )}
-        <h1 className="text-xl sm:text-2xl font-extrabold tracking-tight text-stone-900">
+        <h1 className="text-xl sm:text-2xl font-black tracking-tight text-white">
           {title}
         </h1>
         {description && (
-          <p className="text-xs sm:text-sm text-stone-500 max-w-2xl leading-relaxed">
+          <p className="text-xs sm:text-sm text-zinc-400 max-w-2xl leading-relaxed">
             {description}
           </p>
         )}
@@ -79,7 +79,7 @@ export function PageShell({
   className?: string;
 }) {
   return (
-    <div className={twMerge(clsx('space-y-5 max-w-7xl mx-auto w-full px-0.5', className))}>
+    <div className={twMerge(clsx('space-y-6 max-w-7xl mx-auto w-full px-0.5', className))}>
       {header && <div>{header}</div>}
       {children}
     </div>

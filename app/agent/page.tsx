@@ -138,26 +138,27 @@ export default function AgentPage() {
             <SecondaryButton
               size="sm"
               onClick={() => setMessages([messages[0]])}
-              leftIcon={<RotateCcw className="h-3.5 w-3.5 text-stone-500" />}
+              leftIcon={<RotateCcw className="h-3.5 w-3.5 text-zinc-400" />}
+              className="bg-zinc-900 border-zinc-800 text-zinc-300 hover:text-white"
             >
               Clear Conversation
             </SecondaryButton>
           }
         />
 
-        <div className="rounded border border-stone-200 bg-white shadow-2xs overflow-hidden flex flex-col h-[calc(100vh-16rem)] min-h-[500px]">
-          <div className="px-4 py-3 border-b border-stone-200 bg-stone-50 flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-emerald-600 animate-pulse" />
-              <span className="font-bold text-xs text-stone-900">Assistant Online</span>
+        <div className="rounded-3xl border border-zinc-800/80 bg-zinc-900/90 shadow-2xl backdrop-blur-2xl overflow-hidden flex flex-col h-[calc(100vh-16rem)] min-h-[500px] text-white">
+          <div className="px-5 py-3.5 border-b border-zinc-800/80 bg-zinc-950/80 flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <span className="h-2.5 w-2.5 rounded-full bg-emerald-400 animate-pulse shadow-sm shadow-emerald-400" />
+              <span className="font-bold text-xs text-white">Assistant Online</span>
             </div>
-            <div className="flex items-center gap-1.5 text-[11px] text-stone-500 font-medium">
-              <ShieldCheck className="h-3.5 w-3.5 text-brand-700" />
+            <div className="flex items-center gap-1.5 text-[11px] text-zinc-400 font-medium">
+              <ShieldCheck className="h-3.5 w-3.5 text-violet-400" />
               <span>Policy Limit: 20% Max Discount</span>
             </div>
           </div>
 
-          <div className="flex-1 p-4 sm:p-5 overflow-y-auto space-y-4 text-xs">
+          <div className="flex-1 p-4 sm:p-6 overflow-y-auto space-y-4 text-xs">
             {messages.map((msg) => (
               <AssistantMessageBubble
                 key={msg.id}
@@ -166,22 +167,22 @@ export default function AgentPage() {
             ))}
 
             {loading && (
-              <div className="flex gap-2 items-center text-xs text-stone-500 italic p-2">
-                <Zap className="h-4 w-4 text-brand-700 animate-spin" />
+              <div className="flex gap-2 items-center text-xs text-zinc-400 italic p-2">
+                <Zap className="h-4 w-4 text-violet-400 animate-spin" />
                 <span>Evaluating store inventory & policy limits...</span>
               </div>
             )}
             <div ref={messagesEndRef} />
           </div>
 
-          <div className="p-3 border-t border-stone-200 bg-stone-50 space-y-3">
-            <div className="flex items-center gap-1.5 overflow-x-auto pb-1 scrollbar-none">
+          <div className="p-4 border-t border-zinc-800/80 bg-zinc-950/90 space-y-3">
+            <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-none">
               {DEFAULT_PROMPTS.map((prompt, idx) => (
                 <button
                   key={idx}
                   onClick={() => handleSendMessage(prompt)}
                   disabled={loading}
-                  className="rounded bg-white border border-stone-200 px-2.5 py-1 text-[11px] text-stone-700 hover:bg-stone-100 hover:text-stone-900 whitespace-nowrap transition-colors flex-shrink-0 disabled:opacity-50"
+                  className="rounded-full bg-zinc-900/90 border border-zinc-800 px-3.5 py-1.5 text-[11px] text-zinc-300 hover:bg-zinc-800 hover:text-white whitespace-nowrap transition-all flex-shrink-0 disabled:opacity-50 backdrop-blur-md"
                 >
                   {prompt}
                 </button>
@@ -193,20 +194,20 @@ export default function AgentPage() {
                 e.preventDefault();
                 handleSendMessage();
               }}
-              className="flex items-center gap-2 bg-white rounded border border-stone-300 p-1 focus-within:border-brand-500"
+              className="flex items-center gap-2 bg-zinc-900 rounded-2xl border border-zinc-800 p-1.5 focus-within:border-violet-500 transition-colors"
             >
               <input
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 placeholder="Ask about bundling, margin limits, or sales performance..."
-                className="flex-1 px-3 py-1.5 text-xs text-stone-900 placeholder:text-stone-400 focus:outline-none bg-transparent"
+                className="flex-1 px-3 py-1.5 text-xs text-white placeholder:text-zinc-500 focus:outline-none bg-transparent"
               />
               <ActionButton
                 type="submit"
                 size="sm"
                 disabled={!inputValue.trim() || loading}
-                icon={<Send className="h-3 w-3" />}
+                icon={<Send className="h-3.5 w-3.5" />}
               >
                 Send
               </ActionButton>

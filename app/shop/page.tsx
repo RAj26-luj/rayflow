@@ -26,7 +26,7 @@ import {
 import { useSession, signIn } from 'next-auth/react';
 import { CustomerNavbar } from '@/components/layout/CustomerNavbar';
 import { RazorpayTestModal } from '@/components/payment/RazorpayTestModal';
-import { Badge, Button, Modal } from '@/components/ui';
+import { Badge, Button, Modal, CategoryRail, PromoBanner, ProductCard } from '@/components/ui';
 import { Product, Order } from '@/lib/types';
 import { formatINR } from '@/lib/utils';
 
@@ -506,60 +506,61 @@ export default function ShopPage() {
   });
 
   return (
-    <div className="min-h-screen bg-stone-50 text-stone-900 flex flex-col selection:bg-amber-100 selection:text-amber-900">
+    <div className="min-h-screen bg-zinc-950 text-white flex flex-col selection:bg-violet-900 selection:text-white relative">
       <CustomerNavbar cartCount={totalCartCount} onOpenCart={() => setIsCartOpen(true)} />
 
       {toastMessage && (
-        <div className="fixed bottom-6 right-6 z-50 rounded-md bg-stone-900 text-white px-4 py-2.5 text-xs font-semibold shadow-lg flex items-center gap-2 animate-in fade-in slide-in-from-bottom-2">
+        <div className="fixed bottom-6 right-6 z-50 rounded-2xl bg-zinc-900/95 text-white px-4 py-3 text-xs font-semibold shadow-2xl backdrop-blur-2xl flex items-center gap-2.5 border border-zinc-700/80 animate-in fade-in slide-in-from-bottom-2">
           <CheckCircle2 className="h-4 w-4 text-emerald-400" />
           <span>{toastMessage}</span>
         </div>
       )}
 
       {paidSuccessOrder && (
-        <div className="bg-emerald-700 text-white px-4 py-3 text-center text-xs font-semibold flex items-center justify-center gap-2">
-          <CheckCircle2 className="h-4 w-4" />
+        <div className="bg-emerald-950/90 border-b border-emerald-800 text-emerald-200 px-4 py-3 text-center text-xs font-semibold flex items-center justify-center gap-2 backdrop-blur-md">
+          <CheckCircle2 className="h-4 w-4 text-emerald-400" />
           <span>
             Payment Received! Order <strong>#{paidSuccessOrder.orderNumber}</strong> ({formatINR(paidSuccessOrder.totalAmount)}) captured via Razorpay.
           </span>
           <button
             onClick={() => setPaidSuccessOrder(null)}
-            className="ml-4 underline text-[11px] hover:opacity-80"
+            className="ml-4 underline text-[11px] text-emerald-300 hover:text-white"
           >
             Dismiss
           </button>
         </div>
       )}
 
-      <div className="bg-stone-900 text-white px-4 sm:px-6 py-8 sm:py-10 border-b border-stone-800">
-        <div className="max-w-7xl mx-auto space-y-4">
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+      {/* Header Banner & Search Bar */}
+      <div className="bg-zinc-900/90 text-white px-4 sm:px-6 py-8 sm:py-10 border-b border-zinc-800/80 backdrop-blur-2xl">
+        <div className="max-w-7xl mx-auto space-y-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
-              <span className="text-xs font-bold uppercase tracking-wider text-brand-400 bg-brand-950/80 px-2.5 py-1 rounded border border-brand-800">
+              <span className="text-xs font-bold uppercase tracking-widest text-violet-300 bg-violet-950/80 px-3 py-1 rounded-full border border-violet-800/60 shadow-xs">
                 Verified Merchant Storefront
               </span>
-              <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight text-white mt-2">
-                Performance Gear & Equipment
+              <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white mt-2.5">
+                Performance Gear Collection
               </h1>
-              <p className="text-xs sm:text-sm text-stone-300 max-w-xl mt-1 leading-relaxed">
+              <p className="text-xs sm:text-sm text-zinc-400 max-w-xl mt-1 leading-relaxed">
                 Discover running shoes, activewear, and recovery gear with automatic multi-item savings.
               </p>
             </div>
 
-            <div className="w-full md:w-auto min-w-[300px]">
+            <div className="w-full md:w-auto min-w-[320px]">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-stone-400" />
+                <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-zinc-400" />
                 <input
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   placeholder="Search shoes, hydration, socks..."
-                  className="w-full rounded-md border border-stone-700 bg-stone-800 pl-9 pr-4 py-2 text-xs text-white placeholder:text-stone-400 focus:outline-none focus:border-brand-500"
+                  className="w-full rounded-2xl border border-zinc-800 bg-zinc-950/80 pl-10 pr-4 py-2.5 text-xs text-white placeholder:text-zinc-500 focus:outline-none focus:border-violet-500 shadow-inner"
                 />
                 {searchQuery && (
                   <button
                     onClick={() => setSearchQuery('')}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-stone-400 hover:text-white text-xs"
+                    className="absolute right-3.5 top-1/2 -translate-y-1/2 text-zinc-400 hover:text-white text-xs"
                   >
                     ✕
                   </button>
@@ -568,19 +569,22 @@ export default function ShopPage() {
             </div>
           </div>
 
+          {/* Interactive Category Rail Selector */}
+          <CategoryRail selectedCategory={selectedCategory} onSelectCategory={(cat: string) => setSelectedCategory(cat)} />
+
           <div className="flex items-center gap-2 overflow-x-auto pt-2 pb-1 scrollbar-none">
-            <span className="text-xs text-stone-400 flex items-center gap-1 font-medium flex-shrink-0">
-              <SlidersHorizontal className="h-3.5 w-3.5" />
-              Category:
+            <span className="text-xs text-zinc-400 flex items-center gap-1 font-medium flex-shrink-0">
+              <SlidersHorizontal className="h-3.5 w-3.5 text-violet-400" />
+              Filter:
             </span>
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`rounded-md px-3 py-1 text-xs font-semibold whitespace-nowrap transition-colors ${
+                className={`rounded-full px-3.5 py-1 text-xs font-semibold whitespace-nowrap transition-all ${
                   selectedCategory === cat
-                    ? 'bg-brand-700 text-white'
-                    : 'bg-stone-800 text-stone-300 hover:bg-stone-700'
+                    ? 'bg-gradient-to-r from-violet-600 to-pink-600 text-white shadow-md shadow-violet-950/50'
+                    : 'bg-zinc-950/80 text-zinc-400 hover:bg-zinc-800 hover:text-white border border-zinc-800'
                 }`}
               >
                 {cat}
@@ -590,164 +594,107 @@ export default function ShopPage() {
         </div>
       </div>
 
-      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="text-xs text-stone-500">
-            Showing <strong className="text-stone-900">{filteredProducts.length}</strong> products
+      {/* Main Content Area */}
+      <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 py-8 space-y-6">
+        {/* Promotional Hero Banner */}
+        <PromoBanner />
+
+        <div className="flex items-center justify-between pt-4">
+          <div className="text-xs text-zinc-400">
+            Showing <strong className="text-white font-bold">{filteredProducts.length}</strong> products
           </div>
           <button
             onClick={() => setIsAiCopilotOpen(true)}
-            className="flex items-center gap-1.5 text-xs font-semibold text-brand-700 hover:text-brand-800"
+            className="flex items-center gap-2 text-xs font-bold text-violet-300 bg-violet-950/80 border border-violet-800/60 px-3.5 py-1.5 rounded-full hover:bg-violet-900/80 transition-all shadow-xs"
           >
-            <Bot className="h-4 w-4" />
+            <Bot className="h-4 w-4 text-violet-400" />
             <span>Open Shopping Assistant</span>
           </button>
         </div>
 
+        {/* 2-Column Mobile & Multi-Column Desktop Product Grid */}
         {loadingProducts ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
             {[1, 2, 3, 4, 5, 6].map((n) => (
-              <div key={n} className="h-64 rounded-md bg-stone-200 animate-pulse" />
+              <div key={n} className="h-72 rounded-2xl bg-zinc-900/60 border border-zinc-800 animate-pulse" />
             ))}
           </div>
         ) : filteredProducts.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-md border border-stone-200 p-6 space-y-2">
-            <p className="text-stone-600 text-sm font-semibold">No products found matching &quot;{searchQuery}&quot;</p>
-            <Button variant="secondary" size="sm" onClick={() => { setSearchQuery(''); setSelectedCategory('ALL'); }}>
+          <div className="text-center py-16 bg-zinc-900/80 rounded-3xl border border-zinc-800 p-8 space-y-3">
+            <p className="text-zinc-300 text-sm font-semibold">No products found matching &quot;{searchQuery}&quot;</p>
+            <Button variant="secondary" size="sm" onClick={() => { setSearchQuery(''); setSelectedCategory('ALL'); }} className="bg-zinc-800 border-zinc-700 text-zinc-200">
               Clear Search Filters
             </Button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-            {filteredProducts.map((product) => {
-              const savingsPercent = product.compareAtPrice
-                ? Math.round(((product.compareAtPrice - product.price) / product.compareAtPrice) * 100)
-                : 0;
-
-              return (
-                <div
-                  key={product.id}
-                  className="group rounded-md border border-stone-200 bg-white p-4 shadow-2xs hover:border-stone-300 transition-all flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="relative aspect-square w-full rounded-md overflow-hidden bg-stone-100 mb-3">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={product.image}
-                        alt={product.name}
-                        className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
-                      />
-                      {savingsPercent > 0 && (
-                        <span className="absolute top-2 left-2 rounded bg-brand-700 px-2 py-0.5 text-[10px] font-bold text-white shadow-2xs">
-                          {savingsPercent}% OFF
-                        </span>
-                      )}
-                      <span className="absolute top-2 right-2 rounded bg-stone-900/80 backdrop-blur px-2 py-0.5 text-[9px] font-semibold text-white uppercase">
-                        {product.category}
-                      </span>
-                    </div>
-
-                    <div className="space-y-1">
-                      <h3 className="font-bold text-stone-900 text-sm line-clamp-1 group-hover:text-brand-700 transition-colors">
-                        {product.name}
-                      </h3>
-                      <p className="text-xs text-stone-500 line-clamp-2 leading-relaxed">
-                        {product.description}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="pt-3 border-t border-stone-100 mt-3 space-y-2.5">
-                    <div className="flex items-baseline gap-2">
-                      <span className="text-base font-extrabold text-stone-900">
-                        {formatINR(product.price)}
-                      </span>
-                      {product.compareAtPrice && (
-                        <span className="text-xs text-stone-400 line-through">
-                          {formatINR(product.compareAtPrice)}
-                        </span>
-                      )}
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-2">
-                      <Button
-                        variant="secondary"
-                        size="sm"
-                        onClick={() => addToCart(product)}
-                        icon={<Plus className="h-3.5 w-3.5" />}
-                      >
-                        Add
-                      </Button>
-                      <Button
-                        variant="primary"
-                        size="sm"
-                        onClick={() => {
-                          addToCart(product);
-                          setIsCartOpen(true);
-                        }}
-                      >
-                        Buy Now
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
+          <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
+            {filteredProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                onAddToCart={(p) => addToCart(p, 1)}
+                onBuyNow={(p) => {
+                  addToCart(p, 1);
+                  setIsCartOpen(true);
+                }}
+              />
+            ))}
           </div>
         )}
       </main>
 
+      {/* Cart Slide-Over Drawer */}
       {isCartOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end bg-stone-950/40 backdrop-blur-xs">
-          <div className="w-full max-w-md bg-white h-full shadow-xl flex flex-col justify-between animate-in slide-in-from-right duration-200">
-            <div className="p-4 border-b border-stone-200 flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <ShoppingBag className="h-5 w-5 text-brand-700" />
-                <h2 className="font-bold text-stone-900 text-base">Your Cart ({totalCartCount})</h2>
+        <div className="fixed inset-0 z-50 flex justify-end bg-black/80 backdrop-blur-md">
+          <div className="w-full max-w-md bg-zinc-900/95 text-white h-full shadow-2xl flex flex-col justify-between overflow-hidden animate-in slide-in-from-right duration-200 border-l border-zinc-800 backdrop-blur-2xl">
+            <div className="p-4 sm:p-5 border-b border-zinc-800/80 flex items-center justify-between sticky top-0 bg-zinc-900/95 backdrop-blur-xl z-10">
+              <div className="flex items-center gap-2.5">
+                <ShoppingBag className="h-5 w-5 text-violet-400" />
+                <h2 className="font-bold text-white text-base">Your Cart ({totalCartCount})</h2>
               </div>
               <button
                 onClick={() => setIsCartOpen(false)}
-                className="text-stone-400 hover:text-stone-600 p-1"
+                className="text-zinc-400 hover:text-white p-1 rounded-xl hover:bg-zinc-800 transition-colors"
                 aria-label="Close Cart"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            <div className="p-4 flex-1 overflow-y-auto space-y-3">
+            <div className="p-4 sm:p-5 flex-1 overflow-y-auto space-y-3">
               {cart.length === 0 ? (
-                <div className="text-center py-12 text-stone-500 text-xs space-y-2">
+                <div className="text-center py-16 text-zinc-400 text-xs space-y-3">
                   <p>Your cart is empty.</p>
-                  <Button variant="secondary" size="sm" onClick={() => setIsCartOpen(false)}>
+                  <Button variant="secondary" size="sm" onClick={() => setIsCartOpen(false)} className="bg-zinc-800 border-zinc-700 text-zinc-200">
                     Browse Gear
                   </Button>
                 </div>
               ) : (
                 cart.map((item) => (
-                  <div key={item.product.id} className="flex items-center justify-between p-3 rounded bg-stone-50 border border-stone-200 text-xs">
-                    <div className="min-w-0 flex-1 pr-2">
-                      <div className="font-bold text-stone-900 truncate">{item.product.name}</div>
-                      <div className="text-stone-500">{formatINR(item.product.price)}</div>
+                  <div key={item.product.id} className="flex items-center justify-between p-3.5 rounded-2xl bg-zinc-950/80 border border-zinc-800/80 text-xs">
+                    <div className="min-w-0 flex-1 pr-3">
+                      <div className="font-bold text-white truncate">{item.product.name}</div>
+                      <div className="text-violet-300 font-mono mt-0.5">{formatINR(item.product.price)}</div>
                     </div>
                     <div className="flex items-center gap-2 flex-shrink-0">
                       <button
                         onClick={() => updateQuantity(item.product.id, -1)}
-                        className="rounded p-1 text-stone-500 hover:bg-stone-200"
+                        className="rounded-lg p-1 text-zinc-400 hover:bg-zinc-800 hover:text-white"
                       >
-                        <Minus className="h-3 w-3" />
+                        <Minus className="h-3.5 w-3.5" />
                       </button>
-                      <span className="font-bold text-stone-900 px-1">{item.quantity}</span>
+                      <span className="font-bold text-white px-1.5">{item.quantity}</span>
                       <button
                         onClick={() => updateQuantity(item.product.id, 1)}
-                        className="rounded p-1 text-stone-500 hover:bg-stone-200"
+                        className="rounded-lg p-1 text-zinc-400 hover:bg-zinc-800 hover:text-white"
                       >
-                        <Plus className="h-3 w-3" />
+                        <Plus className="h-3.5 w-3.5" />
                       </button>
                       <button
                         onClick={() => removeFromCart(item.product.id)}
-                        className="rounded p-1 text-red-600 hover:bg-red-50 ml-1"
+                        className="rounded-lg p-1 text-rose-400 hover:bg-rose-950/40 ml-1"
                       >
-                        <Trash2 className="h-3 w-3" />
+                        <Trash2 className="h-3.5 w-3.5" />
                       </button>
                     </div>
                   </div>
@@ -756,21 +703,21 @@ export default function ShopPage() {
             </div>
 
             {cart.length > 0 && (
-              <div className="p-4 border-t border-stone-200 bg-stone-50 space-y-3">
-                <div className="space-y-1 text-xs">
-                  <div className="flex justify-between text-stone-600">
+              <div className="p-4 sm:p-5 border-t border-zinc-800/80 bg-zinc-950/90 space-y-3.5">
+                <div className="space-y-1.5 text-xs">
+                  <div className="flex justify-between text-zinc-400">
                     <span>Subtotal</span>
-                    <span>{formatINR(cartSubtotal)}</span>
+                    <span className="font-mono text-zinc-200">{formatINR(cartSubtotal)}</span>
                   </div>
                   {isBundleEligible && (
-                    <div className="flex justify-between text-emerald-700 font-semibold">
+                    <div className="flex justify-between text-emerald-400 font-semibold">
                       <span>Bundle Savings (10%)</span>
-                      <span>-{formatINR(bundleSavings)}</span>
+                      <span className="font-mono">-{formatINR(bundleSavings)}</span>
                     </div>
                   )}
-                  <div className="flex justify-between text-sm font-extrabold text-stone-900 pt-1 border-t border-stone-200">
+                  <div className="flex justify-between text-base font-extrabold text-white pt-2 border-t border-zinc-800/80">
                     <span>Total</span>
-                    <span>{formatINR(cartFinalTotal)}</span>
+                    <span className="font-mono text-violet-300">{formatINR(cartFinalTotal)}</span>
                   </div>
                 </div>
 
@@ -781,7 +728,7 @@ export default function ShopPage() {
                   onClick={() => handleProceedToCheckout()}
                   isLoading={orderSubmitting}
                 >
-                  Proceed to Checkout
+                  Proceed to Razorpay Checkout
                 </Button>
               </div>
             )}
@@ -789,36 +736,37 @@ export default function ShopPage() {
         </div>
       )}
 
+      {/* Shopping Assistant Side Drawer */}
       {isAiCopilotOpen && (
-        <div className="fixed inset-0 z-50 flex justify-end bg-stone-950/40 backdrop-blur-xs">
-          <div className="w-full max-w-lg bg-stone-900 text-white h-full shadow-xl flex flex-col justify-between overflow-y-auto animate-in slide-in-from-right duration-200">
-            <div className="p-4 border-b border-stone-800 flex items-center justify-between sticky top-0 bg-stone-900 z-10">
-              <div className="flex items-center gap-2">
-                <Bot className="h-5 w-5 text-brand-400" />
+        <div className="fixed inset-0 z-50 flex justify-end bg-black/80 backdrop-blur-md">
+          <div className="w-full max-w-lg bg-zinc-900/95 text-white h-full shadow-2xl flex flex-col justify-between overflow-hidden animate-in slide-in-from-right duration-200 border-l border-zinc-800 backdrop-blur-2xl">
+            <div className="p-4 border-b border-zinc-800/80 flex items-center justify-between sticky top-0 bg-zinc-900/95 z-10">
+              <div className="flex items-center gap-2.5">
+                <Bot className="h-5 w-5 text-violet-400" />
                 <div>
                   <h3 className="font-bold text-white text-sm">Shopping Assistant</h3>
-                  <p className="text-[10px] text-stone-400">Product recommendations & bundle offers</p>
+                  <p className="text-[10px] text-zinc-400">Product recommendations & bundle offers</p>
                 </div>
               </div>
               <button
                 onClick={() => setIsAiCopilotOpen(false)}
-                className="text-stone-400 hover:text-white p-1"
+                className="text-zinc-400 hover:text-white p-1 rounded-xl hover:bg-zinc-800 transition-colors"
               >
                 <X className="h-5 w-5" />
               </button>
             </div>
 
-            <div className="p-4 space-y-3 flex-1 overflow-y-auto text-xs">
+            <div className="p-4 space-y-3.5 flex-1 overflow-y-auto text-xs">
               {messages.map((msg) => (
                 <div
                   key={msg.id}
-                  className={`flex gap-2 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                  className={`flex gap-2.5 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-[85%] rounded-md p-3 leading-relaxed ${
+                    className={`max-w-[85%] rounded-2xl p-3.5 leading-relaxed shadow-md backdrop-blur-md ${
                       msg.role === 'user'
-                        ? 'bg-brand-700 text-white'
-                        : 'bg-stone-800 border border-stone-700 text-stone-200'
+                        ? 'bg-gradient-to-r from-violet-600 to-purple-600 text-white rounded-br-xs'
+                        : 'bg-zinc-950/80 border border-zinc-800 text-zinc-200 rounded-bl-xs'
                     }`}
                   >
                     <div className="whitespace-pre-line space-y-1.5">{msg.content}</div>
@@ -826,10 +774,10 @@ export default function ShopPage() {
                     {msg.products && (
                       <div className="mt-3 space-y-2">
                         {msg.products.map((p) => (
-                          <div key={p.id} className="rounded bg-stone-950 p-2.5 flex items-center justify-between border border-stone-800">
+                          <div key={p.id} className="rounded-xl bg-zinc-900 p-2.5 flex items-center justify-between border border-zinc-800">
                             <div>
                               <div className="font-bold text-white text-xs">{p.name}</div>
-                              <div className="text-[11px] text-emerald-400">{formatINR(p.price)}</div>
+                              <div className="text-[11px] text-emerald-400 font-mono">{formatINR(p.price)}</div>
                             </div>
                             <Button
                               variant="primary"
@@ -849,28 +797,28 @@ export default function ShopPage() {
                 </div>
               ))}
               {aiLoading && (
-                <div className="text-xs text-stone-400 italic">Thinking...</div>
+                <div className="text-xs text-zinc-400 italic">Thinking...</div>
               )}
               <div ref={chatEndRef} />
             </div>
 
-            <div className="p-3 border-t border-stone-800 bg-stone-900 sticky bottom-0">
+            <div className="p-3.5 border-t border-zinc-800/80 bg-zinc-950/90 sticky bottom-0">
               <form
                 onSubmit={(e) => {
                   e.preventDefault();
                   handleSendAiMessage();
                 }}
-                className="flex items-center gap-2 rounded border border-stone-700 bg-stone-800 p-1"
+                className="flex items-center gap-2 rounded-2xl border border-zinc-800 bg-zinc-900 p-1.5"
               >
                 <input
                   type="text"
                   value={aiInput}
                   onChange={(e) => setAiInput(e.target.value)}
                   placeholder="Ask Shopping Assistant..."
-                  className="flex-1 bg-transparent px-3 py-1.5 text-xs text-white placeholder:text-stone-500 focus:outline-none"
+                  className="flex-1 bg-transparent px-3 py-1.5 text-xs text-white placeholder:text-zinc-500 focus:outline-none"
                 />
                 <Button type="submit" variant="primary" size="sm" disabled={!aiInput.trim() || aiLoading}>
-                  <Send className="h-3 w-3" />
+                  <Send className="h-3.5 w-3.5" />
                 </Button>
               </form>
             </div>
@@ -878,54 +826,55 @@ export default function ShopPage() {
         </div>
       )}
 
+      {/* Auth / Guest Checkout Modal */}
       {isAuthModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-stone-950/60 backdrop-blur-xs">
-          <div className="w-full max-w-md bg-white rounded-md p-6 shadow-xl text-stone-900 space-y-4">
-            <div className="flex items-center justify-between border-b border-stone-200 pb-3">
-              <h3 className="font-bold text-stone-900 text-base">Sign In to Complete Purchase</h3>
-              <button onClick={() => setIsAuthModalOpen(false)} className="text-stone-400 hover:text-stone-600 text-sm">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md">
+          <div className="w-full max-w-md bg-zinc-900/95 border border-zinc-800 rounded-3xl p-6 shadow-2xl text-white space-y-4 backdrop-blur-2xl">
+            <div className="flex items-center justify-between border-b border-zinc-800/80 pb-3.5">
+              <h3 className="font-bold text-white text-base">Sign In to Complete Purchase</h3>
+              <button onClick={() => setIsAuthModalOpen(false)} className="text-zinc-400 hover:text-white text-sm">
                 ✕
               </button>
             </div>
 
             {authError && (
-              <div className="rounded bg-red-50 border border-red-200 p-2.5 text-xs text-red-700">
+              <div className="rounded-xl bg-rose-950/60 border border-rose-800 p-3 text-xs text-rose-300">
                 {authError}
               </div>
             )}
 
-            <div className="rounded bg-brand-50 border border-brand-200 p-3 space-y-2">
-              <div className="font-bold text-xs text-brand-900">Demo Customer</div>
-              <p className="text-[11px] text-stone-600">
-                Continue as <strong>Priya Sharma</strong> to test checkout.
+            <div className="rounded-2xl bg-violet-950/60 border border-violet-800/60 p-4 space-y-2.5">
+              <div className="font-bold text-xs text-violet-300">Demo Customer</div>
+              <p className="text-[11px] text-zinc-300 leading-relaxed">
+                Continue as <strong>Priya Sharma</strong> to test Razorpay checkout.
               </p>
               <Button variant="primary" size="sm" fullWidth onClick={handleInlineDemoCustomer} isLoading={authLoading}>
                 Continue as Demo Customer
               </Button>
             </div>
 
-            <form onSubmit={handleInlineCustomerLogin} className="space-y-3 text-xs">
+            <form onSubmit={handleInlineCustomerLogin} className="space-y-3.5 text-xs">
               <div>
-                <label className="font-semibold text-stone-700 block mb-1">Email</label>
+                <label className="font-semibold text-zinc-300 block mb-1">Email</label>
                 <input
                   type="email"
                   required
                   value={authEmail}
                   onChange={(e) => setAuthEmail(e.target.value)}
-                  className="w-full rounded border border-stone-300 p-2 text-stone-900 focus:outline-none focus:border-brand-500"
+                  className="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-white focus:outline-none focus:border-violet-500"
                 />
               </div>
               <div>
-                <label className="font-semibold text-stone-700 block mb-1">Password</label>
+                <label className="font-semibold text-zinc-300 block mb-1">Password</label>
                 <input
                   type="password"
                   required
                   value={authPassword}
                   onChange={(e) => setAuthPassword(e.target.value)}
-                  className="w-full rounded border border-stone-300 p-2 text-stone-900 focus:outline-none focus:border-brand-500"
+                  className="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3 py-2 text-white focus:outline-none focus:border-violet-500"
                 />
               </div>
-              <Button type="submit" variant="secondary" size="md" fullWidth isLoading={authLoading}>
+              <Button type="submit" variant="secondary" size="md" fullWidth isLoading={authLoading} className="bg-zinc-800 border-zinc-700 text-zinc-200">
                 Sign In
               </Button>
             </form>
@@ -933,6 +882,7 @@ export default function ShopPage() {
         </div>
       )}
 
+      {/* Razorpay Payment Modal */}
       <RazorpayTestModal
         order={activeOrder}
         isOpen={isPayModalOpen}

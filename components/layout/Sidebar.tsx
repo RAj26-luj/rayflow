@@ -35,7 +35,7 @@ export const NAV_ITEMS = [
     href: '/opportunities',
     icon: Sparkles,
     badge: '14 New',
-    badgeColor: 'bg-brand-50 text-brand-800 border-brand-200',
+    badgeColor: 'bg-violet-950/80 text-violet-300 border-violet-800/60',
   },
   {
     label: 'Assistant',
@@ -98,18 +98,18 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
   const merchantName = (session?.user as any)?.merchantName || 'Aura Athletics';
 
   const sidebarContent = (
-    <div className="w-64 flex flex-col justify-between h-full bg-white border-r border-stone-200 shadow-2xs">
+    <div className="w-64 flex flex-col justify-between h-full bg-zinc-950/95 border-r border-zinc-800/80 shadow-2xl backdrop-blur-2xl text-white">
       <div>
-        <div className="flex h-16 items-center justify-between px-5 border-b border-stone-100">
+        <div className="flex h-16 items-center justify-between px-5 border-b border-zinc-800/80">
           <Link href="/overview" className="flex items-center gap-2.5 group">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-brand-700 text-white font-bold shadow-xs flex-shrink-0">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-gradient-to-tr from-violet-600 via-purple-600 to-pink-600 text-white font-bold shadow-lg shadow-violet-950/50 flex-shrink-0 group-hover:scale-105 transition-transform duration-300">
               <TrendingUp className="h-4 w-4" />
             </div>
             <div>
-              <div className="font-extrabold text-stone-900 tracking-tight text-sm flex items-center gap-1.5">
+              <div className="font-black text-white tracking-tight text-sm flex items-center gap-1.5 group-hover:text-violet-300 transition-colors">
                 <span>RAYFLOW</span>
               </div>
-              <div className="text-[11px] text-stone-500 font-medium truncate max-w-[130px]">
+              <div className="text-[11px] text-zinc-400 font-medium truncate max-w-[130px]">
                 {merchantName}
               </div>
             </div>
@@ -118,7 +118,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           {onClose && (
             <button
               onClick={onClose}
-              className="lg:hidden rounded-md p-1.5 text-stone-400 hover:bg-stone-100 hover:text-stone-700 transition-colors"
+              className="lg:hidden rounded-xl p-1.5 text-zinc-400 hover:bg-zinc-800 hover:text-white transition-colors"
               aria-label="Close sidebar"
             >
               <X className="h-4 w-4" />
@@ -126,8 +126,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
           )}
         </div>
 
-        <nav className="p-3 space-y-0.5 overflow-y-auto max-h-[calc(100vh-14rem)]">
-          <div className="px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-stone-400">
+        <nav className="p-3 space-y-1 overflow-y-auto max-h-[calc(100vh-14rem)]">
+          <div className="px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-widest text-zinc-500">
             Store Management
           </div>
 
@@ -142,17 +142,17 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
                 href={item.href}
                 onClick={onClose}
                 className={clsx(
-                  'group relative flex items-center justify-between rounded-md px-3 py-2 text-xs font-semibold transition-all select-none',
+                  'group relative flex items-center justify-between rounded-xl px-3.5 py-2.5 text-xs font-bold transition-all select-none',
                   isActive
-                    ? 'bg-brand-700 text-white shadow-xs'
-                    : 'text-stone-700 hover:bg-stone-100 hover:text-stone-900 active:bg-stone-200'
+                    ? 'bg-gradient-to-r from-violet-600 via-purple-600 to-pink-600 text-white shadow-lg shadow-violet-950/50 border border-violet-400/30'
+                    : 'text-zinc-300 hover:bg-zinc-900 hover:text-white border border-transparent'
                 )}
               >
-                <div className="flex items-center gap-2.5">
+                <div className="flex items-center gap-3">
                   <Icon
                     className={clsx(
                       'h-4 w-4 transition-colors',
-                      isActive ? 'text-white' : 'text-stone-400 group-hover:text-stone-700'
+                      isActive ? 'text-white' : 'text-zinc-400 group-hover:text-violet-300'
                     )}
                   />
                   <span>{item.label}</span>
@@ -174,23 +174,23 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         </nav>
       </div>
 
-      <div className="p-3 border-t border-stone-100 bg-stone-50 m-2.5 rounded-lg border space-y-2">
-        <div className="flex items-center justify-between text-xs font-bold text-stone-900">
+      <div className="p-3.5 border border-zinc-800/80 bg-zinc-900/80 m-3 rounded-2xl space-y-2 backdrop-blur-md">
+        <div className="flex items-center justify-between text-xs font-bold text-white">
           <span>Buyer Storefront</span>
-          <span className="text-emerald-800 text-[10px] font-bold bg-emerald-100 px-1.5 py-0.5 rounded">
+          <span className="text-emerald-300 text-[10px] font-bold bg-emerald-950/80 border border-emerald-800/60 px-2 py-0.5 rounded-full">
             Live
           </span>
         </div>
-        <p className="text-[11px] text-stone-500 leading-relaxed">
+        <p className="text-[11px] text-zinc-400 leading-relaxed">
           Test customer assistant & Razorpay checkout.
         </p>
         <Link
           href="/shop"
-          className="w-full rounded-md bg-white border border-stone-200 py-1.5 px-2.5 text-xs font-semibold text-stone-800 hover:bg-stone-100 transition-colors shadow-2xs flex items-center justify-center gap-1.5"
+          className="w-full rounded-xl bg-zinc-800 border border-zinc-700/80 py-2 px-3 text-xs font-bold text-white hover:bg-zinc-700 transition-colors shadow-xs flex items-center justify-center gap-1.5"
         >
-          <ShoppingBag className="h-3.5 w-3.5 text-brand-700" />
+          <ShoppingBag className="h-3.5 w-3.5 text-violet-400" />
           <span>Open Shop</span>
-          <ExternalLink className="h-3 w-3 text-stone-400 ml-0.5" />
+          <ExternalLink className="h-3 w-3 text-zinc-400 ml-0.5" />
         </Link>
       </div>
     </div>
@@ -198,7 +198,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
 
   return (
     <>
-      <aside className="hidden lg:block w-64 flex-shrink-0 min-h-screen sticky top-0 h-screen overflow-y-auto">
+      <aside className="hidden lg:block w-64 flex-shrink-0 min-h-screen sticky top-0 h-screen overflow-y-auto z-30">
         {sidebarContent}
       </aside>
 
@@ -209,7 +209,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              className="fixed inset-0 bg-stone-950/50 backdrop-blur-xs"
+              className="fixed inset-0 bg-black/80 backdrop-blur-md"
               onClick={onClose}
             />
             <motion.div
@@ -217,7 +217,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ type: 'spring', damping: 25, stiffness: 220 }}
-              className="relative z-10 w-64 max-w-[85vw] h-full shadow-xl"
+              className="relative z-10 w-64 max-w-[85vw] h-full shadow-2xl"
             >
               {sidebarContent}
             </motion.div>

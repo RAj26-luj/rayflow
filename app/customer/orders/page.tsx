@@ -10,8 +10,9 @@ import {
   Calendar,
 } from 'lucide-react';
 import { CustomerNavbar } from '@/components/layout/CustomerNavbar';
-import { Button } from '@/components/ui';
+import { Button, OrderCard } from '@/components/ui';
 import { formatINR, formatDate } from '@/lib/utils';
+import { Order } from '@/lib/types';
 
 interface OrderItem {
   id: string;
@@ -65,20 +66,20 @@ export default function CustomerOrdersPage() {
   }, [session, authStatus]);
 
   return (
-    <div className="min-h-screen bg-stone-50 text-stone-900 selection:bg-amber-100 selection:text-amber-900">
+    <div className="min-h-screen bg-zinc-950 text-white selection:bg-violet-900 selection:text-white">
       <CustomerNavbar />
 
-      <main className="mx-auto max-w-4xl px-4 sm:px-6 py-8 sm:py-12 space-y-6">
+      <main className="mx-auto max-w-4xl px-4 sm:px-6 py-8 sm:py-12 space-y-8">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <div className="flex items-center gap-2 text-xs font-semibold text-brand-700 mb-1">
-              <Package className="h-4 w-4" />
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-wider text-violet-300 mb-1">
+              <Package className="h-4 w-4 text-violet-400" />
               <span>Shopper Account</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-stone-900">
+            <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white">
               My Purchase History
             </h1>
-            <p className="mt-1 text-xs sm:text-sm text-stone-500">
+            <p className="mt-1 text-xs sm:text-sm text-zinc-400">
               Track your orders, review bundle savings, and view Razorpay receipts.
             </p>
           </div>
@@ -91,17 +92,17 @@ export default function CustomerOrdersPage() {
         </div>
 
         {loading ? (
-          <div className="py-12 text-center text-xs text-stone-500">Loading purchase history...</div>
+          <div className="py-16 text-center text-xs text-zinc-400 animate-pulse">Loading purchase history...</div>
         ) : !session ? (
-          <div className="text-center py-12 bg-white rounded border border-stone-200 p-6 space-y-3">
-            <p className="text-stone-700 text-sm font-semibold">Please sign in to view your orders.</p>
+          <div className="text-center py-16 bg-zinc-900/80 rounded-3xl border border-zinc-800 p-8 space-y-3 shadow-xl backdrop-blur-xl">
+            <p className="text-zinc-200 text-sm font-bold">Please sign in to view your orders.</p>
             <Link href="/customer/login">
               <Button variant="primary" size="sm">Sign In</Button>
             </Link>
           </div>
         ) : orders.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded border border-stone-200 p-6 space-y-3">
-            <p className="text-stone-700 text-sm font-semibold">No previous orders found.</p>
+          <div className="text-center py-16 bg-zinc-900/80 rounded-3xl border border-zinc-800 p-8 space-y-3 shadow-xl backdrop-blur-xl">
+            <p className="text-zinc-200 text-sm font-bold">No previous orders found.</p>
             <Link href="/shop">
               <Button variant="primary" size="sm">Shop Performance Gear</Button>
             </Link>
@@ -109,44 +110,7 @@ export default function CustomerOrdersPage() {
         ) : (
           <div className="space-y-4">
             {orders.map((ord) => (
-              <div key={ord.id} className="rounded border border-stone-200 bg-white p-4 sm:p-5 shadow-2xs space-y-3">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-stone-100 gap-2">
-                  <div>
-                    <div className="flex items-center gap-2">
-                      <span className="font-bold text-stone-900 text-sm">{ord.orderNumber}</span>
-                      <span className="rounded bg-emerald-50 text-emerald-800 border border-emerald-200 px-2 py-0.5 text-[10px] font-bold">
-                        {ord.status}
-                      </span>
-                      {ord.isBundle && (
-                        <span className="rounded bg-brand-50 text-brand-800 border border-brand-200 px-2 py-0.5 text-[10px] font-bold">
-                          Bundle Discount
-                        </span>
-                      )}
-                    </div>
-                    <div className="text-xs text-stone-500 mt-1 flex items-center gap-1">
-                      <Calendar className="h-3 w-3" />
-                      <span>{formatDate(ord.createdAt)}</span>
-                      <span className="ml-2">Razorpay: {ord.razorpayOrderId}</span>
-                    </div>
-                  </div>
-
-                  <div className="text-right">
-                    <div className="text-base font-extrabold text-stone-900">{formatINR(ord.totalAmount)}</div>
-                    {ord.discountAmount > 0 && (
-                      <div className="text-xs text-emerald-800 font-semibold">Saved {formatINR(ord.discountAmount)}</div>
-                    )}
-                  </div>
-                </div>
-
-                <div className="space-y-1.5 text-xs">
-                  {ord.items.map((item, idx) => (
-                    <div key={idx} className="flex justify-between text-stone-700">
-                      <span>{item.productName} (×{item.quantity})</span>
-                      <span className="font-semibold text-stone-900">{formatINR(item.unitPrice * item.quantity)}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
+              <OrderCard key={ord.id} order={ord as unknown as Order} />
             ))}
           </div>
         )}

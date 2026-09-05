@@ -96,31 +96,31 @@ export default function SettingsPage() {
           />
         }
       >
-        <div className="max-w-3xl space-y-5">
-          <form onSubmit={handleSave} className="rounded border border-stone-200 bg-white p-5 space-y-4 shadow-2xs">
-            <h3 className="font-bold text-stone-900 text-sm border-b border-stone-100 pb-2">
+        <div className="max-w-3xl space-y-6">
+          <form onSubmit={handleSave} className="rounded-3xl border border-zinc-800/80 bg-zinc-900/80 p-6 space-y-5 shadow-xl backdrop-blur-xl text-white">
+            <h3 className="font-bold text-white text-sm border-b border-zinc-800/80 pb-3">
               Store Profile
             </h3>
 
-            <div className="space-y-3 text-xs">
+            <div className="space-y-4 text-xs">
               <div>
-                <label className="font-semibold text-stone-700 block mb-1">Store / Brand Name</label>
+                <label className="font-semibold text-zinc-300 block mb-1">Store / Brand Name</label>
                 <input
                   type="text"
                   required
                   value={merchantName}
                   onChange={(e) => setMerchantName(e.target.value)}
-                  className="w-full rounded border border-stone-300 p-2 text-stone-900 focus:outline-none focus:border-brand-500 font-bold"
+                  className="w-full rounded-xl border border-zinc-800 bg-zinc-950 px-3.5 py-2.5 text-white focus:outline-none focus:border-violet-500 font-bold"
                 />
               </div>
 
               <div>
-                <label className="font-semibold text-stone-700 block mb-1">Primary Email (Read-Only)</label>
+                <label className="font-semibold text-zinc-300 block mb-1">Primary Email (Read-Only)</label>
                 <input
                   type="email"
                   disabled
                   value={merchantEmail}
-                  className="w-full rounded border border-stone-200 bg-stone-50 p-2 text-stone-500 cursor-not-allowed"
+                  className="w-full rounded-xl border border-zinc-800 bg-zinc-950/60 px-3.5 py-2.5 text-zinc-400 cursor-not-allowed"
                 />
               </div>
 
@@ -132,46 +132,46 @@ export default function SettingsPage() {
             </div>
           </form>
 
-          <div className="rounded border border-stone-200 bg-white p-5 space-y-3 shadow-2xs">
-            <div className="flex items-center justify-between border-b border-stone-100 pb-2">
-              <h3 className="font-bold text-stone-900 text-sm flex items-center gap-1.5">
-                <CreditCard className="h-4 w-4 text-brand-700" />
+          <div className="rounded-3xl border border-zinc-800/80 bg-zinc-900/80 p-6 space-y-4 shadow-xl backdrop-blur-xl text-white">
+            <div className="flex items-center justify-between border-b border-zinc-800/80 pb-3">
+              <h3 className="font-bold text-white text-sm flex items-center gap-2">
+                <CreditCard className="h-4 w-4 text-violet-400" />
                 <span>Razorpay Payment Integration</span>
               </h3>
               <Badge variant="emerald">Test Mode Active</Badge>
             </div>
 
-            <div className="space-y-2 text-xs">
-              <div className="p-3 rounded bg-stone-50 border border-stone-200 space-y-1">
-                <div className="font-semibold text-stone-700">Key ID</div>
-                <div className="font-mono text-stone-900">{keyId || 'rzp_test_demo_key_id'}</div>
+            <div className="space-y-2.5 text-xs">
+              <div className="p-3.5 rounded-2xl bg-zinc-950/80 border border-zinc-800 space-y-1">
+                <div className="font-semibold text-zinc-400">Key ID</div>
+                <div className="font-mono text-white">{keyId || 'rzp_test_demo_key_id'}</div>
               </div>
 
-              <div className="p-3 rounded bg-stone-50 border border-stone-200 space-y-1">
-                <div className="font-semibold text-stone-700">Webhook Endpoint</div>
-                <div className="font-mono text-stone-900">/api/webhooks/razorpay</div>
+              <div className="p-3.5 rounded-2xl bg-zinc-950/80 border border-zinc-800 space-y-1">
+                <div className="font-semibold text-zinc-400">Webhook Endpoint</div>
+                <div className="font-mono text-white">/api/webhooks/razorpay</div>
               </div>
             </div>
           </div>
 
-          <div className="rounded border border-stone-200 bg-white p-5 flex items-center justify-between shadow-2xs">
+          <div className="rounded-3xl border border-zinc-800/80 bg-zinc-900/80 p-6 flex items-center justify-between shadow-xl backdrop-blur-xl text-white">
             <div>
-              <h3 className="font-bold text-stone-900 text-sm flex items-center gap-1.5">
-                <Sliders className="h-4 w-4 text-brand-700" />
+              <h3 className="font-bold text-white text-sm flex items-center gap-2">
+                <Sliders className="h-4 w-4 text-violet-400" />
                 <span>Business Rules & Guardrails</span>
               </h3>
-              <p className="text-xs text-stone-500 mt-0.5">Configure discount limits, approval thresholds, and campaign caps.</p>
+              <p className="text-xs text-zinc-400 mt-1">Configure discount limits, approval thresholds, and campaign caps.</p>
             </div>
             <Link href="/policies">
-              <Button variant="outline" size="sm" icon={<ExternalLink className="h-3.5 w-3.5" />}>
+              <Button variant="secondary" size="sm" icon={<ExternalLink className="h-3.5 w-3.5" />} className="bg-zinc-800 border-zinc-700 text-zinc-200">
                 Configure Rules
               </Button>
             </Link>
           </div>
 
-          <div className="rounded border border-red-200 bg-red-50 p-5 space-y-3">
-            <h3 className="font-bold text-red-900 text-sm">Demo Data Reset</h3>
-            <p className="text-xs text-red-700">
+          <div className="rounded-3xl border border-rose-900/60 bg-rose-950/40 p-6 space-y-3 shadow-xl backdrop-blur-xl">
+            <h3 className="font-bold text-rose-200 text-sm">Demo Data Reset</h3>
+            <p className="text-xs text-rose-300 leading-relaxed">
               Reset store metrics, opportunities, and orders back to initial seed data.
             </p>
             <Button variant="danger" size="sm" onClick={() => setIsResetModalOpen(true)}>
@@ -182,12 +182,12 @@ export default function SettingsPage() {
       </PageShell>
 
       <Modal isOpen={isResetModalOpen} onClose={() => setIsResetModalOpen(false)} title="Confirm Reset">
-        <div className="space-y-3 text-xs">
-          <p className="text-stone-700">
+        <div className="space-y-4 text-xs text-zinc-300">
+          <p>
             This will reset all opportunities, orders, and logs back to initial seeded values.
           </p>
-          <div className="flex justify-end gap-2 pt-2">
-            <Button variant="secondary" size="sm" onClick={() => setIsResetModalOpen(false)}>
+          <div className="flex justify-end gap-2.5 pt-2">
+            <Button variant="secondary" size="sm" onClick={() => setIsResetModalOpen(false)} className="bg-zinc-800 border-zinc-700 text-zinc-300">
               Cancel
             </Button>
             <Button variant="danger" size="sm" onClick={handleResetData} isLoading={resetting}>
