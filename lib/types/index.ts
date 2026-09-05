@@ -17,18 +17,24 @@ export type RiskLevel = 'LOW' | 'MEDIUM' | 'HIGH';
 
 export interface Product {
   id: string;
+  merchantId?: string;
+  merchant?: {
+    id: string;
+    name: string;
+    slug: string;
+  };
   name: string;
   sku: string;
   description: string;
   price: number; // in INR
   compareAtPrice?: number;
-  category: 'Footwear' | 'Apparel' | 'Accessories' | 'Fitness Tech' | 'Hydration';
+  category: 'Footwear' | 'Apparel' | 'Accessories' | 'Fitness Tech' | 'Hydration' | string;
   inventory: number;
   conversionRate: number; // e.g. 3.4 for 3.4%
   marginPercent: number; // e.g. 62%
   image: string;
-  complementaryProductIds: string[];
-  tags: string[];
+  complementaryProductIds?: string[];
+  tags?: string[];
 }
 
 export interface Customer {

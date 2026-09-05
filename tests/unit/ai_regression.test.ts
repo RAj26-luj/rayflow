@@ -337,4 +337,23 @@ describe('AI Regression & Comprehensive Quality Gate', () => {
       expect(result.message).not.toContain('Safety Block');
     }
   });
+
+  it('21. Marketplace: allows unauthenticated buyer to search products across all merchants without login', async () => {
+    const { POST } = await import('@/app/api/agent/query/route');
+    const req = new Request('http://localhost:3000/api/agent/query', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        prompt: 'Show me running shoes',
+        type: 'buyer',
+      }),
+    });
+
+    const res = await POST(req);
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.success).toBe(true);
+    expect(body.data.products.length).toBeGreaterThan(0);
+    expect(body.data.message).toContain('Velocity Runner Pro');
+  });
 });

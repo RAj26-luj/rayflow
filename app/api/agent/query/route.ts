@@ -38,20 +38,25 @@ export async function POST(req: Request) {
       // Buyer query unauthenticated resolution
       if (queryMerchantId) {
         const merchant = await prisma.merchant.findUnique({ where: { id: queryMerchantId }, select: { id: true } });
-        targetMerchantId = merchant?.id;
+        if (!merchant) {
+          return NextResponse.json(
+            { success: false, error: { code: 'NOT_FOUND', message: 'No store merchant found.' } },
+            { status: 404 }
+          );
+        }
+        targetMerchantId = merchant.id;
       } else if (merchantSlug) {
         const merchant = await prisma.merchant.findUnique({ where: { slug: merchantSlug }, select: { id: true } });
-        targetMerchantId = merchant?.id;
+        if (!merchant) {
+          return NextResponse.json(
+            { success: false, error: { code: 'NOT_FOUND', message: 'No store merchant found.' } },
+            { status: 404 }
+          );
+        }
+        targetMerchantId = merchant.id;
       } else {
-        const defaultMerchant = await prisma.merchant.findFirst({ select: { id: true } });
-        targetMerchantId = defaultMerchant?.id;
-      }
-
-      if (!targetMerchantId) {
-        return NextResponse.json(
-          { success: false, error: { code: 'NOT_FOUND', message: 'No store merchant found.' } },
-          { status: 404 }
-        );
+        // Multi-merchant marketplace mode for guest/public buyers
+        targetMerchantId = undefined;
       }
     }
 
@@ -59,27 +64,36 @@ export async function POST(req: Request) {
     if (type === 'buyer') {
       result = await AgentOrchestrator.processBuyerQuery(targetMerchantId, prompt);
     } else {
+      if (!targetMerchantId) {
+        return NextResponse.json(
+          { success: false, error: { code: 'UNAUTHORIZED', message: 'Authentication required for merchant agent operations.' } },
+          { status: 401 }
+        );
+      }
       result = await AgentOrchestrator.processMerchantQuery(targetMerchantId, prompt);
     }
 
     // Record Audit Log for Agent execution
-    await prisma.auditLog.create({
-      data: {
-        merchantId: targetMerchantId,
-        actorId: auth ? auth.userId : 'buyer_guest',
-        actorName: auth ? auth.userName : 'Online Shopper',
-        agentName: type === 'buyer' ? 'AI Buyer Agent' : 'Revenue Agent',
-        actionType: 'AGENT_QUERY',
-        result: result.decisionSummary?.policyCheck?.passed === false ? 'BLOCKED' : 'SUCCESS',
-        policyCheck: result.decisionSummary?.policyCheck?.passed === false ? 'FAILED' : 'PASSED',
-        reason: result.decisionSummary ? result.decisionSummary.intent : 'Agent query processed.',
-        metadata: JSON.stringify({
-          prompt,
-          toolsCount: result.toolsExecuted.length,
-          hasDecisionSummary: !!result.decisionSummary,
-        }),
-      },
-    });
+    const auditMerchantId = targetMerchantId || (await prisma.merchant.findFirst({ select: { id: true } }))?.id;
+    if (auditMerchantId) {
+      await prisma.auditLog.create({
+        data: {
+          merchantId: auditMerchantId,
+          actorId: auth ? auth.userId : 'buyer_guest',
+          actorName: auth ? auth.userName : 'Online Shopper',
+          agentName: type === 'buyer' ? 'AI Buyer Agent' : 'Revenue Agent',
+          actionType: 'AGENT_QUERY',
+          result: result.decisionSummary?.policyCheck?.passed === false ? 'BLOCKED' : 'SUCCESS',
+          policyCheck: result.decisionSummary?.policyCheck?.passed === false ? 'FAILED' : 'PASSED',
+          reason: result.decisionSummary ? result.decisionSummary.intent : 'Agent query processed.',
+          metadata: JSON.stringify({
+            prompt,
+            toolsCount: result.toolsExecuted.length,
+            hasDecisionSummary: !!result.decisionSummary,
+          }),
+        },
+      });
+    }
 
     return NextResponse.json({
       success: true,

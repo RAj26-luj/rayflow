@@ -12,16 +12,18 @@ export interface AgentToolExecutionRecord {
 export class AgentTools {
   /**
    * Tool 1: search_catalogue (READ_ONLY)
+   * Searches merchant catalogue or all marketplace products when merchantId is omitted/ALL.
    */
   static async searchCatalogue(
-    merchantId: string,
+    merchantId?: string,
     query: string = '',
     category?: string,
     maxPrice?: number
   ) {
+    const isSpecificMerchant = merchantId && merchantId !== 'ALL' && merchantId.trim().length > 0;
     const products = await prisma.product.findMany({
       where: {
-        merchantId,
+        ...(isSpecificMerchant ? { merchantId } : {}),
         ...(category && category !== 'ALL' ? { category } : {}),
         ...(maxPrice !== undefined && maxPrice > 0 ? { price: { lte: maxPrice } } : {}),
         ...(query && query.trim().length > 0
@@ -34,12 +36,24 @@ export class AgentTools {
             }
           : {}),
       },
+      include: {
+        merchant: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+      },
+      orderBy: { createdAt: 'desc' },
     });
 
     return {
       count: products.length,
       products: products.map((p) => ({
         id: p.id,
+        merchantId: p.merchantId,
+        merchant: p.merchant,
         name: p.name,
         sku: p.sku,
         description: p.description,
@@ -59,20 +73,29 @@ export class AgentTools {
    * Deterministically calculates bundle subtotal, savings, and validates against Policy Engine.
    */
   static async calculateBundle(
-    merchantId: string,
+    merchantId: string | undefined,
     primaryProductId: string,
     addonProductId: string,
     discountPercent: number
   ) {
-    const [primary, addon, policy] = await Promise.all([
-      prisma.product.findFirst({ where: { id: primaryProductId, merchantId } }),
-      prisma.product.findFirst({ where: { id: addonProductId, merchantId } }),
-      prisma.agentPolicy.findUnique({ where: { merchantId } }),
+    const isSpecificMerchant = merchantId && merchantId !== 'ALL' && merchantId.trim().length > 0;
+    const [primary, addon] = await Promise.all([
+      prisma.product.findFirst({
+        where: { id: primaryProductId, ...(isSpecificMerchant ? { merchantId } : {}) },
+        include: { merchant: { select: { id: true, name: true, slug: true } } },
+      }),
+      prisma.product.findFirst({
+        where: { id: addonProductId, ...(isSpecificMerchant ? { merchantId } : {}) },
+        include: { merchant: { select: { id: true, name: true, slug: true } } },
+      }),
     ]);
 
     if (!primary || !addon) {
       throw new Error('One or more bundle products could not be found in merchant catalogue.');
     }
+
+    const policyMerchantId = isSpecificMerchant ? merchantId : primary.merchantId;
+    const policy = await prisma.agentPolicy.findUnique({ where: { merchantId: policyMerchantId } });
 
     const policyVerdict = PolicyEngine.evaluateDiscount(discountPercent, policy || undefined);
 

@@ -365,17 +365,20 @@ export class AgentOrchestrator {
     };
   }
 
-  static async processBuyerQuery(merchantId: string, prompt: string): Promise<OrchestratorResult> {
+  static async processBuyerQuery(merchantId: string | undefined, prompt: string): Promise<OrchestratorResult> {
     const toolsExecuted: AgentToolExecutionRecord[] = [];
     const lower = prompt.toLowerCase();
     const aiProvider = getAIProvider();
 
-    // Resolve merchant name dynamically
-    const merchant = await prisma.merchant.findUnique({
-      where: { id: merchantId },
-      select: { name: true },
-    });
-    const merchantName = merchant?.name || 'our store';
+    // Resolve merchant name dynamically (or default to platform marketplace)
+    let merchantName = 'RAYFLOW Athletics';
+    if (merchantId && merchantId !== 'ALL') {
+      const merchant = await prisma.merchant.findUnique({
+        where: { id: merchantId },
+        select: { name: true },
+      });
+      merchantName = merchant?.name || 'our store';
+    }
 
     // 1. Initial full catalogue check
     const fullCatalogue = await AgentTools.searchCatalogue(merchantId, '');

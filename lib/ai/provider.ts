@@ -255,7 +255,7 @@ export class OpenRouterAIProvider implements AIProvider {
       const productList = (context.products || [])
         .map(
           (p) =>
-            `- ${p.name} (ID: ${p.id}, Category: ${p.category}, Price: ₹${p.price}, Inventory: ${p.inventory} in stock, Description: ${p.description})`
+            `- ${p.name} (ID: ${p.id}, Merchant: ${p.merchant?.name || merchantName}, Category: ${p.category}, Price: ₹${p.price}, Inventory: ${p.inventory} in stock, Description: ${p.description})`
         )
         .join('\n');
 
