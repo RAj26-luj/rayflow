@@ -78,7 +78,7 @@ export function EmptyState({
 }
 
 export function LoadingState({
-  message = 'Loading data...',
+  message = 'Loading...',
   rows = 3,
   className,
 }: {

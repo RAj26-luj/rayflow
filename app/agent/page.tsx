@@ -48,7 +48,7 @@ export default function AgentPage() {
       id: 'msg_welcome',
       role: 'assistant',
       content:
-        "Hello! I am your **Revenue Assistant**.\n\nI analyze store inventory, customer purchase affinity, and checkout trends to identify high-confidence growth opportunities within your store policies.\n\nAsk me about product bundling strategies, checkout recovery campaigns, or simulate policy limits.",
+        "Hello! I'm your store assistant.\n\nI can help you review products, check sales trends, and create discount campaigns within your store rules.\n\nAsk a question below to get started.",
       timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
     },
   ]);
@@ -105,7 +105,7 @@ export default function AgentPage() {
           {
             id: `err_${Date.now()}`,
             role: 'assistant',
-            content: 'Could not process query. Please check parameters.',
+            content: 'Something went wrong. Please try again.',
             timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
           },
         ]);
@@ -117,7 +117,7 @@ export default function AgentPage() {
         {
           id: `err_${Date.now()}`,
           role: 'assistant',
-          content: 'Unable to connect to assistant service.',
+          content: 'Unable to connect. Please try again.',
           timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
         },
       ]);
@@ -130,9 +130,9 @@ export default function AgentPage() {
     <DashboardLayout>
       <PageShell>
         <SectionHeader
-          title="Revenue Assistant"
-          description="Interactive assistant to evaluate opportunities, campaign rules, and margin limits."
-          badge="Merchant Console"
+          title="Assistant"
+          description="Ask questions about your store sales, products, and campaign rules."
+          badge="Help"
           badgeIcon={<TrendingUp className="h-3.5 w-3.5" />}
           actions={
             <SecondaryButton
@@ -141,7 +141,7 @@ export default function AgentPage() {
               leftIcon={<RotateCcw className="h-3.5 w-3.5 text-zinc-400" />}
               className="bg-zinc-900 border-zinc-800 text-zinc-300 hover:text-white"
             >
-              Clear Conversation
+              Clear chat
             </SecondaryButton>
           }
         />
@@ -154,7 +154,7 @@ export default function AgentPage() {
             </div>
             <div className="flex items-center gap-1.5 text-[11px] text-zinc-400 font-medium">
               <ShieldCheck className="h-3.5 w-3.5 text-violet-400" />
-              <span>Policy Limit: 20% Max Discount</span>
+              <span>Rule: 20% Max Discount</span>
             </div>
           </div>
 
@@ -169,7 +169,7 @@ export default function AgentPage() {
             {loading && (
               <div className="flex gap-2 items-center text-xs text-zinc-400 italic p-2">
                 <Zap className="h-4 w-4 text-violet-400 animate-spin" />
-                <span>Evaluating store inventory & policy limits...</span>
+                <span>Checking...</span>
               </div>
             )}
             <div ref={messagesEndRef} />
@@ -200,7 +200,7 @@ export default function AgentPage() {
                 type="text"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                placeholder="Ask about bundling, margin limits, or sales performance..."
+                placeholder="Ask about your store..."
                 className="flex-1 px-3 py-1.5 text-xs text-white placeholder:text-zinc-500 focus:outline-none bg-transparent"
               />
               <ActionButton

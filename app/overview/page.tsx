@@ -97,16 +97,16 @@ export default function OverviewPage() {
   };
 
   const tickerItems = [
-    { text: 'Store Status: Policy guardrails active and enforced', tag: 'HEALTH', variant: 'emerald' as const },
+    { text: 'Store Status: Active and compliant with rules', tag: 'HEALTH', variant: 'emerald' as const },
     { text: `${opportunities.filter(o => o.status === 'PENDING').length} opportunities ready for review`, tag: 'ACTION', variant: 'brand' as const },
-    { text: 'Razorpay Payment Gateway: Test Mode Active', tag: 'PAYMENTS', variant: 'emerald' as const },
-    { text: `Gross Revenue Influenced: ${formatINR(metrics?.revenueInfluenced ?? 0)}`, tag: 'REVENUE', variant: 'amber' as const },
+    { text: 'Razorpay Gateway: Active', tag: 'PAYMENTS', variant: 'emerald' as const },
+    { text: `Total Sales: ${formatINR(metrics?.revenueInfluenced ?? 0)}`, tag: 'SALES', variant: 'amber' as const },
   ];
 
   if (loading && !metrics) {
     return (
       <DashboardLayout>
-        <LoadingState message="Loading store metrics..." />
+        <LoadingState message="Loading store data..." />
       </DashboardLayout>
     );
   }
@@ -130,7 +130,7 @@ export default function OverviewPage() {
               href="/audit"
               className="text-xs font-bold text-emerald-300 underline hover:text-white"
             >
-              View in Audit Log →
+              View Activity Log →
             </Link>
           </motion.div>
         )}
@@ -139,13 +139,13 @@ export default function OverviewPage() {
           <div>
             <div className="flex items-center gap-2 text-[11px] font-bold text-violet-300 uppercase tracking-wider">
               <TrendingUp className="h-3.5 w-3.5 text-violet-400" />
-              Merchant Portal
+              Overview
             </div>
             <h1 className="text-2xl sm:text-3xl font-black tracking-tight text-white mt-1">
               Welcome back, {session?.user?.name ? session.user.name.split(' ')[0] : 'Merchant'}
             </h1>
             <p className="text-xs sm:text-sm text-zinc-400 mt-1">
-              You have <strong className="text-white font-bold">{opportunities.filter(o => o.status === 'PENDING').length} opportunities</strong> ready for review across catalogue and checkout sessions.
+              You have <strong className="text-white font-bold">{opportunities.filter(o => o.status === 'PENDING').length} opportunities</strong> to review.
             </p>
           </div>
 
@@ -156,7 +156,7 @@ export default function OverviewPage() {
               </SecondaryButton>
             </Link>
             <Link href="/opportunities">
-              <ActionButton size="md" leftIcon={<Sparkles className="h-4 w-4" />}>
+              <ActionButton size="md">
                 Review Opportunities
               </ActionButton>
             </Link>
@@ -165,7 +165,7 @@ export default function OverviewPage() {
 
         <MetricGroup cols={4}>
           <Metric
-            label="Gross Revenue Influenced"
+            label="Total Sales"
             value={formatINR(metrics?.revenueInfluenced ?? 0)}
             change="+18.4%"
             changeType="positive"
@@ -181,7 +181,7 @@ export default function OverviewPage() {
             icon={<CheckCircle2 className="h-4 w-4 text-emerald-400" />}
           />
           <Metric
-            label="Conversion Uplift"
+            label="Conversion Rate"
             value={`+${metrics?.aiConversionUplift ?? 0}%`}
             change="Multi-item ratio"
             changeType="positive"

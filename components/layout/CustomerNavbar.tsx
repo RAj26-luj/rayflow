@@ -57,8 +57,7 @@ export function CustomerNavbar({ cartCount = 0, onOpenCart }: CustomerNavbarProp
               href="/shop"
               className="px-3.5 py-1.5 text-xs font-semibold text-violet-300 bg-violet-950/60 border border-violet-800/50 rounded-full transition-all flex items-center gap-1.5 hover:bg-violet-900/60 shadow-xs"
             >
-              <Sparkles className="h-3.5 w-3.5 text-violet-400" />
-              <span>Explore Collection</span>
+              <span>Shop</span>
             </Link>
             {isCustomer && (
               <Link
@@ -118,7 +117,7 @@ export function CustomerNavbar({ cartCount = 0, onOpenCart }: CustomerNavbarProp
                     <p className="font-bold text-white truncate">{userName}</p>
                     <p className="text-[11px] text-zinc-400 truncate">{session.user.email}</p>
                     <span className="inline-block mt-1 text-[10px] font-bold bg-violet-950/80 text-violet-300 border border-violet-800/60 px-2 py-0.5 rounded-full">
-                      {isCustomer ? 'Shopper Account' : 'Merchant'}
+                      {isCustomer ? 'Customer' : 'Merchant'}
                     </span>
                   </div>
 
@@ -130,7 +129,7 @@ export function CustomerNavbar({ cartCount = 0, onOpenCart }: CustomerNavbarProp
                         className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-zinc-800 transition-colors"
                       >
                         <Package className="h-4 w-4 text-zinc-400" />
-                        <span>My Purchase History</span>
+                        <span>My Orders</span>
                       </Link>
                     )}
                     {isMerchant && (

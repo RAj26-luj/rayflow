@@ -68,13 +68,13 @@ export const NAV_ITEMS = [
     badge: null,
   },
   {
-    label: 'Business Rules',
+    label: 'Rules',
     href: '/policies',
     icon: Sliders,
     badge: null,
   },
   {
-    label: 'Activity & Audit',
+    label: 'Activity',
     href: '/audit',
     icon: ShieldCheck,
     badge: null,
@@ -106,7 +106,7 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
               <TrendingUp className="h-4 w-4" />
             </div>
             <div>
-              <div className="font-black text-white tracking-tight text-sm flex items-center gap-1.5 group-hover:text-violet-300 transition-colors">
+              <div className="font-bold text-white tracking-tight text-sm flex items-center gap-1.5 group-hover:text-violet-300 transition-colors">
                 <span>RAYFLOW</span>
               </div>
               <div className="text-[11px] text-zinc-400 font-medium truncate max-w-[130px]">
@@ -127,8 +127,8 @@ export function Sidebar({ isOpen, onClose }: SidebarProps) {
         </div>
 
         <nav className="p-3 space-y-1 overflow-y-auto max-h-[calc(100vh-14rem)]">
-          <div className="px-3 py-1.5 text-[10px] font-extrabold uppercase tracking-widest text-zinc-500">
-            Store Management
+          <div className="px-3 py-1.5 text-[10px] font-semibold uppercase tracking-widest text-zinc-500">
+            Menu
           </div>
 
           {NAV_ITEMS.map((item) => {

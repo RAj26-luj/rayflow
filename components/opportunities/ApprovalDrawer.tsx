@@ -234,9 +234,9 @@ export function ApprovalDrawer({
                 </div>
                 <div className="flex items-center justify-between pt-1 border-t border-zinc-800/80">
                   <span className="text-zinc-400">Policy Evaluation:</span>
-                  <span className="inline-flex items-center gap-1 text-emerald-300 font-bold bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-800/60 text-[11px]">
+                  <span className="inline-flex items-center gap-1 text-emerald-300 font-semibold bg-emerald-950/80 px-2.5 py-0.5 rounded-full border border-emerald-800/60 text-[11px]">
                     <CheckCircle2 className="h-3 w-3 text-emerald-400" />
-                    Within store limits ✓
+                    Within store limits
                   </span>
                 </div>
               </div>
@@ -244,7 +244,7 @@ export function ApprovalDrawer({
 
             {/* Section 4: Failure Handling */}
             <div className="space-y-1.5">
-              <div className="text-[10px] sm:text-xs font-bold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
+              <div className="text-[10px] sm:text-xs font-semibold uppercase tracking-wider text-zinc-400 flex items-center gap-1.5">
                 <Lock className="h-3.5 w-3.5 text-zinc-400" />
                 Payment & Failure Invariants
               </div>
@@ -265,8 +265,7 @@ export function ApprovalDrawer({
                 animate={{ opacity: 1, y: 0 }}
                 className="rounded-2xl border border-violet-800/60 bg-violet-950/50 p-4 space-y-2 text-xs text-white"
               >
-                <div className="font-bold flex items-center gap-1.5 text-violet-300">
-                  <TrendingUp className="h-4 w-4" />
+                <div className="font-semibold flex items-center gap-1.5 text-violet-300">
                   Simulation Projections
                 </div>
                 <div className="grid grid-cols-2 gap-2 text-[11px]">
@@ -306,7 +305,7 @@ export function ApprovalDrawer({
                   className="flex-1 sm:flex-none"
                   leftIcon={<CheckCircle2 className="h-3.5 w-3.5" />}
                 >
-                  Approve Opportunity
+                  Approve
                 </ActionButton>
               ) : opportunity.status === 'APPROVED' ? (
                 <ActionButton
@@ -318,12 +317,12 @@ export function ApprovalDrawer({
                   className="flex-1 sm:flex-none"
                   leftIcon={<Zap className="h-3.5 w-3.5" />}
                 >
-                  Execute Opportunity
+                  Start Campaign
                 </ActionButton>
               ) : (
-                <div className="rounded-full bg-emerald-950/80 border border-emerald-800/60 text-emerald-300 px-3.5 py-1.5 text-xs font-bold flex items-center gap-1.5">
+                <div className="rounded-full bg-emerald-950/80 border border-emerald-800/60 text-emerald-300 px-3.5 py-1.5 text-xs font-semibold flex items-center gap-1.5">
                   <CheckCircle2 className="h-3.5 w-3.5 text-emerald-400" />
-                  <span>Active & Executed</span>
+                  <span>Completed</span>
                 </div>
               )}
             </div>

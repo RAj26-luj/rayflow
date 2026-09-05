@@ -49,7 +49,7 @@ export function RazorpayTestModal({
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [confirmedPayment, setConfirmedPayment] = useState<any>(null);
 
-  // Reset modal state whenever a new order is opened
+  // Reset state
   useEffect(() => {
     if (isOpen) {
       setStep('method');
@@ -60,7 +60,7 @@ export function RazorpayTestModal({
     }
   }, [isOpen, order?.id]);
 
-  // Escape key listener to close modal safely
+  // Key listener
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isOpen && !isProcessing) {
@@ -73,7 +73,7 @@ export function RazorpayTestModal({
 
   if (!isOpen || !order) return null;
 
-  // Handle OTP Submission
+  // Handle OTP
   const handleVerifyOtp = async (inputOtp?: string) => {
     const code = (inputOtp || otp).trim();
     if (!code) {

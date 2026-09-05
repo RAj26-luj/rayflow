@@ -87,9 +87,9 @@ export default function OpportunitiesPage() {
     <DashboardLayout>
       <PageShell>
         <SectionHeader
-          title="Revenue Opportunities"
-          description="Discovered growth opportunities based on customer purchase affinity and store performance."
-          badge="Growth Pipeline"
+          title="Growth Opportunities"
+          description="Suggested actions to grow your store sales."
+          badge="Opportunities"
           badgeIcon={<TrendingUp className="h-3.5 w-3.5" />}
           actions={
             <div className="flex items-center gap-2.5">

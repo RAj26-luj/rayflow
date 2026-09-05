@@ -64,15 +64,15 @@ export default function AuditPage() {
           <SectionHeader
             badge={
               <Badge variant="brand" dot>
-                Activity & Audit Trail
+                Activity Log
               </Badge>
             }
-            title="Activity & Audit"
-            description="Chronological log of store events, rule evaluations, merchant approvals, and payment captures."
+            title="Activity"
+            description="Log of store actions, approvals, and payment records."
             actions={
               <div className="flex items-center gap-2.5">
                 <Badge variant="emerald" icon={<ShieldCheck className="h-3.5 w-3.5" />}>
-                  Verified & Logged
+                  Logged
                 </Badge>
                 <Button
                   variant="secondary"

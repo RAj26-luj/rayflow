@@ -3,7 +3,7 @@
 import React from 'react';
 import { clsx } from 'clsx';
 import {
-  Sparkles,
+  Package,
   Footprints,
   Shirt,
   Droplets,
@@ -25,7 +25,7 @@ const CATEGORIES: CategoryItem[] = [
   { id: 'Hydration', name: 'Hydration', icon: <Droplets className="h-5 w-5" /> },
   { id: 'Recovery', name: 'Recovery', icon: <Activity className="h-5 w-5" /> },
   { id: 'Tech', name: 'Tech', icon: <Watch className="h-5 w-5" /> },
-  { id: 'Accessories', name: 'Gear', icon: <Sparkles className="h-5 w-5" /> },
+  { id: 'Accessories', name: 'Gear', icon: <Package className="h-5 w-5" /> },
 ];
 
 export function CategoryRail({

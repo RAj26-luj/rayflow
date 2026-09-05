@@ -25,9 +25,8 @@ export function PromoBanner({
 
       <div className="relative grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
         <div className="space-y-3 text-left">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-purple-500/10 border border-purple-500/30 px-3 py-1 text-xs font-bold text-pink-400">
-            <Sparkles className="h-3.5 w-3.5 text-pink-400" />
-            Special Collection
+          <span className="inline-flex items-center gap-1.5 rounded-full bg-purple-500/10 border border-purple-500/30 px-3 py-1 text-xs font-semibold text-pink-400">
+            Featured Deal
           </span>
 
           <h2 className="text-2xl sm:text-3xl font-extrabold tracking-tight text-white line-clamp-2">
@@ -50,7 +49,7 @@ export function PromoBanner({
               onClick={() => onShopNow && onShopNow(featuredProduct)}
               className="inline-flex items-center gap-2 rounded-full bg-gradient-to-r from-purple-600 via-violet-600 to-pink-600 px-5 py-2.5 text-xs font-bold text-white shadow-lg shadow-purple-600/30 hover:opacity-95 transition-opacity"
             >
-              <span>Shop Bundle</span>
+              <span>Shop Now</span>
               <ArrowRight className="h-4 w-4" />
             </button>
           </div>

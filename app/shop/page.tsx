@@ -536,14 +536,14 @@ export default function ShopPage() {
         <div className="max-w-7xl mx-auto space-y-6">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div>
-              <span className="text-xs font-bold uppercase tracking-widest text-violet-300 bg-violet-950/80 px-3 py-1 rounded-full border border-violet-800/60 shadow-xs">
-                Verified Merchant Storefront
+              <span className="text-xs font-semibold uppercase tracking-widest text-violet-300 bg-violet-950/80 px-3 py-1 rounded-full border border-violet-800/60 shadow-xs">
+                Store
               </span>
               <h1 className="text-2xl sm:text-4xl font-black tracking-tight text-white mt-2.5">
-                Performance Gear Collection
+                All Products
               </h1>
               <p className="text-xs sm:text-sm text-zinc-400 max-w-xl mt-1 leading-relaxed">
-                Discover running shoes, activewear, and recovery gear with automatic multi-item savings.
+                Find products and save on bundles.
               </p>
             </div>
 
@@ -554,7 +554,7 @@ export default function ShopPage() {
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search shoes, hydration, socks..."
+                  placeholder="Search products..."
                   className="w-full rounded-2xl border border-zinc-800 bg-zinc-950/80 pl-10 pr-4 py-2.5 text-xs text-white placeholder:text-zinc-500 focus:outline-none focus:border-violet-500 shadow-inner"
                 />
                 {searchQuery && (
@@ -814,7 +814,7 @@ export default function ShopPage() {
                   type="text"
                   value={aiInput}
                   onChange={(e) => setAiInput(e.target.value)}
-                  placeholder="Ask Shopping Assistant..."
+                  placeholder="How can I help?"
                   className="flex-1 bg-transparent px-3 py-1.5 text-xs text-white placeholder:text-zinc-500 focus:outline-none"
                 />
                 <Button type="submit" variant="primary" size="sm" disabled={!aiInput.trim() || aiLoading}>

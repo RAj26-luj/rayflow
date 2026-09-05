@@ -127,7 +127,15 @@ export function StatusBadge({
   }
 
   const shouldPulse = pulse !== undefined ? pulse : defaultPulse;
-  const displayText = label || status?.replace(/_/g, ' ');
+  const humanizedLabels: Record<string, string> = {
+    NEEDS_APPROVAL: 'Needs approval',
+    AUTO_APPROVED: 'Approved',
+    BLOCKED_BY_POLICY: 'Blocked',
+    EXECUTED: 'Completed',
+    ATTEMPTED: 'Pending',
+    RECOMMENDED: 'Suggested',
+  };
+  const displayText = label || humanizedLabels[norm] || status?.replace(/_/g, ' ');
 
   return (
     <span

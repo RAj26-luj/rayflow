@@ -176,13 +176,13 @@ export function OpportunityCard({
       </div>
 
       <div className="text-xs text-zinc-300 leading-relaxed bg-zinc-950/70 p-3 rounded-xl border border-zinc-800/80">
-        <strong className="text-violet-300">Why it matters: </strong>
+        <strong className="text-violet-300">Details: </strong>
         <span>{opportunity.description}</span>
       </div>
 
       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2.5 text-xs">
         <div className="p-2.5 rounded-xl bg-zinc-950/60 border border-zinc-800/60">
-          <div className="text-[10px] uppercase font-semibold text-zinc-400 tracking-wider">Estimated Revenue</div>
+          <div className="text-[10px] uppercase font-semibold text-zinc-400 tracking-wider">Estimated Sales</div>
           <div className="text-sm font-extrabold text-emerald-400 mt-0.5">
             {formatINR(opportunity.expectedRevenue)}
           </div>
@@ -199,14 +199,14 @@ export function OpportunityCard({
         <div className="col-span-2 sm:col-span-1 p-2.5 rounded-xl bg-zinc-950/60 border border-zinc-800/60">
           <div className="text-[10px] uppercase font-semibold text-zinc-400 tracking-wider">Confidence</div>
           <div className="text-xs font-bold text-violet-300 mt-0.5">
-            {opportunity.confidence}% probability
+            {opportunity.confidence}% match
           </div>
         </div>
       </div>
 
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pt-1">
         <div className="text-xs text-zinc-300">
-          <span className="font-semibold text-white">Recommended: </span>
+          <span className="font-semibold text-white">Suggested: </span>
           <span>{opportunity.recommendedAction}</span>
         </div>
 
@@ -261,13 +261,13 @@ export function CampaignCard({
           </div>
         </div>
         <div className="p-2.5 rounded-xl bg-zinc-950/60 border border-zinc-800/60">
-          <div className="text-[10px] text-zinc-400">Expected Revenue</div>
+          <div className="text-[10px] text-zinc-400">Expected Sales</div>
           <div className="text-xs font-bold text-emerald-400 mt-0.5">
             {formatINR(campaign.expectedRevenue)}
           </div>
         </div>
         <div className="p-2.5 rounded-xl bg-zinc-950/60 border border-zinc-800/60">
-          <div className="text-[10px] text-zinc-400">Budget Cap</div>
+          <div className="text-[10px] text-zinc-400">Max Budget</div>
           <div className="text-xs font-bold text-white mt-0.5">
             {formatINR(campaign.maxBudget)}
           </div>
@@ -282,9 +282,8 @@ export function CampaignCard({
 
       {campaign.aiReasoning && (
         <div className="rounded-xl bg-violet-950/50 border border-violet-800/50 p-3 text-xs text-zinc-300 leading-relaxed flex items-start gap-2.5">
-          <Sparkles className="h-4 w-4 text-violet-400 flex-shrink-0 mt-0.5" />
           <div>
-            <strong className="text-violet-300 font-semibold">Audience Insight: </strong>
+            <strong className="text-violet-300 font-semibold">Note: </strong>
             <span>&quot;{campaign.aiReasoning}&quot;</span>
           </div>
         </div>

@@ -127,16 +127,16 @@ export default function PoliciesPage() {
     <DashboardLayout>
       <PageShell>
         <SectionHeader
-          title="Business Rules & Limits"
-          description="Configure store discount ceilings, approval thresholds, and campaign caps."
-          badge="Store Policy Rules"
+          title="Store Rules"
+          description="Set discount caps, budget limits, and approval rules."
+          badge="Rules"
           badgeIcon={<Sliders className="h-3.5 w-3.5" />}
         />
 
         {savedSuccess && (
           <div className="rounded-2xl border border-emerald-800/60 bg-emerald-950/80 p-3.5 text-xs text-emerald-200 font-semibold flex items-center gap-2 shadow-xl backdrop-blur-xl">
             <CheckCircle2 className="h-4 w-4 text-emerald-400" />
-            <span>Store rules updated successfully!</span>
+            <span>Saved.</span>
           </div>
         )}
 
