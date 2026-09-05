@@ -29,6 +29,7 @@ import { RazorpayTestModal } from '@/components/payment/RazorpayTestModal';
 import { Badge, Button, Modal, CategoryRail, PromoBanner, ProductCard } from '@/components/ui';
 import { Product, Order } from '@/lib/types';
 import { formatINR } from '@/lib/utils';
+import { ALL_PRODUCTS } from '@/lib/data/products';
 
 interface CartItem {
   product: Product;
@@ -100,93 +101,7 @@ export default function ShopPage() {
   const [paidSuccessOrder, setPaidSuccessOrder] = useState<Order | null>(null);
   const [paymentFailError, setPaymentFailError] = useState<string | null>(null);
 
-  const FALLBACK_PRODUCTS: Product[] = [
-    {
-      id: 'prd_aura_001',
-      name: 'Velocity Carbon Running Shoes',
-      sku: 'AUR-FTW-001',
-      description: 'Lightweight carbon-plated racing shoes engineered for speed and marathon efficiency.',
-      price: 4999,
-      compareAtPrice: 5999,
-      category: 'Footwear',
-      inventory: 45,
-      conversionRate: 4.8,
-      marginPercent: 68,
-      image: 'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=600&q=80',
-      complementaryProductIds: ['prd_aura_006', 'prd_aura_003'],
-      tags: ['racing', 'marathon', 'carbon-plate'],
-    },
-    {
-      id: 'prd_aura_002',
-      name: 'AeroDry Performance Singlet',
-      sku: 'AUR-APP-002',
-      description: 'Ultra-breathable moisture-wicking singlet designed for high-heat training sessions.',
-      price: 1299,
-      compareAtPrice: 1699,
-      category: 'Apparel',
-      inventory: 80,
-      conversionRate: 3.5,
-      marginPercent: 72,
-      image: 'https://images.unsplash.com/photo-1581655353564-df123a1eb820?auto=format&fit=crop&w=600&q=80',
-      tags: ['apparel', 'singlet', 'aerodry'],
-    },
-    {
-      id: 'prd_aura_003',
-      name: 'HydroMax 750ml Insulated Flask',
-      sku: 'AUR-ACC-003',
-      description: 'Double-wall vacuum insulated stainless steel flask keeping fluids cold for 24 hours.',
-      price: 899,
-      compareAtPrice: 1199,
-      category: 'Hydration',
-      inventory: 120,
-      conversionRate: 5.2,
-      marginPercent: 65,
-      image: 'https://images.unsplash.com/photo-1602143407151-7111542de6e8?auto=format&fit=crop&w=600&q=80',
-      tags: ['hydration', 'flask', 'insulated'],
-    },
-    {
-      id: 'prd_aura_004',
-      name: 'ProPulse Massage Roller',
-      sku: 'AUR-REC-004',
-      description: 'High-density grid muscle foam roller for targeted myofascial release & recovery.',
-      price: 1499,
-      compareAtPrice: 1999,
-      category: 'Recovery',
-      inventory: 35,
-      conversionRate: 2.9,
-      marginPercent: 70,
-      image: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=600&q=80',
-      tags: ['recovery', 'roller', 'massage'],
-    },
-    {
-      id: 'prd_aura_005',
-      name: 'PaceTrack GPS Smartwatch',
-      sku: 'AUR-TCH-005',
-      description: 'Multisport GPS watch featuring real-time heart rate, VO2 max estimation & route tracking.',
-      price: 8999,
-      compareAtPrice: 10999,
-      category: 'Tech',
-      inventory: 20,
-      conversionRate: 4.1,
-      marginPercent: 55,
-      image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&w=600&q=80',
-      tags: ['tech', 'gps', 'smartwatch'],
-    },
-    {
-      id: 'prd_aura_006',
-      name: 'Anti-Blister Cushioned Socks (3-Pack)',
-      sku: 'AUR-ACC-006',
-      description: 'Anatomical left/right fit running socks with targeted arch support and heel padding.',
-      price: 499,
-      compareAtPrice: 699,
-      category: 'Accessories',
-      inventory: 200,
-      conversionRate: 6.8,
-      marginPercent: 80,
-      image: 'https://images.unsplash.com/photo-1586350977771-b3b0abd50c82?auto=format&fit=crop&w=600&q=80',
-      tags: ['socks', 'anti-blister', 'running'],
-    },
-  ];
+  const FALLBACK_PRODUCTS: Product[] = ALL_PRODUCTS;
 
   const fetchProducts = async () => {
     try {

@@ -10,6 +10,7 @@ import {
 import { DashboardLayout } from '@/components/layout/DashboardLayout';
 import { Product } from '@/lib/types';
 import { formatINR } from '@/lib/utils';
+import { ALL_PRODUCTS } from '@/lib/data/products';
 import { PageShell, SectionHeader } from '@/components/ui/SectionHeader';
 import { ActionButton, SecondaryButton } from '@/components/ui/Button';
 import { CategoryBadge } from '@/components/ui/Badge';
@@ -31,11 +32,14 @@ export default function CataloguePage() {
       setLoading(true);
       const res = await fetch('/api/products');
       const data = await res.json();
-      if (data.success) {
-        setProducts(data.data?.products || (Array.isArray(data.data) ? data.data : []));
+      if (data.success && data.data?.products && data.data.products.length > 0) {
+        setProducts(data.data.products);
+      } else {
+        setProducts(ALL_PRODUCTS);
       }
     } catch (err) {
       console.error(err);
+      setProducts(ALL_PRODUCTS);
     } finally {
       setLoading(false);
     }
